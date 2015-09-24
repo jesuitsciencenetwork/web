@@ -8,4 +8,6 @@
 /bin/
 /composer.phar
 /vendor/
-/web/bundles/
+/html/bundles/*
+logs
+fcgi-bin
