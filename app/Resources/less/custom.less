@@ -1,0 +1,60 @@
+.navbar {
+  //-webkit-box-shadow: 0 8px 6px -6px rgba(0,0,0,0.2);
+  //-moz-box-shadow: 0 8px 6px -6px rgba(0,0,0,0.2);
+  //box-shadow: 0 8px 6px -6px rgba(0,0,0,0.2);
+
+  input.search {
+    border-radius: 30px;
+  }
+}
+
+.navbar-brand {
+    font-family: @font-family-sans-serif;
+}
+.navbar-default .navbar-brand, .navbar-default .navbar-brand:hover {
+    color: @brand-primary;
+}
+
+body {
+  padding-top: 60px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+footer .logos {
+  ul {
+    text-align: center;
+  }
+  li {
+    padding-left: 25px;
+    padding-right: 25px;
+  }
+  a {
+    opacity: 0.3;
+    &:hover {
+      opacity: 0.7;
+    }
+  }
+}
+
+
+#top-shadow {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 50px;
+  z-index: 999;
+  -webkit-box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  -moz-box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  display: none;
+}
+.navbar   {
+  z-index:1000; /* lift .navbar above #top-shadow */
+}
+
+body{min-height:1000px;} /* min height so you can always scroll */

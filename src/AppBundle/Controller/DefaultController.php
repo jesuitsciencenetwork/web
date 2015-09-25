@@ -15,7 +15,17 @@ class DefaultController extends Controller
     {
         // replace this example code with whatever you need
         return $this->render('default/index.html.twig', array(
-            'base_dir' => realpath($this->container->getParameter('kernel.root_dir').'/..'),
+
+        ));
+    }
+
+    /**
+     * @Route("/map", name="map")
+     */
+    public function mapAction(Request $request)
+    {
+        return $this->render('default/map.html.twig', array(
+
         ));
     }
 }
