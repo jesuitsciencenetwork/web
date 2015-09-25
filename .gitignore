@@ -11,3 +11,9 @@
 /html/bundles/*
 logs
 fcgi-bin
+.idea
+/html/css/*
+!html/css/.gitkeep
+/html/js/*
+!html/js/.gitkeep
+
