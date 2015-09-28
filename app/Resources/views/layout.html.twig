@@ -22,6 +22,7 @@
                     <li><a href="{{ path('homepage') }}#sources">Sources</a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
+                    <li{% if 'list' == route %} class="active"{% endif %}><a href="{{ path('list') }}">List</a></li>
                     <li{% if 'search' == route %} class="active"{% endif %}><a href="{{ path('search') }}">Advanced Search</a></li>
                     <li{% if 'map' == route %} class="active"{% endif %}><a href="{{ path('map') }}">Map</a></li>
                     <li{% if 'graph' == route %} class="active"{% endif %}><a href="#">Graph</a></li>

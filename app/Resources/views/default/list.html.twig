@@ -1,0 +1,34 @@
+{% extends "layout.html.twig" %}
+
+{% block content %}
+    <div class="container container-narrow">
+        <div class="col-xs-12">
+            <h2>Complete List</h2>
+            <ul class="list-inline">
+                {% for letter in range('A', 'Z') %}
+                {% if letters[letter] is defined %}
+                    <li><a href="#{{ letter }}">{{ letter }}</a></li>
+                {% else %}
+                    <li class="text-muted" style="color: #eee;">{{ letter }}</li>
+                {% endif %}
+                {% endfor %}
+            </ul>
+
+            {% for letter, persons in letters %}
+            <h4 id="{{ letter }}">{{ letter }} <small class="text-muted">
+                    {% set entryCount = persons|length %}
+                    {% if entryCount %}({{ entryCount }} {% if entryCount == 1 %}entry{% else %}entries{% endif %}){% endif %}
+                </small></h4>
+            <ul>
+            {% for person in persons %}
+                <li>
+                    <a href="{{ path('detail', {id:person.id}) }}">{{ person.displayName }}</a>
+                    <small class="text-muted">({{ person.dateOfBirth }}–{{ person.dateOfDeath }})</small>
+                </li>
+            {% endfor %}
+            </ul>
+            {% endfor %}
+        </div>
+    </div>
+
+{% endblock %}

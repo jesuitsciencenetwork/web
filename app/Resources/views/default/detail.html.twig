@@ -7,44 +7,44 @@
         <div class="col-sm-8">
 
             <header>
-                <h1>Tomasz Żebrowski</h1>
+                <h1>{{ person.firstName }} {{ person.lastName }} <small class="text-muted">({{ person.dateOfBirth }}–{{ person.dateOfDeath }})</small></h1>
                 <p class="small text-muted pref">
-                    IDI: <a href="https://pdrprod.bbaw.de/idi/pdr/pdrPo.001.042.000000001" title="Download raw data as XML" download><code>pdrUo.001.042.000000010</code></a> &bull; VIAF: <a target="_blank" href="http://viaf.org/viaf/8962210"><code>8962210</code></a>
+                    IDI: <a href="https://pdrprod.bbaw.de/idi/pdr/{{ person.pdrId }}" title="Download raw data as XML" download><code>{{ person.pdrId }}</code></a>{% if person.viafId %} &bull; VIAF: <a target="_blank" href="http://viaf.org/viaf/{{ person.viafId }}"><code>{{ person.viafId }}</code></a>{% endif %}
                 </p>
 
 
             </header>
 
-            <h4>Timeline</h4>
-            <div class="timeline" style="background-color: #fafafa; height: 700px;">
-
-            </div>
+            <h4>Aspects</h4>
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>When</th>
+                        <th>Where</th>
+                        <th>What</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for aspect in aspects %}
+                    {% set aspect = aspect.0 %}
+                <tr>
+                    <td>{{ aspect.dateFrom }}–{{ aspect.dateTo }}</td>
+                    <td>{{ aspect.placeName }}</td>
+                    <td>{{ aspect.description }}</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
 
         </div>
         <div class="col-sm-4 col-right">
-            <h4>General</h4>
+            <h4>Alternative Spellings</h4>
             <div class="panel panel-default">
-                <table class="table">
-                    <tbody>
-                    <tr>
-                        <td class="text-center" style="width:50%;">
-                            <span style="font-family: Montserrat; font-weight: bold; font-size: 16px;">* 1714</span><br><small class="text-muted">in Navahrudak</small>
-                        </td>
-                        <td class="text-center" style="width:50%;">
-                            <span style="font-family: Montserrat; font-weight: bold; font-size: 16px;">&dagger; 1758</span><br><small class="text-muted">in Vilnius</small>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-                <div class="panel-body">
-                    <dl class="">
-                        <dt>Alternate Names</dt>
-                        <dd>
-                            Thomas Zimbrowski<br>
-                            Tommy Zebrow
-                        </dd>
-                    </dl>
-                </div>
+                <ul class="list-group">
+                    {% for name in person.alternateNames %}
+                    <li class="list-group-item">{{ name.displayName }}</li>
+                    {% endfor %}
+                </ul>
             </div>
 
             <h4>Related subjects</h4>
@@ -89,7 +89,8 @@
         function initMap() {
             map = new google.maps.Map(document.getElementById('map'), {
                 center: {lat: -34.397, lng: 150.644},
-                zoom: 8
+                zoom: 8,
+                scrollwheel: false
             });
         }
     </script>

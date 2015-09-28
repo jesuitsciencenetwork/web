@@ -24,8 +24,6 @@ class RdfParser
 
     public function getAlternateNames()
     {
-        preg_match_all('=<schema:(alternateN|n)ame.*?>(.+?)</schema:=m', $this->xml, $matches);
 
-        return array_unique($matches[2]);
     }
 }

@@ -2,6 +2,8 @@
 # http://symfony.com/doc/current/book/service_container.html
 parameters:
     viaf_cache_dir: "%kernel.root_dir%/cache/viaf/"
+    idi_cache_dir: "%kernel.root_dir%/cache/idi/"
+    geo_cache_dir: "%kernel.root_dir%/cache/geo/"
 
 services:
   jsn.provider.rdf.remote:
@@ -15,8 +17,22 @@ services:
       - @jsn.provider.rdf.remote
       - %viaf_cache_dir%
 
+  jsn.provider.idi.remote:
+    class: AppBundle\Pdr\IdiProvider\RemoteProvider
+    public: false
+
+  jsn.provider.idi.caching:
+    class: AppBundle\Pdr\IdiProvider\CachingProvider
+    public: false
+    arguments:
+      - @jsn.provider.idi.remote
+      - %idi_cache_dir%
+
   jsn.rdf_provider:
     alias: jsn.provider.rdf.caching
+
+  jsn.idi_provider:
+    alias: jsn.provider.idi.caching
 
   jsn.command.fetch_viaf_names:
     class: AppBundle\Command\FetchViafNamesCommand
@@ -24,3 +40,33 @@ services:
       - @jsn.rdf_provider
     tags:
       - { name: console.command }
+
+  jsn.geocoder:
+    class: AppBundle\Geocoder
+    arguments:
+      - %geo_cache_dir%
+
+  jsn.provider.pdr.ids:
+    class: AppBundle\Pdr\IdProvider
+
+
+  jsn.command.import_data:
+    class: AppBundle\Command\ImportDataCommand
+    arguments:
+      - @doctrine.orm.entity_manager
+      - @jsn.connector.pdr
+      - @jsn.connector.viaf
+      - @jsn.provider.pdr.ids
+    tags:
+      - { name: console.command }
+
+  jsn.connector.viaf:
+    class: AppBundle\Viaf\ViafConnector
+    arguments:
+      - @jsn.rdf_provider
+
+  jsn.connector.pdr:
+    class: AppBundle\Pdr\PdrConnector
+    arguments:
+      - @jsn.idi_provider
+      - @jsn.geocoder

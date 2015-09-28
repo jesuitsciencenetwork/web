@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Form\AdvancedSearchForm;
+use AppBundle\Helper;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,7 +23,54 @@ class DefaultController extends Controller
      */
     public function detailAction($id, Request $request)
     {
-        return $this->render('default/detail.html.twig', array());
+        $person = $this
+            ->getDoctrine()
+            ->getRepository('AppBundle:Person')
+            ->find($id);
+
+        $aspects = $this
+            ->getDoctrine()
+            ->getRepository('AppBundle:Aspect')
+            ->createQueryBuilder('a')
+            ->select('a, COALESCE(a.dateFrom, a.dateTo) as orderDate')
+            ->orderBy('orderDate', 'ASC')
+            ->where('a.person = :person')
+            ->setParameter('person', $person->getId())
+            ->getQuery()
+            ->execute()
+        ;
+
+        return $this->render('default/detail.html.twig', array(
+            'person' => $person,
+            'aspects' => $aspects
+        ));
+    }
+
+    /**
+     * @Route("/list/", name="list")
+     */
+    public function listAction()
+    {
+        $persons = $this
+            ->getDoctrine()
+            ->getRepository('AppBundle:Person')
+            ->findBy(array(), array('lastName' => 'ASC', 'firstName' => 'ASC'))
+        ;
+
+        $letters = array();
+
+        foreach ($persons as $person) {
+            $letter = strtoupper(Helper::removeAccents(mb_substr($person->getLastName(), 0, 1)));
+            if (!array_key_exists($letter, $letters)) {
+                $letters[$letter] = array();
+            }
+
+            $letters[$letter][] = $person;
+        }
+
+        return $this->render('default/list.html.twig', array(
+            'letters' => $letters
+        ));
     }
 
     /**

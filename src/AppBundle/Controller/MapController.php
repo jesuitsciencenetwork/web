@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 class MapController extends Controller
 {
     /**
-     * @Route("/", name="map")
+     * @Route("/map/", name="map")
      */
     public function indexAction(Request $request)
     {
