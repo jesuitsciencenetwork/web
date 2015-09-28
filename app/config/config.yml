@@ -61,6 +61,8 @@ assetic:
                 - "%kernel.root_dir%/../vendor/components/jquery/jquery.js"
                 - "%kernel.root_dir%/../vendor/twbs/bootstrap/js/dropdown.js"
                 - "%kernel.root_dir%/../vendor/twbs/bootstrap/js/modal.js"
+                - "%kernel.root_dir%/../vendor/twbs/bootstrap/js/tooltip.js"
+                - "%kernel.root_dir%/../vendor/twbs/bootstrap/js/popover.js"
                 - "%kernel.root_dir%/../vendor/cross-solution/bootstrap3-dialog/dist/js/bootstrap-dialog.js"
                 - "%kernel.root_dir%/Resources/js/global.js"
             output: js/scripts.js

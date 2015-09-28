@@ -1,0 +1,97 @@
+{% extends 'layout.html.twig' %}
+
+
+
+{% block content %}
+    <div class="container detail">
+        <div class="col-sm-8">
+
+            <header>
+                <h1>Tomasz Żebrowski</h1>
+                <p class="small text-muted pref">
+                    IDI: <a href="https://pdrprod.bbaw.de/idi/pdr/pdrPo.001.042.000000001" title="Download raw data as XML" download><code>pdrUo.001.042.000000010</code></a> &bull; VIAF: <a target="_blank" href="http://viaf.org/viaf/8962210"><code>8962210</code></a>
+                </p>
+
+
+            </header>
+
+            <h4>Timeline</h4>
+            <div class="timeline" style="background-color: #fafafa; height: 700px;">
+
+            </div>
+
+        </div>
+        <div class="col-sm-4 col-right">
+            <h4>General</h4>
+            <div class="panel panel-default">
+                <table class="table">
+                    <tbody>
+                    <tr>
+                        <td class="text-center" style="width:50%;">
+                            <span style="font-family: Montserrat; font-weight: bold; font-size: 16px;">* 1714</span><br><small class="text-muted">in Navahrudak</small>
+                        </td>
+                        <td class="text-center" style="width:50%;">
+                            <span style="font-family: Montserrat; font-weight: bold; font-size: 16px;">&dagger; 1758</span><br><small class="text-muted">in Vilnius</small>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <div class="panel-body">
+                    <dl class="">
+                        <dt>Alternate Names</dt>
+                        <dd>
+                            Thomas Zimbrowski<br>
+                            Tommy Zebrow
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+
+            <h4>Related subjects</h4>
+            <div class="panel panel-default">
+                <div class="list-group">
+                    <a class="list-group-item" href="#">mathematics</a>
+                    <a class="list-group-item" href="#">astronomy</a>
+                    <a class="list-group-item" href="#">architecture</a>
+                    <a class="list-group-item" href="#">exact sciences</a>
+                    <a class="list-group-item" href="#">physics</a>
+                    <a class="list-group-item" href="#">astronomical observatory</a>
+                </div>
+            </div>
+
+            <h4>Relations</h4>
+            <div class="panel panel-default">
+                <ul class="list-group">
+                    <a class="list-group-item" href="#">Marcin Poczobut</a>
+                    <a class="list-group-item" href="#">Joseph Stepling</a>
+                    <a class="list-group-item" href="#">Rudjer Bošković</a>
+                    <a class="list-group-item" href="#">Maximilian Hell</a>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div id="map" style="height:350px;"></div>
+
+    <div class="container detail">
+        <h4>Sources</h4>
+        <ol>
+            <li>Jezuici polscy a nauki ścisłe od XVI do XIX wieku: słownik bio-bibliograficzny</li>
+            <li>Diccionario histórico de la Compañía de Jesús</li>
+        </ol>
+    </div>
+
+{% endblock %}
+
+{% block javascripts %}
+    <script type="text/javascript">
+        var map;
+        function initMap() {
+            map = new google.maps.Map(document.getElementById('map'), {
+                center: {lat: -34.397, lng: 150.644},
+                zoom: 8
+            });
+        }
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBAj3xGeT4xh_SJyqeiPJqMKHY0UnQV2Eg&callback=initMap" async defer></script>
+{% endblock %}

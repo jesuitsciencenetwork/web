@@ -1,7 +1,7 @@
 {% extends "base.html.twig" %}
 
 {% block body %}
-
+    {% set route = app.request.attributes.get('_route') %}
     <nav class="navbar navbar-default navbar-fixed-top">
         <div class="container">
             <!-- Brand and toggle get grouped for better mobile display -->
@@ -17,25 +17,14 @@
 
             <div class="collapse navbar-collapse" id="navbar-collapse">
                 <ul class="nav navbar-nav">
-                    <li class="active"><a href="#">Link <span class="sr-only">(current)</span></a></li>
-                    <li><a href="#">Link</a></li>
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
-                        <ul class="dropdown-menu">
-                            <li><a href="#">Action</a></li>
-                            <li><a href="#">Another action</a></li>
-                            <li><a href="#">Something else here</a></li>
-                            <li role="separator" class="divider"></li>
-                            <li><a href="#">Separated link</a></li>
-                            <li role="separator" class="divider"></li>
-                            <li><a href="#">One more separated link</a></li>
-                        </ul>
-                    </li>
+                    <li><a href="{{ path('homepage') }}#about">About</a></li>
+                    <li><a href="{{ path('homepage') }}#jesuit-sciences">Jesuit Sciences</a></li>
+                    <li><a href="{{ path('homepage') }}#sources">Sources</a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
-                    <li><a href="#">Advanced Search</a></li>
-                    <li><a href="{{ path('map') }}">Map</a></li>
-                    <li><a href="#">Graph</a></li>
+                    <li{% if 'search' == route %} class="active"{% endif %}><a href="{{ path('search') }}">Advanced Search</a></li>
+                    <li{% if 'map' == route %} class="active"{% endif %}><a href="{{ path('map') }}">Map</a></li>
+                    <li{% if 'graph' == route %} class="active"{% endif %}><a href="#">Graph</a></li>
                 </ul>
                 <form class="navbar-form navbar-right" role="search">
                     <div class="form-group">
@@ -48,4 +37,68 @@
     <div id="top-shadow"></div>
 
     {% block content %}{% endblock %}
+
+    <footer>
+        <div class="container logos">
+            <div class="col-sm-12">
+                <ul class="list-inline">
+                    <li><a href="#"><img src="{{ asset('images/logos/buw.png') }}" height="30"/></a></li>
+                    <li><a href="#"><img src="{{ asset('images/logos/izwt.png') }}" height="30"/></a></li>
+                    <li><a href="#"><img src="{{ asset('images/logos/dfg.png') }}" height="30"/></a></li>
+                    <li><a href="#"><img src="{{ asset('images/logos/bbaw.png') }}" height="30"/></a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer">
+            <div class="container">
+                <div class="col-sm-4">
+                    <h4>Partners</h4>
+                    <p>
+                        The project behind the Jesuit Science Network is funded by the <a href="http://www.dfg.de/en/">DFG</a>
+                        (2011-2016) and located at the <a href="#">Interdisciplinary Centre for Science and Technology Studies</a> at
+                        <a href="#">Wuppertal University</a>.
+                    </p>
+                    <p>
+                        The main database behind the JSN along with its
+                        editing tools are powered by the <a href="#">Person Data Repository</a> project at the <a href="#">BBAW</a>.
+                    </p>
+                </div>
+                <div class="col-sm-4">
+                    <h4>Project Manager</h4>
+
+                    <p>
+                        <a href="http://www.geschichte.uni-wuppertal.de/personen/wissenschafts-und-technikgeschichte/prof-dr-volker-remmert.html">Volker Remmert</a><br>
+                        Wuppertal University<br>
+                        remmert@<span class="hidden">null</span>uni-wuppertal.de
+                    </p>
+
+                    <h4>Primary Investigator</h4>
+                    <p>
+                        <a href="http://www.geschichte.uni-wuppertal.de/personen/wissenschafts-und-technikgeschichte/dagmar-mrozik.html">Dagmar Mrozik</a><br>
+                        Wuppertal University<br>
+                        mrozik@<span class="hidden">null</span>uni-wuppertal.de
+                    </p>
+                </div>
+                <div class="col-sm-4">
+                    <h4>Contact</h4>
+
+                    <p>
+                        <em>Wuppertal University</em><br>
+                        IZWT<br>
+                        Bergische Universität Wuppertal<br>
+                        Gaußstraße 20<br>
+                        42119 Wuppertal
+                    </p>
+
+                </div>
+            </div>
+        </div>
+        <div class="black-bar">
+            <div class="container">
+                <div class="col-xs-12">
+                    <p>Copyright 2015 by someone. All rights reserved. <a href="{{ path('imprint') }}">Imprint</a></p>
+                </div>
+            </div>
+        </div>
+    </footer>
 {% endblock %}

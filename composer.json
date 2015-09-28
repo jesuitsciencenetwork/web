@@ -25,7 +25,8 @@
         "cross-solution/bootstrap3-dialog": "dev-master",
         "knplabs/knp-paginator-bundle": "~2.5",
         "oyejorge/less.php": "~1.7",
-        "fortawesome/font-awesome": "~4.4"
+        "fortawesome/font-awesome": "~4.4",
+        "gregwar/cache": "1.0.*"
     },
     "require-dev": {
         "sensio/generator-bundle": "~2.3"
