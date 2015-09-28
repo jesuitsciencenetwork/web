@@ -70,3 +70,8 @@ services:
     arguments:
       - @jsn.idi_provider
       - @jsn.geocoder
+
+  jsn.twig.extension.app:
+    class: AppBundle\Twig\AppExtension
+    tags:
+      - { name: twig.extension }

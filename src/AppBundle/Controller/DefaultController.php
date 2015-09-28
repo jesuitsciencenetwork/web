@@ -7,6 +7,7 @@ use AppBundle\Helper;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class DefaultController extends Controller
 {
@@ -27,6 +28,10 @@ class DefaultController extends Controller
             ->getDoctrine()
             ->getRepository('AppBundle:Person')
             ->find($id);
+
+        if (null === $person) {
+            throw new NotFoundHttpException('Person not found');
+        }
 
         $aspects = $this
             ->getDoctrine()
@@ -81,7 +86,7 @@ class DefaultController extends Controller
         $person = $this
             ->getDoctrine()
             ->getRepository('AppBundle:Person')
-            ->findOneBy(array('viaf' => $id));
+            ->findOneBy(array('viafId' => $id));
 
         if (!$person) {
             $this
