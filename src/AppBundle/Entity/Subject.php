@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\Collection;
 /**
  * Class Subject
  * @ORM\Entity
+ * @ORM\Table(indexes={@ORM\Index(name="slug", columns={"slug"})})
  */
 class Subject
 {
@@ -26,10 +27,22 @@ class Subject
     private $title;
 
     /**
+     * @var string
+     * @ORM\Column(type="string", length=255)
+     */
+    private $slug;
+
+    /**
      * @var Person[]|Collection
-     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Person")
+     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Person", mappedBy="subjects")
      */
     private $associatedPersons;
+
+    /**
+     * @var Aspect[]|Collection
+     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Aspect", mappedBy="subjects")
+     */
+    private $associatedAspects;
     /**
      * Constructor
      */
@@ -104,5 +117,63 @@ class Subject
     public function getAssociatedPersons()
     {
         return $this->associatedPersons;
+    }
+
+    /**
+     * Set slug
+     *
+     * @param string $slug
+     *
+     * @return Subject
+     */
+    public function setSlug($slug)
+    {
+        $this->slug = $slug;
+
+        return $this;
+    }
+
+    /**
+     * Get slug
+     *
+     * @return string
+     */
+    public function getSlug()
+    {
+        return $this->slug;
+    }
+
+    /**
+     * Add associatedAspect
+     *
+     * @param \AppBundle\Entity\Aspect $associatedAspect
+     *
+     * @return Subject
+     */
+    public function addAssociatedAspect(\AppBundle\Entity\Aspect $associatedAspect)
+    {
+        $this->associatedAspects[] = $associatedAspect;
+
+        return $this;
+    }
+
+    /**
+     * Remove associatedAspect
+     *
+     * @param \AppBundle\Entity\Aspect $associatedAspect
+     */
+    public function removeAssociatedAspect(\AppBundle\Entity\Aspect $associatedAspect)
+    {
+        $this->associatedAspects->removeElement($associatedAspect);
+    }
+
+    /**
+     * Get associatedAspects
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getAssociatedAspects()
+    {
+        return $this->associatedAspects;
     }
 }

@@ -3,7 +3,6 @@
 namespace AppBundle;
 
 use AppBundle\DTO\Position;
-use Doctrine\ORM\EntityRepository;
 use Gregwar\Cache\Cache;
 
 class Geocoder
@@ -11,7 +10,17 @@ class Geocoder
     private $cache;
 
     private $replacementMap = array(
-        'Dobrzyń Land' => 'Dobrzyń'
+        'Dobrzyń Land' => 'Dobrzyń',
+        'Red Ruthenia' => 'Grodno',
+        'Kashubia' => 'Pojezierze Kaszubskie',
+        'Neusol' => 'Neusohl',
+        'Vinius' => 'Vilnius'
+    );
+
+    private $manualLookup = array(
+        'Samogitia' => array(55.75, 22.75),
+        'Date given as 1629, maybe 1692 meant?' => array(0,0),
+        'Wolmenting' => array(0,0),
     );
 
     public function __construct($cacheDir)
@@ -25,6 +34,11 @@ class Geocoder
      */
     public function geocode($placeName)
     {
+        if (array_key_exists($placeName, $this->manualLookup)) {
+            list($lat, $lng) = $this->manualLookup[$placeName];
+            return new Position($lat, $lng);
+        }
+
         if (array_key_exists($placeName, $this->replacementMap)) {
             $placeName = $this->replacementMap[$placeName];
         }
@@ -59,7 +73,6 @@ class Geocoder
         );
 
         $url = $url . '?' . http_build_query($options);
-        var_dump($url);
 
         return file_get_contents($url);
     }

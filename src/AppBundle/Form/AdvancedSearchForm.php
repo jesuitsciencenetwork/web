@@ -11,7 +11,17 @@ class AdvancedSearchForm extends AbstractType
     {
         $builder
             ->add('name', 'text')
+            ->add('subject', 'entity', array(
+                'class' => 'AppBundle:Subject',
+                'property' => 'title',
+                'multiple' => true,
+            ))
             ->add('place', 'text')
+
+            ->add('includeAspects', 'checkbox', array(
+                'label' => 'Include relevant aspects in result list',
+
+            ))
             ->add('search', 'submit', array(
                 'label' => 'Search',
                 'attr' => array(

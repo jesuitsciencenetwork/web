@@ -32,6 +32,24 @@ class Person
     private $lastName;
 
     /**
+     * @var string
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $nameLink;
+
+    /**
+     * @var string
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $title;
+
+    /**
+     * @var boolean
+     * @ORM\Column(type="boolean")
+     */
+    private $isJesuit = true;
+
+    /**
      * @var integer
      * @ORM\Column(type="integer", nullable=true)
      */
@@ -50,6 +68,18 @@ class Person
     private $dateOfDeath;
 
     /**
+     * @var string
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $placeOfBirth;
+
+    /**
+     * @var string
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $placeOfDeath;
+
+    /**
      * @var AlternateName[]|Collection
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\AlternateName", mappedBy="person")
      */
@@ -57,8 +87,8 @@ class Person
 
     /**
      * @var Subject[]|Collection
-     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Subject")
-     * @ORM\JoinTable()
+     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Subject", inversedBy="associatedPersons")
+     * @ORM\JoinTable(name="person_subject")
      */
     private $subjects;
 
@@ -67,6 +97,16 @@ class Person
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\Aspect", mappedBy="person")
      */
     private $aspects;
+
+    /**
+     * @var Person[]|Collection
+     * @ORM\ManyToMany(targetEntity="Person")
+     * @ORM\JoinTable(name="relations",
+     *      joinColumns={@ORM\JoinColumn(name="person_id", referencedColumnName="id")},
+     *      inverseJoinColumns={@ORM\JoinColumn(name="other_person_id", referencedColumnName="id")}
+     * )
+     */
+    private $relations;
 
     /**
      * @return int
@@ -268,7 +308,26 @@ class Person
 
     public function getDisplayName()
     {
-        return $this->firstName . ' ' . $this->lastName;
+        $name = '';
+
+        if ($this->title) {
+            $name .= $this->title . ' ';
+        }
+        if ($this->firstName) {
+            $name .= $this->firstName . ' ';
+        }
+        if ($this->nameLink) {
+            if (substr($this->nameLink, -1, 1) == "'") {
+                $name .= $this->nameLink;
+            } else {
+                $name .= $this->nameLink . ' ';
+            }
+        }
+        if ($this->lastName) {
+            $name .= $this->lastName;
+        }
+
+        return trim($name);
     }
 
     public function getPdrId()
@@ -303,10 +362,188 @@ class Person
     /**
      * Get aspects
      *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return Aspect[]|\Doctrine\Common\Collections\Collection
      */
     public function getAspects()
     {
         return $this->aspects;
+    }
+
+    /**
+     * Set title
+     *
+     * @param string $title
+     *
+     * @return Person
+     */
+    public function setTitle($title)
+    {
+        $this->title = $title;
+
+        return $this;
+    }
+
+    /**
+     * Get title
+     *
+     * @return string
+     */
+    public function getTitle()
+    {
+        return $this->title;
+    }
+
+    /**
+     * Set isJesuit
+     *
+     * @param boolean $isJesuit
+     *
+     * @return Person
+     */
+    public function setJesuit($isJesuit)
+    {
+        $this->isJesuit = $isJesuit;
+
+        return $this;
+    }
+
+    /**
+     * Get isJesuit
+     *
+     * @return boolean
+     */
+    public function isJesuit()
+    {
+        return $this->isJesuit;
+    }
+
+    /**
+     * Set isJesuit
+     *
+     * @param boolean $isJesuit
+     *
+     * @return Person
+     */
+    public function setIsJesuit($isJesuit)
+    {
+        $this->isJesuit = $isJesuit;
+
+        return $this;
+    }
+
+    /**
+     * Get isJesuit
+     *
+     * @return boolean
+     */
+    public function getIsJesuit()
+    {
+        return $this->isJesuit;
+    }
+
+    /**
+     * Add relation
+     *
+     * @param \AppBundle\Entity\Person $relation
+     *
+     * @return Person
+     */
+    public function addRelation(\AppBundle\Entity\Person $relation)
+    {
+        $this->relations[] = $relation;
+
+        return $this;
+    }
+
+    /**
+     * Remove relation
+     *
+     * @param \AppBundle\Entity\Person $relation
+     */
+    public function removeRelation(\AppBundle\Entity\Person $relation)
+    {
+        $this->relations->removeElement($relation);
+    }
+
+    /**
+     * Get relations
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getRelations()
+    {
+        return $this->relations;
+    }
+
+    /**
+     * Set nameLink
+     *
+     * @param string $nameLink
+     *
+     * @return Person
+     */
+    public function setNameLink($nameLink)
+    {
+        $this->nameLink = $nameLink;
+
+        return $this;
+    }
+
+    /**
+     * Get nameLink
+     *
+     * @return string
+     */
+    public function getNameLink()
+    {
+        return $this->nameLink;
+    }
+
+    /**
+     * Set placeOfBirth
+     *
+     * @param string $placeOfBirth
+     *
+     * @return Person
+     */
+    public function setPlaceOfBirth($placeOfBirth)
+    {
+        $this->placeOfBirth = $placeOfBirth;
+
+        return $this;
+    }
+
+    /**
+     * Get placeOfBirth
+     *
+     * @return string
+     */
+    public function getPlaceOfBirth()
+    {
+        return $this->placeOfBirth;
+    }
+
+    /**
+     * Set placeOfDeath
+     *
+     * @param string $placeOfDeath
+     *
+     * @return Person
+     */
+    public function setPlaceOfDeath($placeOfDeath)
+    {
+        $this->placeOfDeath = $placeOfDeath;
+
+        return $this;
+    }
+
+    /**
+     * Get placeOfDeath
+     *
+     * @return string
+     */
+    public function getPlaceOfDeath()
+    {
+        return $this->placeOfDeath;
     }
 }

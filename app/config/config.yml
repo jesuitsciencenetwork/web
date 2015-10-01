@@ -63,7 +63,10 @@ assetic:
                 - "%kernel.root_dir%/../vendor/twbs/bootstrap/js/modal.js"
                 - "%kernel.root_dir%/../vendor/twbs/bootstrap/js/tooltip.js"
                 - "%kernel.root_dir%/../vendor/twbs/bootstrap/js/popover.js"
+                - "%kernel.root_dir%/../vendor/twbs/bootstrap/js/scrollspy.js"
+                - "%kernel.root_dir%/../vendor/twbs/bootstrap/js/affix.js"
                 - "%kernel.root_dir%/../vendor/cross-solution/bootstrap3-dialog/dist/js/bootstrap-dialog.js"
+                - "%kernel.root_dir%/Resources/js/typeahead.bundle.js"
                 - "%kernel.root_dir%/Resources/js/global.js"
             output: js/scripts.js
         styles:
@@ -95,6 +98,11 @@ doctrine:
         auto_generate_proxy_classes: "%kernel.debug%"
         naming_strategy: doctrine.orm.naming_strategy.underscore
         auto_mapping: true
+        dql:
+            string_functions:
+                Field: AppBundle\ORM\Field
+            numeric_functions:
+                Rand: AppBundle\ORM\Rand
 
 # Swiftmailer Configuration
 swiftmailer:

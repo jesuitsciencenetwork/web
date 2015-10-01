@@ -1,33 +1,62 @@
 {% extends "layout.html.twig" %}
 
-{% block content %}
-    <div class="container container-narrow">
-        <div class="col-xs-12">
-            <h2>Complete List</h2>
-            <ul class="list-inline">
-                {% for letter in range('A', 'Z') %}
-                {% if letters[letter] is defined %}
-                    <li><a href="#{{ letter }}">{{ letter }}</a></li>
-                {% else %}
-                    <li class="text-muted" style="color: #eee;">{{ letter }}</li>
-                {% endif %}
-                {% endfor %}
-            </ul>
+{% macro person(person) %}
+    <li class="entry">
+        <a href="{{ path('detail', {id:person.id}) }}">{{ person.displayName }}</a>
+        <small class="text-muted">({{ person.dateOfBirth }}–{{ person.dateOfDeath }})</small>
+    </li>
+{% endmacro %}
 
-            {% for letter, persons in letters %}
-            <h4 id="{{ letter }}">{{ letter }} <small class="text-muted">
-                    {% set entryCount = persons|length %}
-                    {% if entryCount %}({{ entryCount }} {% if entryCount == 1 %}entry{% else %}entries{% endif %}){% endif %}
-                </small></h4>
-            <ul>
-            {% for person in persons %}
-                <li>
-                    <a href="{{ path('detail', {id:person.id}) }}">{{ person.displayName }}</a>
-                    <small class="text-muted">({{ person.dateOfBirth }}–{{ person.dateOfDeath }})</small>
-                </li>
-            {% endfor %}
-            </ul>
-            {% endfor %}
+{% import _self as macro %}
+
+{% block bodyAttributes %} data-spy="scroll" data-target="#letter-list"{% endblock %}
+
+{% block stylesheets %}
+    <style type="text/css">
+        .jumptarget:before {
+            height:170px; /* fixed header height*/
+            margin:-170px 0 0; /* negative fixed header height */
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="container container-narrow alph-list">
+        <div class="col-xs-12" id="letter-list">
+            <header>
+                <h2>
+                    Alphabetical List
+                </h2>
+                <ul class="nav nav-pills letter-list">
+                    {% for letter in range('A', 'Z') %}
+                    {% if letters[letter] is defined %}
+                        <li><a href="#{{ letter }}">{{ letter }}</a></li>
+                    {% else %}
+                        <li class="disabled" role="presentation"><a>{{ letter }}</a></li>
+                    {% endif %}
+                    {% endfor %}
+                </ul>
+            </header>
+            <div>
+                {% for letter, persons in letters %}
+                <h4 class="jumptarget" id="{{ letter }}">{{ letter }} <small class="text-muted">{{ persons|length }}</small></h4>
+                <ul class="list-unstyled">
+                {% for person in persons %}
+                    {{ macro.person(person) }}
+                {% endfor %}
+                </ul>
+                {% endfor %}
+
+                <h4 class="jumptarget" id="non-jesuit">Non-Jesuits
+                    <small class="text-muted">
+                        {{ nonjesuits|length }}
+                    </small></h4>
+                <ul class="list-unstyled">
+                    {% for person in nonjesuits %}
+                        {{ macro.person(person) }}
+                    {% endfor %}
+                </ul>
+            </div>
         </div>
     </div>
 

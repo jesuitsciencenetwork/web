@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -68,8 +69,15 @@ class Aspect
     private $source;
 
     /**
+     * @var Subject[]|Collection
+     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Subject", inversedBy="associatedAspects")
+     * @ORM\JoinTable(name="aspect_subject")
+     */
+    private $subjects;
+
+    /**
      * @var string
-     * @ORM\Column(type="string", length=100000, nullable=true)
+     * @ORM\Column(type="string", length=10000, nullable=true)
      */
     private $description;
 
@@ -311,5 +319,46 @@ class Aspect
     public function getDateExact()
     {
         return $this->dateExact;
+    }
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->subjects = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
+     * Add subject
+     *
+     * @param \AppBundle\Entity\Subject $subject
+     *
+     * @return Aspect
+     */
+    public function addSubject(\AppBundle\Entity\Subject $subject)
+    {
+        $this->subjects[] = $subject;
+
+        return $this;
+    }
+
+    /**
+     * Remove subject
+     *
+     * @param \AppBundle\Entity\Subject $subject
+     */
+    public function removeSubject(\AppBundle\Entity\Subject $subject)
+    {
+        $this->subjects->removeElement($subject);
+    }
+
+    /**
+     * Get subjects
+     *
+     * @return Subject[]|\Doctrine\Common\Collections\Collection
+     */
+    public function getSubjects()
+    {
+        return $this->subjects;
     }
 }

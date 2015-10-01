@@ -2,8 +2,9 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Form\AdvancedSearchForm;
+use AppBundle\Entity\Person;
 use AppBundle\Helper;
+use Doctrine\ORM\EntityRepository;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -37,8 +38,10 @@ class DefaultController extends Controller
             ->getDoctrine()
             ->getRepository('AppBundle:Aspect')
             ->createQueryBuilder('a')
-            ->select('a, COALESCE(a.dateFrom, a.dateTo) as orderDate')
-            ->orderBy('orderDate', 'ASC')
+            ->select('a, COALESCE(a.dateExact, a.dateFrom, a.dateTo, 99999) as orderDate')
+            ->addSelect("FIELD(a.type, 'beginningOfLife', 'entryInTheOrder', 'resignationFromTheOrder', 'expulsionFromTheOrder', 'endOfLife', 'education', 'career', 'miscellaneous') as HIDDEN typeField")
+            ->addOrderBy('typeField', 'ASC')
+            ->addOrderBy('orderDate', 'ASC')
             ->where('a.person = :person')
             ->setParameter('person', $person->getId())
             ->getQuery()
@@ -59,7 +62,27 @@ class DefaultController extends Controller
         $persons = $this
             ->getDoctrine()
             ->getRepository('AppBundle:Person')
-            ->findBy(array(), array('lastName' => 'ASC', 'firstName' => 'ASC'))
+            ->createQueryBuilder('p')
+            ->select('p, s')
+            ->leftJoin('p.subjects', 's')
+            ->where('p.isJesuit = 1')
+            ->addOrderBy('p.lastName', 'ASC')
+            ->addOrderBy('p.firstName', 'ASC')
+            ->getQuery()
+            ->execute()
+        ;
+
+        $nonJesuits = $this
+            ->getDoctrine()
+            ->getRepository('AppBundle:Person')
+            ->createQueryBuilder('p')
+            ->select('p, s')
+            ->leftJoin('p.subjects', 's')
+            ->where('p.isJesuit = 0')
+            ->addOrderBy('p.lastName', 'ASC')
+            ->addOrderBy('p.firstName', 'ASC')
+            ->getQuery()
+            ->execute()
         ;
 
         $letters = array();
@@ -74,34 +97,64 @@ class DefaultController extends Controller
         }
 
         return $this->render('default/list.html.twig', array(
+            'letters' => $letters,
+            'nonjesuits' => $nonJesuits
+        ));
+    }
+
+    /**
+     * @Route(path="/subjects/", name="subjects")
+     */
+    public function subjectsAction()
+    {
+        $subjects = $this
+            ->getDoctrine()
+            ->getManager()
+            ->createQuery(
+                'SELECT s, COUNT(p) FROM AppBundle:Subject s LEFT JOIN s.associatedPersons p GROUP BY s.id ORDER BY s.title ASC'
+            )
+            ->execute()
+        ;
+
+        $letters = array();
+
+        foreach ($subjects as $subject) {
+            $letter = substr($subject[0]->getTitle(), 0, 1);
+
+            if (!array_key_exists($letter, $letters)) {
+                $letters[$letter] = array();
+            }
+
+            $letters[$letter][] = array(
+                'subject' => $subject[0],
+                'count' => $subject[1]
+            );
+        }
+
+        return $this->render('default/subjects.html.twig', array(
             'letters' => $letters
         ));
     }
 
     /**
-     * @Route("/viaf/{id}/", name="viaf")
+     * @Route("/random/", name="random")
      */
-    public function viafAction($id)
+    public function randomAction()
     {
-        $person = $this
+        /** @var EntityRepository $repo */
+        $repo =  $this
             ->getDoctrine()
-            ->getRepository('AppBundle:Person')
-            ->findOneBy(array('viafId' => $id));
+            ->getRepository('AppBundle:Person');
+        $person = $repo
+            ->createQueryBuilder('p')
+            ->addSelect('RAND() as HIDDEN rand')
+            ->setMaxResults(1)
+            ->orderBy('rand')
+            ->getQuery()
+            ->getSingleResult()
+        ;
 
-        if (!$person) {
-            $this
-                ->get('braincrafted_bootstrap.flash')
-                ->alert(sprintf(
-                    'The VIAF ID "%s" could not be found. Please try searching our database instead.',
-                    $id
-                ))
-            ;
-            return $this->redirect($this->generateUrl('search'));
-        }
-
-        return $this->redirect(
-            $this->generateUrl('detail', array('id' => $person->getId()))
-        );
+        return $this->redirect($this->generateUrl('detail', array('id' => $person->getId())));
     }
 
     /**
@@ -120,23 +173,5 @@ class DefaultController extends Controller
         return $this->render('default/workshop.html.twig', array());
     }
 
-    /**
-     * @Route("/search/", name="search")
-     */
-    public function searchAction(Request $request)
-    {
-        $form = $this->createForm(new AdvancedSearchForm());
 
-        $form->handleRequest($request);
-
-        if ($form->isValid()) {
-            return $this->render('default/results.html.twig', array(
-                'form' => $form->createView()
-            ));
-        }
-
-        return $this->render('default/search.html.twig', array(
-            'form' => $form->createView()
-        ));
-    }
 }

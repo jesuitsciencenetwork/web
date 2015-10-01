@@ -73,5 +73,12 @@ services:
 
   jsn.twig.extension.app:
     class: AppBundle\Twig\AppExtension
+    arguments:
+      - @jsn.twig.helper.rendering
     tags:
       - { name: twig.extension }
+
+  jsn.twig.helper.rendering:
+    class: AppBundle\Twig\Helper\RenderingHelper
+    arguments:
+      - @router

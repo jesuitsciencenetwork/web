@@ -1,0 +1,48 @@
+{% extends "layout.html.twig" %}
+
+{% block bodyAttributes %} data-spy="scroll" data-target="#letter-list"{% endblock %}
+
+{% block stylesheets %}
+    <style type="text/css">
+        .jumptarget:before {
+            height:170px; /* fixed header height*/
+            margin:-170px 0 0; /* negative fixed header height */
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="container container-narrow alph-list">
+        <div class="col-xs-12" id="letter-list">
+            <header>
+                <small class="pull-right text-muted" style="margin-top: 20px; line-height: 28px;"><em>number after subject denotes count of associated persons</em></small>
+                <h2>
+                    Subjects
+                </h2>
+                <ul class="nav nav-pills letter-list">
+                    {% for letter in range('A', 'Z') %}
+                        {% if letters[letter] is defined %}
+                            <li><a href="#{{ letter }}">{{ letter }}</a></li>
+                        {% else %}
+                            <li class="disabled" role="presentation"><a>{{ letter }}</a></li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </header>
+            <div>
+                {% for letter, entries in letters %}
+                    <h4 class="jumptarget" id="{{ letter }}">{{ letter }} <small class="text-muted">{{ entries|length }}</small></h4>
+                    <ul class="list-unstyled">
+                        {% for entry in entries %}
+                            <li class="entry">
+                                <a href="{{ path('subject', {slug:entry.subject.id}) }}">{{ entry.subject.title }}</a>
+                                <small class="text-muted">{{ entry.count }}</small>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

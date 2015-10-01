@@ -3,6 +3,7 @@
 namespace AppBundle\Pdr;
 
 use AppBundle\Geocoder;
+use AppBundle\Helper;
 
 class PdrConnector
 {
@@ -23,17 +24,23 @@ class PdrConnector
         $xml = simplexml_load_string($source);
 
         if (false === $xml) {
-            throw new \RuntimeException('Could not parse XML');
+            throw new \RuntimeException('Could not parse XML for Entry '. $pdrId);
         }
 
         $data = array(
             'pdrId' => $pdrId,
-            'displayName' => null,
+            'firstName' => null,
+            'lastName' => null,
+            'nameLink' => null,
+            'title' => null,
             'viaf' => null,
             'beginningOfLife' => null,
             'endOfLife' => null,
             'sources' => array(),
             'aspects' => array(),
+            'subjects' => array(),
+            'personRefs' => array(),
+            'nonjesuit' => false,
             'alternateNames' => array()
         );
 
@@ -57,67 +64,45 @@ class PdrConnector
             $aspectData = array(
                 'aoId' => (string)$aspect['id'],
                 'type' => null,
-                'placeName' => null,
-                'lat' => null,
-                'lng' => null,
-                'description' => null,
             );
 
             $semantics = (string)$aspect->semanticDim->semanticStm;
 
             switch ($semantics) {
+                case 'residence':
+                    continue 2;
+                case 'relatives':
+                    $semantics = 'miscellaneous';
+                    break;
                 case 'NormName_DE':
-                    list($firstName, $lastName) = $this->getNamesFromNotification($aspect->notification);
+                    list($titles, $firstName, $nameLink, $lastName, $nonJesuit) = $this->getNamesFromNormNameNotification($aspect->notification);
+                    $data['title'] = $titles;
                     $data['firstName'] = $firstName;
+                    $data['nameLink'] = $nameLink;
                     $data['lastName'] = $lastName;
+                    $data['nonjesuit'] = $nonJesuit;
                     continue 2;
                 case 'Name':
-                    $data['alternateNames'][] = $this->getSortedNameFromNotification($aspect->notification);
+                    $data['alternateNames'][] = $this->getSortedNameFromAlternateNameNotification($aspect->notification);
                     continue 2;
-                case 'biographicalData':
-                    $date = $aspect->notification->date;
-                    $dateType = (string)$date['type'];
-                    if ('event' != $dateType && $dateValue = (string)$date['when']) {
-                        $data[$dateType] = $dateValue;
-                    }
-
-                    // parse date into $data
-                    // birthdate/deathdate
-                    // entryInTheOrder/expulsionFromTheOrder/resignationFromTheOrder
-
-                    // do not break, also include full aspect!
             }
 
             $aspectData['type'] = $semantics;
             // @todo preserve links between stuff
 
-            $aspectData['description'] = trim(strip_tags($aspect->notification->asXML()));
-
-            // collect tags
-            /** @var \SimpleXMLElement $notification */
-            $notification = $aspect->notification;
-
-            foreach ($notification->children() as $child) {
-
-                switch ($child->getName()) {
-                    case 'name':
-                        // type of aspect!
-                        break;
-                    case 'persName':
-                        // store reference, skip self-ref
-                        break;
-                    case 'placeName':
-                        // geocode, then store
-                        $placeName = (string)$child;
-                        $position = $this->geocoder->geocode($placeName);
-                        $aspectData['placeName'] = $placeName;
-                        $aspectData['lat'] = $position->getLatitude();
-                        $aspectData['lng'] = $position->getLongitude();
-                        break;
-                }
+            $notificationData = $this->processNotification($aspect->notification, Helper::pdr2num($pdrId));
+            $aspectData = array_merge($aspectData, $notificationData);
+            foreach ($aspectData['subjects'] as $slug => $subject) {
+                $data['subjects'][$slug] = $subject;
             }
-//            var_dump((string)($aspect->notification));
-
+            foreach ($aspectData['personRefs'] as $ref) {
+                $data['personRefs'][] = $ref;
+            }
+            if ($aspectData['type'] == 'beginningOfLife') {
+                $data['beginningOfLife'] = $aspectData['dateExact'];
+            } elseif ($aspectData['type'] == 'endOfLife') {
+                $data['endOfLife'] = $aspectData['dateExact'];
+            }
             // relationStm
             // semanticStm
             // do not import: validationStm/reference
@@ -130,12 +115,15 @@ class PdrConnector
             $data['sources'][] = (string)$mods['ID'];//$mods->asXML();
         }
 
+        //$data['subjects'] = array_unique($data['subjects']);
+
         return $data;
     }
 
-    protected function getSortedNameFromNotification($xml)
+    protected function getSortedNameFromAlternateNameNotification($xml)
     {
-        $first = $middle = $last = array();
+        $titles = $first = $middle = $last = array();
+        $nameLink = null;
 
         foreach ($xml->persName as $namePart) {
             $type = (string)$namePart['type'];
@@ -148,19 +136,43 @@ class PdrConnector
                 $part = 'middle';
             } elseif ('forename' === $type) {
                 $part = 'first';
+            } elseif ('titleOfNobility' === $type) {
+                $part = 'titles';
+            } elseif ('nameLink' === $type) {
+                $nameLink = $value;
+                continue;
+            } elseif ('pseudonym' === $type) {
+                $part = 'middle';
             } else {
                 throw new \RuntimeException('Unknown namepart: ' . $type . ' / ' . $subType);
             }
 
             array_push($$part, $value);
         }
-        $names = array_merge($first, $middle, $last);
-        return trim(implode(" ", $names));
+        $firstNames = array_merge($titles, $first, $middle);
+        return html_entity_decode(
+            str_replace(
+                array('&#152;','&#156;', "\n", "\r"),
+                '',
+                trim(implode(" ", $firstNames)) . ($nameLink ? (substr($nameLink, -1, 1) == "'" ? ' ' . $nameLink : ' ' . $nameLink . ' ') : ' ') . trim(implode(" ", $last))
+            ),
+            ENT_QUOTES | ENT_XML1,
+            'UTF-8'
+        );
     }
 
-    protected function getNamesFromNotification($xml)
+    protected function getNamesFromNormNameNotification($xml)
     {
-        $first = $middle = $last = array();
+        $titles = $first = $middle = $last = array();
+        $nonJesuit = false;
+        $nameLink = null;
+
+        foreach ($xml->name as $comment) {
+            $type = (string)$comment['type'];
+            if ('Nonjesuit' == $type) {
+                $nonJesuit = true;
+            }
+        }
 
         foreach ($xml->persName as $namePart) {
             $type = (string)$namePart['type'];
@@ -173,6 +185,13 @@ class PdrConnector
                 $part = 'middle';
             } elseif ('forename' === $type) {
                 $part = 'first';
+            } elseif ('titleOfNobility' === $type) {
+                $part = 'titles';
+            } elseif ('nameLink' === $type) {
+                $nameLink = $value;
+                continue;
+            } elseif ('pseudonym' === $type) {
+                $part = 'middle'; // only occurs once: Benedykt Herbest, pdrPo.001.042.000000613
             } else {
                 throw new \RuntimeException('Unknown namepart: ' . $type . ' / ' . $subType);
             }
@@ -181,13 +200,108 @@ class PdrConnector
         }
         $firstNames = array_merge($first, $middle);
         return array(
+            trim(implode(" ", $titles)),
             trim(implode(" ", $firstNames)),
-            trim(implode(" ", $last))
+            $nameLink ? trim($nameLink) : $nameLink,
+            trim(implode(" ", $last)),
+            $nonJesuit
         );
     }
 
     public function getIdRange()
     {
 
+    }
+
+    private function processNotification($xml, $currentPoId)
+    {
+        $output = array(
+            'dateFrom' => null,
+            'dateTo' => null,
+            'dateExact' => null,
+            'placeName' => null,
+            'lat' => null,
+            'lng' => null,
+            'subjects' => array(),
+            'personRefs' => array(),
+            'description' => '',
+        );
+        $textParts = array();
+        $dom = dom_import_simplexml($xml);
+        foreach ($dom->childNodes as $childNode) {
+            if ($childNode->nodeType == XML_TEXT_NODE) {
+                if (strpos(strtolower($childNode->nodeValue), 'death') !== false) {
+                    $output['type'] = 'endOfLife';
+                } elseif (strpos(strtolower($childNode->nodeValue), 'birth') !== false) {
+                    $output['type'] = 'beginningOfLife';
+                } elseif (strpos(strtolower($childNode->nodeValue), 'entry in the order') !== false) {
+                    $output['type'] = 'entryInTheOrder';
+                } elseif (strpos(strtolower($childNode->nodeValue), 'resignation') !== false) {
+                    $output['type'] = 'resignationFromTheOrder';
+                }
+                $textParts[] = trim($childNode->nodeValue);
+                continue;
+            }
+
+            $tag  = $childNode->nodeName;
+            $type = $childNode->getAttribute('type');
+            $subtype = $childNode->getAttribute('subtype');
+            $href = $childNode->getAttribute('ana');
+
+            if ($tag == 'persName') {
+                $id = Helper::pdr2num($href);
+                if ($id !== $currentPoId) {
+                    $output['personRefs'][] = array($currentPoId, $id);
+                }
+                $textParts[] = '{P:' . $id . '|' . $childNode->nodeValue . '}';
+            } elseif ($tag == 'name' && $type == 'science' && $subtype == 'subject') {
+                $slug = Helper::slugify($childNode->nodeValue);
+                $output['subjects'][$slug] = $childNode->nodeValue;
+                $textParts[] = '{S:' . $slug . '|' . $childNode->nodeValue . '}';
+            } elseif ($tag == 'placeName') {
+                $pos = $this->geocoder->geocode($childNode->nodeValue);
+
+                $output['lat'] = $pos->getLatitude();
+                $output['lng'] = $pos->getLongitude();
+                $output['placeName'] = $childNode->nodeValue;
+
+                $textParts[] = '{M:' . $pos->getLatitude(
+                    ) . ',' . $pos->getLongitude(
+                    ) . '|' . $childNode->nodeValue . '}';
+            } elseif ($tag == 'name') {
+                $textParts[] = $childNode->nodeValue;
+            } elseif ($tag == 'date') {
+                if ($type == 'event' && $subtype) {
+                    $output['type'] = $subtype; // exit/resign/entry
+                } elseif ($type == 'beginningOfLife' || $type == 'endOfLife') {
+                    $output['type'] = $type;
+                }
+
+                if ($date = $childNode->getAttribute('when')) {
+                    $output['dateExact'] = $date;
+                }
+                if ($date = $childNode->getAttribute('from')) {
+                    $output['dateFrom'] = $date;
+                }
+                if ($date = $childNode->getAttribute('to')) {
+                    $output['dateTo'] = $date;
+                }
+                $textParts[] = $childNode->nodeValue;
+            } else {
+                $textParts[] = $childNode->nodeValue;
+//                var_dump($tag);
+//                var_dump($type);
+//                var_dump($subtype);
+//                var_dump($href);
+//                echo " == \n";
+            }
+
+        }
+
+        //$output['subjects'] = array_unique($output['subjects']);
+
+        $output['description'] = implode(' ', $textParts);
+
+        return $output;
     }
 }

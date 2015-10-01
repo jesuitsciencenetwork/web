@@ -24,7 +24,7 @@ body {
 h1, h2, h3, h4, h5, h6 {
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
 }
 
 footer {
@@ -124,17 +124,21 @@ body{min-height:1000px;} /* min height so you can always scroll */
 
 .hero {
   text-align: center;
+  position: relative;
   h1 {
-    font-size: floor((@font-size-base * 2.7));
-    margin-top: 150px;
-    margin-bottom: 0;
-    padding: (@line-height-computed);
-    //background-color: rgba(255,255,255,0.6);
-    //color: #444;
-    width: 730px;
+    font-size: floor((@font-size-base * 3));
+    margin: 0;
+    left: 0;
+    right: 0;
+    top:0;
+    bottom: 0;
+    display: block;
+    position: absolute;
+    line-height: 350px;
+    padding: 0;
     background-color: rgba(0,0,0,0.6);
     color: #fff;
-    display: inline-block;
+    text-shadow: 1px 1px 0 #000;
   }
 }
 
@@ -215,4 +219,452 @@ code {
 
 a.list-group-item, a.list-group-item:hover {
   color: @link-color;
+}
+
+.alph-list {
+  ul.list-unstyled + h4 {
+    margin-top: (@line-height-computed * 2);
+  }
+
+  ul.list-unstyled {
+    padding-left: 30px;
+  }
+  ul.list-unstyled li {
+    margin-bottom: (@line-height-computed / 4);
+  }
+
+  h4 small {
+    margin-left: 15px;
+  }
+  ul.list-inline {
+    margin-top: -4px;
+  }
+
+  li.entry span {
+    color: #888;
+    font-size: 9px;
+  }
+  header {
+    background-color: #fff;
+    position:fixed;
+  }
+  header + div {
+    padding-top: 120px;
+  }
+}
+
+ul.letter-list {
+  text-align: center;
+  //padding-top: (@line-height-computed / 2);
+  //padding-bottom: (@line-height-computed / 2);
+  border-top: 1px solid @gray-lighter;
+  border-bottom: 1px solid @gray-lighter;
+  margin-top: (@line-height-computed);
+  background-color: #fff;
+
+  &.affix {
+    margin: 0;
+    top: 70px;
+    width: 670px;
+  }
+
+  li > a {
+    padding: 7px;
+  }
+
+  .disabled a {
+    color: #eee;
+  }
+}
+
+.jumptarget:before {
+  content:"";
+  display:block;
+  height:70px; /* fixed header height*/
+  margin:-70px 0 0; /* negative fixed header height */
+}
+
+ul.timeline {
+  position: relative;
+
+  &:before {
+    content: "";
+    display: block;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 100px;
+    width: 3px;
+    background: #ccc;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+  }
+
+  .timeline-entry {
+    margin-bottom: 30px;
+    margin-left: 125px;
+    padding: 10px;
+    background-color: #f6f6f6;
+    &:before {
+      content: "";
+      display: block;
+      width: 11px;
+      height: 11px;
+      border: 3px solid #fff;
+      box-sizing: content-box;
+      position: absolute;
+      left: 93px;
+      margin-top: 2px;
+      background-color: #444;
+      -webkit-border-radius: 20px;
+      -moz-border-radius: 20px;
+      border-radius: 20px;
+    }
+    &.type-entryInTheOrder:before, &.type-resignationFromTheOrder:before, &.type-expulsionFromTheOrder:before {
+      background-color: #22A7F0;
+    }
+    &.type-education:before {
+      background-color: #26A65B;
+    }
+    &.type-miscellaneous:before {
+      background-color: #48929B;
+    }
+    &.type-career:before {
+      background-color: #F9690E;
+    }
+    &.type-biographicalData:before {
+      background-color: #8E44AD;
+    }
+    &.type-beginningOfLife:before {
+      background-color: #9B59B6;
+    }
+    &.type-endOfLife:before {
+      background-color: #000;
+    }
+    span.date {
+      display: block;
+      position: absolute;
+      left: 5px;
+      width: 80px;
+      text-align: right;
+      white-space: nowrap;
+
+      &:after {
+        content: "";
+        position: absolute;
+        left: 110px;
+        width: 0;
+        height: 0;
+        margin-top: 3px;
+        border-style: solid;
+        border-width: 7px 10px 7px 0;
+        border-color: transparent #f6f6f6 transparent transparent;
+      }
+    }
+
+    span.place {
+      float: right;
+      font-size: 75%;
+      margin-left: 15px;
+
+      button {
+        color: #666;
+        font-size: 11px;
+        padding: 0;
+      }
+      button:hover, button:active, button:focus {
+        color: #333;
+        text-decoration: none;
+        i {
+          color: @link-color;
+        }
+      }
+    }
+  }
+}
+
+
+
+/*
+ * typehead.js-bootstrap3.less
+ * @version 0.2.3
+ * https://github.com/hyspace/typeahead.js-bootstrap3.less
+ *
+ * Licensed under the MIT license:
+ * http://www.opensource.org/licenses/MIT
+ */
+
+//custom mixin for .form-control-validation
+.typeahead-form-control(@border-color: #ccc;) {
+  border-color: @border-color;
+  .box-shadow(inset 0 1px 1px rgba(0,0,0,.075)); // Redeclare so transitions work
+  &:focus {
+    border-color: darken(@border-color, 10%);
+    @shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 6px lighten(@border-color, 20%);
+    .box-shadow(@shadow);
+  }
+}
+
+//main styles for control
+.tt-input,
+.tt-hint {
+  .twitter-typeahead &{
+    //validation states
+    .has-warning &{
+      .typeahead-form-control(@state-warning-text);
+    }
+    .has-error &{
+      .typeahead-form-control(@state-danger-text);
+    }
+    .has-success &{
+      .typeahead-form-control(@state-success-text);
+    }
+  }
+
+  //border
+  .input-group .twitter-typeahead:first-child &{
+    .border-left-radius(@border-radius-base);
+    width: 100%;
+  }
+  .input-group .twitter-typeahead:last-child &{
+    .border-right-radius(@border-radius-base);
+    width: 100%;
+  }
+
+  //sizing - small:size and border
+  .input-group.input-group-sm .twitter-typeahead &{
+    .input-size(@input-height-small; @padding-small-vertical; @padding-small-horizontal; @font-size-small; @line-height-small; @border-radius-small);
+  }
+  .input-group.input-group-sm .twitter-typeahead:not(:first-child):not(:last-child) &{
+    border-radius: 0;
+  }
+  .input-group.input-group-sm .twitter-typeahead:first-child &{
+    .border-left-radius(@border-radius-small);
+    .border-right-radius(0);
+  }
+  .input-group.input-group-sm .twitter-typeahead:last-child &{
+    .border-left-radius(0);
+    .border-right-radius(@border-radius-small);
+  }
+
+  //sizing - large:size and border
+  .input-group.input-group-lg .twitter-typeahead &{
+    .input-size(@input-height-large; @padding-large-vertical; @padding-large-horizontal; @font-size-large; @line-height-large; @border-radius-large);
+  }
+  .input-group.input-group-lg .twitter-typeahead:not(:first-child):not(:last-child) &{
+    border-radius: 0;
+  }
+  .input-group.input-group-lg .twitter-typeahead:first-child &{
+    .border-left-radius(@border-radius-large);
+    .border-right-radius(0);
+  }
+  .input-group.input-group-lg .twitter-typeahead:last-child &{
+    .border-left-radius(0);
+    .border-right-radius(@border-radius-large);
+  }
+}
+
+//for wrapper
+.twitter-typeahead {
+  width: 100%;
+  float: left;
+  .input-group &{
+    //overwrite `display:inline-block` style
+    display: table-cell!important;
+  }
+}
+
+//particular style for each other
+.twitter-typeahead .tt-hint {
+  color: @text-muted;//color - hint
+}
+.twitter-typeahead .tt-input {
+  z-index: 2;
+  //disabled status
+  //overwrite inline styles of .tt-query
+  &[disabled],
+  &[readonly],
+  fieldset[disabled] & {
+    cursor: not-allowed;
+    //overwirte inline style
+    background-color: @input-bg-disabled!important;
+  }
+}
+
+//dropdown styles
+.tt-dropdown-menu, .tt-menu {
+  //dropdown menu
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: @zindex-dropdown;
+  //min-width: 160px;
+  width: 380px;
+  padding: 5px 0;
+  margin: 2px 0 0;
+  list-style: none;
+  font-size: @font-size-base;
+  background-color: @dropdown-bg;
+  border: 1px solid @dropdown-fallback-border;
+  border: 1px solid @dropdown-border;
+  border-radius: @border-radius-base;
+  .box-shadow(0 6px 12px rgba(0,0,0,.175));
+  background-clip: padding-box;
+  *border-right-width: 2px;
+  *border-bottom-width: 2px;
+
+  max-height: 500px;
+  overflow-y: auto;
+
+  h4 {
+    font-size: 13px;
+    margin-left: 10px;
+    margin-bottom: 5px;
+    margin-top: 5px;
+  }
+
+  .tt-suggestion {
+    //item
+    display: block;
+    padding: 3px 20px;
+    clear: both;
+    font-weight: normal;
+    line-height: @line-height-base;
+    color: @dropdown-link-color;
+    margin-bottom: 3px;
+
+    strong.tt-highlight {
+      font-weight: normal;
+      background-color: #ffc;
+    }
+
+    &.tt-cursor, &:hover {
+      //item selected
+      cursor: pointer;
+      text-decoration: none;
+      outline: 0;
+      background-color: @dropdown-link-hover-bg;
+      color: @dropdown-link-hover-color;
+      a {
+        //link in item selected
+        color: @dropdown-link-hover-color;
+      }
+    }
+    p {
+      margin: 0;
+    }
+  }
+}
+
+///**********************************************************
+// *     typeahead.js v0.11.1 - twitter bootstrap v3.3.5    *
+// **********************************************************/
+//
+///*root typeahead class*/
+//.twitter-typeahead {
+//  display: inherit !important;
+//  width: 100%;
+//}
+//
+//.twitter-typeahead .tt-input[disabled] {
+//  background-color : #eeeeee !important;
+//}
+//
+///*Added to input that's initialized into a typeahead*/
+//.twitter-typeahead .tt-input {
+//
+//}
+//
+///*Added to hint input.*/
+//.twitter-typeahead .hint {
+//
+//}
+//
+///*Added to menu element*/
+//.twitter-typeahead .tt-menu {
+//  width: 100%;
+//  max-height: 500px;
+//  overflow-y: scroll;
+//  border: 1px solid #cccccc;
+//
+//  -moz-box-shadow: 12px 14px 30px -7px #616161;
+//  -webkit-box-shadow: 12px 14px 30px -7px #616161;
+//  box-shadow: 12px 14px 30px -7px #616161;
+//}
+//
+///*Added to dataset elements*/
+//.twitter-typeahead .tt-dataset {
+//
+//}
+//
+///*dded to suggestion elements*/
+//.twitter-typeahead .tt-suggestion {
+//  padding: 3px 20px;
+//  white-space: nowrap;
+//}
+//
+///*Added to menu element when it contains no content*/
+//.twitter-typeahead .tt-empty {
+//  background-color: white;
+//}
+//
+///*Added to menu element when it is opened*/
+//.twitter-typeahead .tt-open {
+//  background-color: white;
+//}
+//
+///*Added to suggestion element when menu cursor moves to said suggestion*/
+//.twitter-typeahead .tt-suggestion:hover,
+//.twitter-typeahead .tt-suggestion:focus,
+//.twitter-typeahead .tt-cursor {
+//  cursor: hand !important;
+//  background-color: #337ab7;
+//  color: white;
+//}
+//
+///*Added to the element that wraps highlighted text*/
+//.twitter-typeahead .tt-highlight {
+//  background-color: #ffc;
+//}
+
+
+
+
+
+.panel.alternate-names {
+  .panel-body {
+    padding-bottom: 0;
+  }
+
+  ul {
+    margin-bottom: 15px;
+  }
+  ul + div {
+    margin-top: -10px;
+  }
+  button {
+    margin-bottom: 5px;
+  }
+}
+p.viaf-notice {
+  font-size: 70%;
+  color: @gray-light;
+  text-align: right;
+  font-style: italic;
+  margin-top: -15px;
+  margin-bottom: 20px;
+}
+
+
+
+.affix-placeholder {
+  /* Doesn't take up space in the content flow initially. */
+  display: none;
+}
+
+.affix + .affix-placeholder {
+  /* Once we affix the submenu, it *does* take up space in the content flow. But keep it invisible. */
+  display: block;
+  visibility: hidden;
 }

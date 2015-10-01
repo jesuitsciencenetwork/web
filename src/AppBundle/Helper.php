@@ -11,7 +11,17 @@ class Helper
 
     public static function pdr2num($id)
     {
-        return (int)trim(substr($id, 14), '0');
+        return (int)ltrim(substr($id, 14), '0');
+    }
+
+    public static function slugify($value)
+    {
+        $value = self::removeAccents($value);
+        $value = preg_replace('/[^A-Za-z0-9]/', ' ', $value);
+        $value = preg_replace('/\h+/', '-', $value);
+        $value = trim(strtolower($value));
+
+        return $value;
     }
 
     public static function removeAccents($string) {

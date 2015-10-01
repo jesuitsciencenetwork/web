@@ -1,16 +1,18 @@
 {% extends 'layout.html.twig' %}
 
+{% block bodyAttributes %} data-spy="scroll" data-target="#navbar-collapse"{% endblock %}
+
 {% block content %}
     <div class="hero" style="height: 350px; background: white url(http://www.edition-open-sources.org/media/Studies/1/15/big2_2_Schemmel_imagesRicci-Schall-Verbiest.jpg) center center no-repeat; -webkit-background-size: 100%; -moz-background-size: 100%; background-size: 100%; -webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing: border-box; -webkit-background-size: cover; -moz-background-size: cover; background-size: cover;">
         <h1>Jesuit Science Network</h1>
     </div>
     <div class="container container-narrow">
-
+        <div class="col-xs-12">
         {#[- Beschreibung der geplanten Funktionalitäten#}
         {#- Beschreibung von optionalen Funktionalitäten]#}
         {#- Logos BUW, IZWT, BBAW, DFG#}
 
-        <h3 id="about">What is the Jesuit Science Network (JSN)?</h3>
+        <h3 class="jumptarget" id="about">What is the Jesuit Science Network (JSN)?</h3>
 
         <p>
             The Jesuit Science Network is a biographical database on Jesuit scholars in the early modern sciences,
@@ -24,12 +26,13 @@
         <div class="cta">
             <div class="well text-center">
                 <h4>Try out the JSN yourself</h4>
-                <a href="#" class="btn btn-primary">Try Advanced Search</a>
-                <a href="#" class="btn btn-primary">View Graphical Analysis</a>
+                <a href="{{ path('search') }}" class="btn btn-primary">Try Advanced Search</a>
+                <a href="{{ path('graph') }}" class="btn btn-primary">View Graphical Analysis</a>
                 <a href="{{ path('map') }}" class="btn btn-primary">Explore on Map</a>
             </div>
             <p class="small text-center">
-                or <a href="#">view sample database entry (Mister X, 1599-1624)</a>
+                <a href="{{ path('random') }}">Random Database Entry</a> &bull;
+                <a href="{{ path('list') }}">Complete Alphabetical List</a>
             </p>
         </div>
 
@@ -41,10 +44,12 @@
             Jesuit root needed to be treated separately and by itself, eventually growing into what is now called he
             Jesuit Science Network.
         </p>
+        </div>
     </div>
 
     <div class="container container-narrow">
-        <h3 id="jesuit-science">Jesuit Early Modern Science</h3>
+        <div class="col-xs-12">
+        <h3 class="jumptarget" id="jesuit-science">Jesuit Early Modern Science</h3>
 
         <p>
             The key interest is in Jesuits active in early modern mathematical sciences. Building on already existing
@@ -102,12 +107,14 @@
                 woods and horticulture; beekeeping; money, measure and weight
             </dd>
         </dl>
+        </div>
     </div>
 
     <div class="divider" style="background-image: url(http://www.edition-open-sources.org/media/Studies/1/15/big2_2_Schemmel_imagesRicci-Schall-Verbiest.jpg);"></div>
 
     <div class="container container-narrow">
-        <h3 id="sources">Sources</h3>
+        <div class="col-xs-12">
+        <h3 class="jumptarget" id="sources">Sources</h3>
 
         <p>
             The main source for the biographical data collected and presented in the JSN is the twelve-volume
@@ -154,7 +161,7 @@
         {#hier nicht untergebracht. Sollte man hier auch die Anzahl der Aspekte und Referenzen anzeigen? Wäre eigentlich#}
         {#nur Angeben... Aber sieht bestimmt nett aus ;) // Referenzen wären allerdings unsinnig, da insbesondere#}
         {#VIAF/Wikipedia/spanisches Lexikon (?) zusammengefasst werden müssten, sonst skewed perception.#}
-
+        </div>
     </div>
 
 {% endblock %}

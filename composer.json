@@ -27,7 +27,8 @@
         "oyejorge/less.php": "~1.7",
         "fortawesome/font-awesome": "~4.4",
         "gregwar/cache": "1.0.*",
-        "jolicode/jolitypo": "~0.2"
+        "jolicode/jolitypo": "~0.2",
+        "twitter/typeahead.js": "~0.11"
     },
     "require-dev": {
         "sensio/generator-bundle": "~2.3"

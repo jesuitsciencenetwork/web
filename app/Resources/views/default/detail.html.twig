@@ -7,7 +7,7 @@
         <div class="col-sm-8">
 
             <header>
-                <h1>{{ person.firstName }} {{ person.lastName }} <small class="text-muted">({{ person.dateOfBirth }}–{{ person.dateOfDeath }})</small></h1>
+                <h1>{{ person.displayName }} <small class="text-muted">({{ person.dateOfBirth }}–{{ person.dateOfDeath }})</small></h1>
                 <p class="small text-muted pref">
                     IDI: <a href="https://pdrprod.bbaw.de/idi/pdr/{{ person.pdrId }}" title="Download raw data as XML" download><code>{{ person.pdrId }}</code></a>{% if person.viafId %} &bull; VIAF: <a target="_blank" href="http://viaf.org/viaf/{{ person.viafId }}"><code>{{ person.viafId }}</code></a>{% endif %}
                 </p>
@@ -15,59 +15,91 @@
 
             </header>
 
-            <h4>Aspects</h4>
-            <table class="table table-bordered table-striped">
-                <thead>
-                    <tr>
-                        <th>When</th>
-                        <th>Where</th>
-                        <th>What</th>
-                    </tr>
-                </thead>
-                <tbody>
+            <ul class="list-unstyled timeline">
                 {% for aspect in aspects %}
                     {% set aspect = aspect.0 %}
-                <tr>
-                    <td>{{ aspect.dateFrom }}–{{ aspect.dateTo }}</td>
-                    <td>{{ aspect.placeName }}</td>
-                    <td>{{ aspect.description }}</td>
-                </tr>
+                <li class="timeline-entry type-{{ aspect.type }}">
+                    <span class="date">
+                        {% if aspect.dateExact %}
+                            {{ aspect.dateExact }}
+                        {% elseif aspect.dateFrom or aspect.dateTo %}
+                            {{ aspect.dateFrom }} – {{ aspect.dateTo }}
+                        {% endif %}
+                    </span>
+                    {% if aspect.placeName %}
+                    <span class="place"><button type="button" data-lat="{{ aspect.latitude }}" data-lng="{{ aspect.longitude }}" class="geo btn btn-link">{{ icon('map-marker') }} {{ aspect.placeName }}</button></span>
+                    {% endif %}
+                    {% if "entryInTheOrder" == aspect.type %}
+                        <em>Entered The Order</em>
+                    {% elseif "beginningOfLife" == aspect.type %}
+                        <em>Born</em>
+                    {% elseif "endOfLife" == aspect.type %}
+                        <em>Died</em>
+                    {% elseif "resignationFromTheOrder" == aspect.type %}
+                        <em>Resigned from The Order</em>
+                    {% elseif "expulsionFromTheOrder" == aspect.type %}
+                        <em>Expelled from The Order</em>
+                    {% else %}
+                    {{ aspect.description|replace_links([person.id])|smart_quotes }}
+                    {% endif %}
+                    {% if aspect.subjects|length %}
+                        <ul class="list-inline">
+                            {% for subject in aspect.subjects %}
+                                <li><a href="{{ path('subject', {slug:subject.slug}) }}"><span class="badge badge-default">{{ subject.title }}</span></a></li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </li>
                 {% endfor %}
-                </tbody>
-            </table>
+            </ul>
 
         </div>
         <div class="col-sm-4 col-right">
-            <h4>Alternative Spellings</h4>
-            <div class="panel panel-default">
-                <ul class="list-group">
+            {% if person.alternateNames|length %}
+            <h4>Alternate Names</h4>
+            <div class="panel panel-default alternate-names">
+                <div class="panel-body">
+                <ul class="list-unstyled">
+                    {% set hiddenItems = false %}
                     {% for name in person.alternateNames %}
-                    <li class="list-group-item">{{ name.displayName }}</li>
+                    <li {% if loop.index > 5 %}{% if hiddenItems == false %}{% set hiddenItems = (loop.revindex+0) %}{% endif %} class="hidden"{% endif %}>{{ name.displayName }}</li>
                     {% endfor %}
                 </ul>
+                    {% if hiddenItems != false %}
+                    <div class="text-center" style="border-top: 1px solid #eee">
+                        <button type="button" class="btn btn-link js-show-hiddennames">show {{ hiddenItems }} more names</button>
+                    </div>
+                    {% endif %}
+                </div>
             </div>
+                {% if person.viafId %}
+                <p class="viaf-notice">
+                    may include data from <a target="_blank" href="http://viaf.org/viaf/{{ person.viafId }}">viaf.org</a>
+                </p>
+                {% endif %}
+            {% endif %}
 
+            {% if person.subjects|length %}
             <h4>Related subjects</h4>
             <div class="panel panel-default">
                 <div class="list-group">
-                    <a class="list-group-item" href="#">mathematics</a>
-                    <a class="list-group-item" href="#">astronomy</a>
-                    <a class="list-group-item" href="#">architecture</a>
-                    <a class="list-group-item" href="#">exact sciences</a>
-                    <a class="list-group-item" href="#">physics</a>
-                    <a class="list-group-item" href="#">astronomical observatory</a>
+                    {% for subject in person.subjects %}
+                    <a class="list-group-item" href="{{ path('subject', {slug:subject.slug}) }}">{{ subject.title }}</a>
+                    {% endfor %}
                 </div>
             </div>
+            {% endif %}
 
+            {% if person.relations|length %}
             <h4>Relations</h4>
             <div class="panel panel-default">
                 <ul class="list-group">
-                    <a class="list-group-item" href="#">Marcin Poczobut</a>
-                    <a class="list-group-item" href="#">Joseph Stepling</a>
-                    <a class="list-group-item" href="#">Rudjer Bošković</a>
-                    <a class="list-group-item" href="#">Maximilian Hell</a>
+                    {% for relation in person.relations %}
+                    <a class="list-group-item" href="{{ path('detail', {id:relation.id}) }}">{{ relation.displayName }}</a>
+                    {% endfor %}
                 </ul>
             </div>
+            {% endif %}
         </div>
     </div>
 
@@ -92,7 +124,29 @@
                 zoom: 8,
                 scrollwheel: false
             });
+
+            var bounds = new google.maps.LatLngBounds();
+            $('.geo').each(function() {
+                var $this = $(this),
+                    pos = new google.maps.LatLng(
+                            parseFloat($this.data('lat')),
+                            parseFloat($this.data('lng'))
+                    )
+                ;
+                new google.maps.Marker({position: pos, map: map});
+                bounds.extend(pos);
+                $this.click(function(e) {
+                    e.preventDefault();
+                    map.setCenter(pos);
+                    map.setZoom(8);
+                    window.scrollTo('#map', 50);
+                });
+            });
+            map.fitBounds(bounds);
         }
     </script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBAj3xGeT4xh_SJyqeiPJqMKHY0UnQV2Eg&callback=initMap" async defer></script>
+    <script type="text/javascript">
+
+    </script>
 {% endblock %}
