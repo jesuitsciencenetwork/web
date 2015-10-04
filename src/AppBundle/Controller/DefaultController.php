@@ -96,7 +96,13 @@ class DefaultController extends Controller
             $letters[$letter][] = $person;
         }
 
+        $jesuitCount = count($persons);
+        $nonJesuitCount = count($nonJesuits);
+
         return $this->render('default/list.html.twig', array(
+            'jesuitCount' => $jesuitCount,
+            'nonJesuitCount' => $nonJesuitCount,
+            'fullCount' => $nonJesuitCount + $jesuitCount,
             'letters' => $letters,
             'nonjesuits' => $nonJesuits
         ));
@@ -132,6 +138,7 @@ class DefaultController extends Controller
         }
 
         return $this->render('default/subjects.html.twig', array(
+            'fullCount' => count($subjects),
             'letters' => $letters
         ));
     }

@@ -24,8 +24,9 @@
     <div class="container container-narrow alph-list">
         <div class="col-xs-12" id="letter-list">
             <header>
+                <small class="pull-right text-muted" style="margin-top: 20px; line-height: 28px;"><em>{{ jesuitCount }} Jesuits and {{ nonJesuitCount }} <a href="#non-jesuit">Non-Jesuits</a></em></small>
                 <h2>
-                    Alphabetical List
+                    <span class="text-muted">{{ fullCount }}</span> Persons
                 </h2>
                 <ul class="nav nav-pills letter-list">
                     {% for letter in range('A', 'Z') %}
@@ -35,6 +36,7 @@
                         <li class="disabled" role="presentation"><a>{{ letter }}</a></li>
                     {% endif %}
                     {% endfor %}
+                    <li><a href="#non-jesuit">NJ</a></li>
                 </ul>
             </header>
             <div>
