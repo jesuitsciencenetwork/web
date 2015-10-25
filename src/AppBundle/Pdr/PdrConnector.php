@@ -95,15 +95,35 @@ class PdrConnector
             foreach ($aspectData['subjects'] as $slug => $subject) {
                 $data['subjects'][$slug] = $subject;
             }
-            foreach ($aspectData['personRefs'] as $ref) {
-                $data['personRefs'][] = $ref;
-            }
             if ($aspectData['type'] == 'beginningOfLife') {
                 $data['beginningOfLife'] = $aspectData['dateExact'];
             } elseif ($aspectData['type'] == 'endOfLife') {
                 $data['endOfLife'] = $aspectData['dateExact'];
             }
+
             // relationStm
+            foreach ($aspect->relationDim->relationStm as $relationStatement) {
+                $rel = $relationStatement->relation[0];
+                $class = (string)$rel['class'];
+                $context = (string)$rel['context'];
+                $value = (string)$rel;
+                $subjectString = (string)$relationStatement['subject'];
+                $subject = Helper::pdr2num($subjectString);
+                $objectString = (string)$relationStatement->relation[0]['object'];
+                $object = Helper::pdr2num($objectString);
+                if ('aspectOf' === $value || false !== strpos($subjectString, 'pdrAo') || $subjectString != $pdrId) {
+                    continue;
+                }
+
+                $data['personRefs'][] = array(
+                    $subject,
+                    $object,
+                    $class,
+                    $context,
+                    $value
+                );
+            }
+
             // semanticStm
             // do not import: validationStm/reference
 
@@ -222,8 +242,8 @@ class PdrConnector
             'placeName' => null,
             'lat' => null,
             'lng' => null,
+            'country' => null,
             'subjects' => array(),
-            'personRefs' => array(),
             'description' => '',
         );
         $textParts = array();
@@ -248,13 +268,13 @@ class PdrConnector
             $subtype = $childNode->getAttribute('subtype');
             $href = $childNode->getAttribute('ana');
 
+            $ana = Helper::pdr2num($href);
             if ($tag == 'persName') {
-                $id = Helper::pdr2num($href);
-                if ($id !== $currentPoId) {
-                    $output['personRefs'][] = array($currentPoId, $id);
-                }
-                $textParts[] = '{P:' . $id . '|' . $childNode->nodeValue . '}';
+                $textParts[] = '{P:' . $ana . '|' . $childNode->nodeValue . '}';
             } elseif ($tag == 'name' && $type == 'science' && $subtype == 'subject') {
+                if ($href && $ana !== $currentPoId) {
+                    continue;
+                }
                 $slug = Helper::slugify($childNode->nodeValue);
                 $output['subjects'][$slug] = $childNode->nodeValue;
                 $textParts[] = '{S:' . $slug . '|' . $childNode->nodeValue . '}';
@@ -263,6 +283,7 @@ class PdrConnector
 
                 $output['lat'] = $pos->getLatitude();
                 $output['lng'] = $pos->getLongitude();
+                $output['country'] = $pos->getCountry();
                 $output['placeName'] = $childNode->nodeValue;
 
                 $textParts[] = '{M:' . $pos->getLatitude(

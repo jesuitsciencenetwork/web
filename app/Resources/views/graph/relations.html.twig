@@ -1,0 +1,46 @@
+{% extends "layout.html.twig" %}
+
+{% block content %}
+<div id="relations"></div>
+{% endblock %}
+
+{% block stylesheets %}
+    <style type="text/css">
+        body, html {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        #relations {
+            width: 800px;
+            height: 500px;
+            margin-top: 50px;
+        }
+    </style>
+{% endblock %}
+
+{% block javascripts %}
+<script type="text/javascript">
+    var nodes = new vis.DataSet({{ nodes|json_encode|raw }});
+    var edges = new vis.DataSet({{ edges|json_encode|raw }});
+    var network = new vis.Network(
+        document.getElementById('relations'), // container
+        {nodes: nodes,edges: edges}, // data
+        {
+            layout: {
+                improvedLayout: false
+            },
+            nodes: {
+                shape: 'dot',
+                scaling: {
+                    customScalingFunction: function (min,max,total,value) {
+                        return max*(value/total);
+                    },
+                    min:5,
+                    max:150
+                }
+            }
+        } // options
+    );
+</script>
+{% endblock %}

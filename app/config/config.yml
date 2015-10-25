@@ -66,6 +66,7 @@ assetic:
                 - "%kernel.root_dir%/../vendor/twbs/bootstrap/js/scrollspy.js"
                 - "%kernel.root_dir%/../vendor/twbs/bootstrap/js/affix.js"
                 - "%kernel.root_dir%/../vendor/cross-solution/bootstrap3-dialog/dist/js/bootstrap-dialog.js"
+                - "%kernel.root_dir%/Resources/vendor/vis/dist/vis.min.js"
                 - "%kernel.root_dir%/Resources/js/typeahead.bundle.js"
                 - "%kernel.root_dir%/Resources/js/global.js"
             output: js/scripts.js
@@ -74,6 +75,7 @@ assetic:
                 - "%kernel.root_dir%/Resources/css/fonts.css"
                 - "%kernel.root_dir%/../vendor/fortawesome/font-awesome/less/font-awesome.less"
                 - "%kernel.root_dir%/../vendor/cross-solution/bootstrap3-dialog/dist/css/bootstrap-dialog.css"
+                - "%kernel.root_dir%/Resources/vendor/vis/dist/vis.min.css"
                 - "%kernel.root_dir%/Resources/less/bootstrap.less"
             output: css/styles.css
 

@@ -14,9 +14,9 @@ class Geocoder
     );
 
     private $manualLookup = array(
-        'Samogitia' => array(55.75, 22.75),
-        'Kashubia' => array(54.25, 18.00),
-        'Red Ruthenia' => array(49.59, 24.41),
+        'Samogitia' => array(55.75, 22.75, 'PL'),
+        'Kashubia' => array(54.25, 18.00, 'PL'),
+        'Red Ruthenia' => array(49.59, 24.41, 'PL'),
     );
 
     public function __construct($cacheDir)
@@ -31,8 +31,8 @@ class Geocoder
     public function geocode($placeName)
     {
         if (array_key_exists($placeName, $this->manualLookup)) {
-            list($lat, $lng) = $this->manualLookup[$placeName];
-            return new Position($lat, $lng);
+            list($lat, $lng, $country) = $this->manualLookup[$placeName];
+            return new Position($lat, $lng, $country);
         }
 
         if (array_key_exists($placeName, $this->replacementMap)) {
@@ -55,7 +55,16 @@ class Geocoder
         }
 
         $loc = $data['results'][0]['geometry']['location'];
-        return new Position($loc['lat'], $loc['lng']);
+
+        $country = null;
+        foreach ($data['results'][0]['address_components'] as $comp) {
+            if (!in_array('country', $comp['types'])) {
+                continue;
+            }
+            $country = $comp['short_name'];
+        }
+
+        return new Position($loc['lat'], $loc['lng'], $country);
     }
 
     protected function fetch($placeName)

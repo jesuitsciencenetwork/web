@@ -55,6 +55,18 @@ class Aspect
     private $placeName;
 
     /**
+     * @var string
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $country;
+
+    /**
+     * @var string
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $continent;
+
+    /**
      * @var float
      * @ORM\Column(type="decimal", precision=11, scale=8, nullable=true)
      */

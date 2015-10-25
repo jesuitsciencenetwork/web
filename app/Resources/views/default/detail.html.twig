@@ -90,12 +90,12 @@
             </div>
             {% endif %}
 
-            {% if person.relations|length %}
+            {% if person.relationsOutgoing|length %}
             <h4>Relations</h4>
             <div class="panel panel-default">
                 <ul class="list-group">
-                    {% for relation in person.relations %}
-                    <a class="list-group-item" href="{{ path('detail', {id:relation.id}) }}">{{ relation.displayName }}</a>
+                    {% for relation in person.relationsOutgoing %}
+                    <a class="list-group-item" href="{{ path('detail', {id:relation.id}) }}">{{ relation.target.displayName }}</a>
                     {% endfor %}
                 </ul>
             </div>

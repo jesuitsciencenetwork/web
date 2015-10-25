@@ -100,13 +100,15 @@ class Person
 
     /**
      * @var Person[]|Collection
-     * @ORM\ManyToMany(targetEntity="Person")
-     * @ORM\JoinTable(name="relations",
-     *      joinColumns={@ORM\JoinColumn(name="person_id", referencedColumnName="id")},
-     *      inverseJoinColumns={@ORM\JoinColumn(name="other_person_id", referencedColumnName="id")}
-     * )
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Relation", mappedBy="target")
      */
-    private $relations;
+    private $relationsIncoming;
+
+    /**
+     * @var Person[]|Collection
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Relation", mappedBy="source")
+     */
+    private $relationsOutgoing;
 
     /**
      * @return int
@@ -463,40 +465,6 @@ class Person
     }
 
     /**
-     * Add relation
-     *
-     * @param \AppBundle\Entity\Person $relation
-     *
-     * @return Person
-     */
-    public function addRelation(\AppBundle\Entity\Person $relation)
-    {
-        $this->relations[] = $relation;
-
-        return $this;
-    }
-
-    /**
-     * Remove relation
-     *
-     * @param \AppBundle\Entity\Person $relation
-     */
-    public function removeRelation(\AppBundle\Entity\Person $relation)
-    {
-        $this->relations->removeElement($relation);
-    }
-
-    /**
-     * Get relations
-     *
-     * @return \Doctrine\Common\Collections\Collection
-     */
-    public function getRelations()
-    {
-        return $this->relations;
-    }
-
-    /**
      * Set nameLink
      *
      * @param string $nameLink
@@ -566,5 +534,73 @@ class Person
     public function getPlaceOfDeath()
     {
         return $this->placeOfDeath;
+    }
+
+    /**
+     * Add relationsIncoming
+     *
+     * @param \AppBundle\Entity\Relation $relationsIncoming
+     *
+     * @return Person
+     */
+    public function addRelationsIncoming(\AppBundle\Entity\Relation $relationsIncoming)
+    {
+        $this->relationsIncoming[] = $relationsIncoming;
+
+        return $this;
+    }
+
+    /**
+     * Remove relationsIncoming
+     *
+     * @param \AppBundle\Entity\Relation $relationsIncoming
+     */
+    public function removeRelationsIncoming(\AppBundle\Entity\Relation $relationsIncoming)
+    {
+        $this->relationsIncoming->removeElement($relationsIncoming);
+    }
+
+    /**
+     * Get relationsIncoming
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getRelationsIncoming()
+    {
+        return $this->relationsIncoming;
+    }
+
+    /**
+     * Add relationsOutgoing
+     *
+     * @param \AppBundle\Entity\Relation $relationsOutgoing
+     *
+     * @return Person
+     */
+    public function addRelationsOutgoing(\AppBundle\Entity\Relation $relationsOutgoing)
+    {
+        $this->relationsOutgoing[] = $relationsOutgoing;
+
+        return $this;
+    }
+
+    /**
+     * Remove relationsOutgoing
+     *
+     * @param \AppBundle\Entity\Relation $relationsOutgoing
+     */
+    public function removeRelationsOutgoing(\AppBundle\Entity\Relation $relationsOutgoing)
+    {
+        $this->relationsOutgoing->removeElement($relationsOutgoing);
+    }
+
+    /**
+     * Get relationsOutgoing
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getRelationsOutgoing()
+    {
+        return $this->relationsOutgoing;
     }
 }

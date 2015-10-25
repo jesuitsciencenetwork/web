@@ -63,7 +63,7 @@ class ImportDataCommand extends Command
             'INSERT INTO subject (title, slug) VALUES (:title, :slug)'
         );
         $refStatement = $connection->prepare(
-            'INSERT INTO relations (person_id, other_person_id) VALUES (?, ?) ON DUPLICATE KEY UPDATE person_id=person_id'
+            'INSERT INTO relations (source_id, target_id, class, context, `value`) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE id=id'
         );
         $personStatement = $connection->prepare(
             'INSERT INTO person (id, first_name, name_link, last_name, title, is_jesuit, viaf_id, date_of_birth, date_of_death) VALUES (:id, :firstName, :nameLink, :lastName, :title, :isJesuit, :viafId, :dateOfBirth, :dateOfDeath)'
@@ -75,7 +75,7 @@ class ImportDataCommand extends Command
             'INSERT INTO person_subject (person_id, subject_id) VALUES (:personId, :subjectId)'
         );
         $aspectStatement = $connection->prepare(
-            'INSERT INTO aspect (id, person_id, type, date_exact, date_from, date_to, place_name, latitude, longitude, description) VALUES (:id, :personId, :type, :dateExact, :dateFrom, :dateTo, :placeName, :latitude, :longitude, :description) ON DUPLICATE KEY UPDATE id=id'
+            'INSERT INTO aspect (id, person_id, type, date_exact, date_from, date_to, place_name, country, latitude, longitude, description) VALUES (:id, :personId, :type, :dateExact, :dateFrom, :dateTo, :placeName, :country, :latitude, :longitude, :description) ON DUPLICATE KEY UPDATE id=id'
         );
         $aspectSubjectStatement = $connection->prepare(
             'INSERT INTO aspect_subject (aspect_id, subject_id) VALUES (:aspectId, :subjectId) ON DUPLICATE KEY UPDATE aspect_id=aspect_id'
@@ -168,6 +168,7 @@ class ImportDataCommand extends Command
                     ':placeName' => $aspectData['placeName'],
                     ':latitude' => $aspectData['lat'],
                     ':longitude' => $aspectData['lng'],
+                    ':country' => $aspectData['country'],
                     ':dateExact' => $aspectData['dateExact'],
                     ':dateFrom' => $aspectData['dateFrom'],
                     ':dateTo' => $aspectData['dateTo'],
@@ -201,10 +202,9 @@ class ImportDataCommand extends Command
                 continue;
             }
             try {
-                $refStatement->execute(array($ref[0], $ref[1]));
-                $refStatement->execute(array($ref[1], $ref[0]));
+                $refStatement->execute($ref);
             } catch (\PDOException $e) {
-                $output->writeln('failed to insert relation: '. $ref[0] . ' <-> '.$ref[1]);
+                $output->writeln('failed to insert relation: '. $ref[0] . ' -> '.$ref[1]);
             }
             $progress->advance();
         }
