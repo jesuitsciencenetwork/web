@@ -35,7 +35,7 @@
                     <ul class="list-unstyled">
                         {% for entry in entries %}
                             <li class="entry">
-                                <a href="{{ path('subject', {slug:entry.subject.id}) }}">{{ entry.subject.title }}</a>
+                                <a href="{{ path('subject', {slug:entry.subject.slug}) }}">{{ entry.subject.title }}</a>
                                 <small class="text-muted">{{ entry.count }}</small>
                             </li>
                         {% endfor %}
