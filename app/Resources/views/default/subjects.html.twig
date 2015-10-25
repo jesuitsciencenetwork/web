@@ -15,7 +15,6 @@
     <div class="container container-narrow alph-list">
         <div class="col-xs-12" id="letter-list">
             <header>
-                <small class="pull-right text-muted" style="margin-top: 20px; line-height: 28px;"><em>number after subject denotes count of associated persons</em></small>
                 <h2>
                     <span class="text-muted">{{ fullCount }}</span> subjects
                 </h2>
@@ -31,12 +30,16 @@
             </header>
             <div>
                 {% for letter, entries in letters %}
-                    <h4 class="jumptarget" id="{{ letter }}">{{ letter }} <small class="text-muted">{{ entries|length }}</small></h4>
+                    <h4 class="jumptarget" id="{{ letter }}">{{ letter }}</h4>
                     <ul class="list-unstyled">
+                        <li class="entry">
+                            Subject <small class="text-muted"><em>mentions</em> &bull; <em>associated persons</em></small>
+                        </li>
+                        <li class="list-separator"></li>
                         {% for entry in entries %}
                             <li class="entry">
                                 <a href="{{ path('subject', {slug:entry.subject.slug}) }}">{{ entry.subject.title }}</a>
-                                <small class="text-muted">{{ entry.count }}</small>
+                                <small class="text-muted">{{ entry.aspectCount }} &bull; {{ entry.personCount }}</small>
                             </li>
                         {% endfor %}
                     </ul>

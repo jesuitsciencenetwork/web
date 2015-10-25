@@ -144,7 +144,7 @@ class DefaultController extends Controller
             ->getDoctrine()
             ->getManager()
             ->createQuery(
-                'SELECT s, COUNT(p) FROM AppBundle:Subject s LEFT JOIN s.associatedPersons p GROUP BY s.id ORDER BY s.title ASC'
+                'SELECT s, (SELECT COUNT(DISTINCT p.id) FROM AppBundle:Person p INNER JOIN p.subjects ps WHERE ps.id=s.id) as personCount, (SELECT COUNT(DISTINCT a.id) FROM AppBundle:Aspect a INNER JOIN a.subjects asps WHERE asps.id=s.id) as aspectCount FROM AppBundle:Subject s ORDER BY s.title ASC'
             )
             ->execute()
         ;
@@ -160,7 +160,8 @@ class DefaultController extends Controller
 
             $letters[$letter][] = array(
                 'subject' => $subject[0],
-                'count' => $subject[1]
+                'personCount' => $subject['personCount'],
+                'aspectCount' => $subject['aspectCount']
             );
         }
 
