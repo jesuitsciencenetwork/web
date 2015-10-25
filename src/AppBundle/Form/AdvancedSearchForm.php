@@ -10,24 +10,75 @@ class AdvancedSearchForm extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('name', 'text')
+            ->add('resultDisplay', 'choice', array(
+                'multiple' => false,
+                'expanded' => true,
+                'choices' => array(
+                    'person' => 'Persons',
+                    'subject' => 'Subjects',
+                    'places' => 'Places'
+                )
+            ))
+            ->add('name', 'text', array(
+                'required' => false,
+            ))
             ->add('subject', 'entity', array(
                 'class' => 'AppBundle:Subject',
                 'property' => 'title',
                 'multiple' => true,
+                'required' => false,
             ))
-            ->add('place', 'text')
 
-            ->add('includeAspects', 'checkbox', array(
-                'label' => 'Include relevant aspects in result list',
-
+            ->add('place', 'text', array(
+                'required' => false,
             ))
-            ->add('search', 'submit', array(
-                'label' => 'Search',
-                'attr' => array(
-                    'class' => 'pull-right'
+            ->add('placeRestriction', 'choice', array(
+                'required' => false,
+                'multiple' => true,
+                'expanded' => true,
+                'choices' => array(
+                    'bio' => 'Biographical events',
+                    'career' => 'Career events',
+                    'teaching' => 'Teaching events'
                 )
             ))
+
+            ->add('birthDateOperator', 'choice', array(
+                'choices' => array(
+                    'before' => 'before',
+                    'after' => 'after',
+                    'in' => 'in'
+                )
+            ))
+
+            ->add('birthDate', 'choice', array(
+                'required' => false,
+                'placeholder' => '',
+                'choices' => array_combine(range(1600, 1800), range(1600, 1800)),
+            ))
+
+            ->add('deathDateOperator', 'choice', array(
+                'choices' => array(
+                    'before' => 'before',
+                    'after' => 'after',
+                    'in' => 'in'
+                )
+            ))
+
+            ->add('deathDate', 'choice', array(
+                'required' => false,
+                'placeholder' => '',
+                'choices' => array_combine(range(1600, 1800), range(1600, 1800)),
+            ))
+
+            ->add('position', 'text', array(
+                'required' => false
+            ))
+
+            ->add('membership', 'text', array(
+                'required' => false
+            ))
+
         ;
     }
 
