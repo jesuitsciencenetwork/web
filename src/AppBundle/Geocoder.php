@@ -10,17 +10,13 @@ class Geocoder
     private $cache;
 
     private $replacementMap = array(
-        'Dobrzyń Land' => 'Dobrzyń',
-        'Red Ruthenia' => 'Grodno',
-        'Kashubia' => 'Pojezierze Kaszubskie',
-        'Neusol' => 'Neusohl',
-        'Vinius' => 'Vilnius'
+        'Dobrzyń Land' => 'Dobrzyń nad Wisłą',
     );
 
     private $manualLookup = array(
         'Samogitia' => array(55.75, 22.75),
-        'Date given as 1629, maybe 1692 meant?' => array(0,0),
-        'Wolmenting' => array(0,0),
+        'Kashubia' => array(54.25, 18.00),
+        'Red Ruthenia' => array(49.59, 24.41),
     );
 
     public function __construct($cacheDir)
