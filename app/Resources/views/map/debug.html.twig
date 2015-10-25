@@ -1,0 +1,55 @@
+{% extends "layout.html.twig" %}
+
+{% block content %}
+<div id="map"></div>
+{% endblock %}
+
+{% block stylesheets %}
+    <style type="text/css">
+        body, html {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        #map {
+            height: 100%;
+            margin-top: 50px;
+        }
+    </style>
+{% endblock %}
+
+{% block javascripts %}
+    <script type="text/javascript">
+        var map;
+        var places = {{ places|json_encode|raw }};
+        function initMap() {
+            map = new google.maps.Map(document.getElementById('map'), {
+                center: {lat: -34.397, lng: 150.644},
+                zoom: 8,
+                zoomControl: true
+            });
+            var bounds = new google.maps.LatLngBounds();
+            $.each(places, function(i, place) {
+                var infowindow = new google.maps.InfoWindow({
+                    content: place.persons
+                });
+                var pos = new google.maps.LatLng(
+                        parseFloat(place.lat),
+                        parseFloat(place.lng)
+                );
+                var marker = new google.maps.Marker({
+                    position: pos,
+                    map: map,
+                    title: place.name
+
+                });
+                marker.addListener('click', function() {
+                    infowindow.open(map, marker);
+                });
+                bounds.extend(pos);
+            });
+            map.fitBounds(bounds);
+        }
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBAj3xGeT4xh_SJyqeiPJqMKHY0UnQV2Eg&callback=initMap" async defer></script>
+{% endblock %}
