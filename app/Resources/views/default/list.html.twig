@@ -24,9 +24,9 @@
     <div class="container container-narrow alph-list">
         <div class="col-xs-12" id="letter-list">
             <header>
-                <small class="pull-right text-muted" style="margin-top: 20px; line-height: 28px;"><em>{{ jesuitCount }} Jesuits and {{ nonJesuitCount }} <a href="#non-jesuit">Non-Jesuits</a></em></small>
+                <small class="pull-right text-muted" style="margin-top: 20px; line-height: 28px;"><em>{{ jesuitCount }} Jesuits and {{ nonJesuitCount }} <a href="#non-jesuit">non-Jesuits</a></em></small>
                 <h2>
-                    <span class="text-muted">{{ fullCount }}</span> Persons
+                    <span class="text-muted">{{ fullCount }}</span> persons
                 </h2>
                 <ul class="nav nav-pills letter-list">
                     {% for letter in range('A', 'Z') %}
@@ -49,7 +49,7 @@
                 </ul>
                 {% endfor %}
 
-                <h4 class="jumptarget" id="non-jesuit">Non-Jesuits
+                <h4 class="jumptarget" id="non-jesuit">non-Jesuits
                     <small class="text-muted">
                         {{ nonjesuits|length }}
                     </small></h4>

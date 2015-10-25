@@ -30,15 +30,15 @@
                     <span class="place"><button type="button" data-lat="{{ aspect.latitude }}" data-lng="{{ aspect.longitude }}" class="geo btn btn-link">{{ icon('map-marker') }} {{ aspect.placeName }}</button></span>
                     {% endif %}
                     {% if "entryInTheOrder" == aspect.type %}
-                        <em>Entered The Order</em>
+                        <em>Entered the order</em>
                     {% elseif "beginningOfLife" == aspect.type %}
                         <em>Born</em>
                     {% elseif "endOfLife" == aspect.type %}
                         <em>Died</em>
                     {% elseif "resignationFromTheOrder" == aspect.type %}
-                        <em>Resigned from The Order</em>
+                        <em>Resigned from the order</em>
                     {% elseif "expulsionFromTheOrder" == aspect.type %}
-                        <em>Expelled from The Order</em>
+                        <em>Expelled from the order</em>
                     {% else %}
                     {{ aspect.description|replace_links([person.id])|smart_quotes }}
                     {% endif %}
@@ -56,7 +56,7 @@
         </div>
         <div class="col-sm-4 col-right">
             {% if person.alternateNames|length %}
-            <h4>Alternate Names</h4>
+            <h4>Alternate names</h4>
             <div class="panel panel-default alternate-names">
                 <div class="panel-body">
                 <ul class="list-unstyled">
@@ -67,14 +67,14 @@
                 </ul>
                     {% if hiddenItems != false %}
                     <div class="text-center" style="border-top: 1px solid #eee">
-                        <button type="button" class="btn btn-link js-show-hiddennames">show {{ hiddenItems }} more names</button>
+                        <button type="button" class="btn btn-link js-show-hiddennames">Show {{ hiddenItems }} more names</button>
                     </div>
                     {% endif %}
                 </div>
             </div>
                 {% if person.viafId %}
                 <p class="viaf-notice">
-                    may include data from <a target="_blank" href="http://viaf.org/viaf/{{ person.viafId }}">viaf.org</a>
+                    May include data from <a target="_blank" href="http://viaf.org/viaf/{{ person.viafId }}">viaf.org</a>
                 </p>
                 {% endif %}
             {% endif %}

@@ -111,7 +111,7 @@ class ImportDataCommand extends Command
                 continue;
             }
             $subjectStatement->execute(array(
-                ':title' => ucwords($subjectTitle),
+                ':title' => ucfirst($subjectTitle),
                 ':slug' => $slug
             ));
             $subjectId = $connection->lastInsertId();
