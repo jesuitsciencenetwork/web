@@ -124,13 +124,13 @@ class ImportDataCommand extends Command
             $po = Helper::pdr2num($personData['pdrId']);
             $personStatement->execute(array(
                 ':id' => $po,
-                ':firstName' => $personData['firstName'],
-                ':nameLink' => $personData['nameLink'],
-                ':lastName' => $personData['lastName'],
-                ':title' => $personData['title'],
-                ':viafId' => $personData['viaf'],
-                ':dateOfBirth' => $personData['beginningOfLife'],
-                ':dateOfDeath' => $personData['endOfLife'],
+                ':firstName' => $personData['firstName'] ?: null ,
+                ':nameLink' => $personData['nameLink'] ?: null,
+                ':lastName' => $personData['lastName'] ?: null,
+                ':title' => $personData['title'] ?: null,
+                ':viafId' => $personData['viaf'] ?: null,
+                ':dateOfBirth' => $personData['beginningOfLife'] ?: null,
+                ':dateOfDeath' => $personData['endOfLife'] ?: null,
                 ':isJesuit' => $personData['nonjesuit'] ? false : true
             ));
 

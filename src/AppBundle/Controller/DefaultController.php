@@ -55,40 +55,76 @@ class DefaultController extends Controller
     }
 
     /**
-     * @Route("/list/", name="list")
+     * @Route("/jesuits/", name="list")
      */
     public function listAction()
     {
-        $persons = $this
+        $em = $this->getDoctrine()->getManager();
+        $query = $em->createQuery('SELECT COUNT(p.id) FROM AppBundle:Person p WHERE p.isJesuit = 0');
+        $nonJesuitCount = $query->getSingleScalarResult();
+
+        $jesuits = $this
             ->getDoctrine()
             ->getRepository('AppBundle:Person')
             ->createQueryBuilder('p')
-            ->select('p, s')
+            ->select('p, s, COALESCE(p.lastName, p.firstName) as sortOrder')
             ->leftJoin('p.subjects', 's')
             ->where('p.isJesuit = 1')
-            ->addOrderBy('p.lastName', 'ASC')
+            ->addOrderBy('sortOrder', 'ASC')
             ->addOrderBy('p.firstName', 'ASC')
             ->getQuery()
             ->execute()
         ;
+
+        return $this->render('default/list.html.twig', array(
+            'jesuitview' => true,
+            'personCount' => count($jesuits),
+            'otherCount' => $nonJesuitCount,
+            'letters' => $this->makeLetterList($jesuits),
+        ));
+    }
+
+    /**
+     * @Route("/non-jesuits/", name="list_nonjesuits")
+     */
+    public function listNonJesuitsAction()
+    {
+        $em = $this->getDoctrine()->getManager();
+        $query = $em->createQuery('SELECT COUNT(p.id) FROM AppBundle:Person p WHERE p.isJesuit = 1');
+        $jesuitCount = $query->getSingleScalarResult();
 
         $nonJesuits = $this
             ->getDoctrine()
             ->getRepository('AppBundle:Person')
             ->createQueryBuilder('p')
-            ->select('p, s')
+            ->select('p, s, COALESCE(p.lastName, p.firstName) as sortOrder')
             ->leftJoin('p.subjects', 's')
             ->where('p.isJesuit = 0')
-            ->addOrderBy('p.lastName', 'ASC')
+            ->addOrderBy('sortOrder', 'ASC')
             ->addOrderBy('p.firstName', 'ASC')
             ->getQuery()
             ->execute()
         ;
 
+        return $this->render('default/list.html.twig', array(
+            'jesuitview' => false,
+            'personCount' => count($nonJesuits),
+            'otherCount' => $jesuitCount,
+            'letters' => $this->makeLetterList($nonJesuits),
+        ));
+    }
+
+    /**
+     * @param Person[] $persons
+     * @return array
+     */
+    private function makeLetterList($persons)
+    {
         $letters = array();
 
         foreach ($persons as $person) {
-            $letter = strtoupper(Helper::removeAccents(mb_substr($person->getLastName(), 0, 1)));
+            $person = $person[0]; // 0 = entity, 1 = coalesce(...)
+            $letter = strtoupper(Helper::removeAccents(mb_substr($person->getLastName() ? $person->getLastName() : $person->getFirstName(), 0, 1)));
             if (!array_key_exists($letter, $letters)) {
                 $letters[$letter] = array();
             }
@@ -96,16 +132,7 @@ class DefaultController extends Controller
             $letters[$letter][] = $person;
         }
 
-        $jesuitCount = count($persons);
-        $nonJesuitCount = count($nonJesuits);
-
-        return $this->render('default/list.html.twig', array(
-            'jesuitCount' => $jesuitCount,
-            'nonJesuitCount' => $nonJesuitCount,
-            'fullCount' => $nonJesuitCount + $jesuitCount,
-            'letters' => $letters,
-            'nonjesuits' => $nonJesuits
-        ));
+        return $letters;
     }
 
     /**

@@ -2,7 +2,7 @@
 
 {% macro person(person) %}
     <li class="entry">
-        <a href="{{ path('detail', {id:person.id}) }}">{{ person.displayName }}</a>
+        <a href="{{ path('detail', {id:person.id}) }}">{{ person.listName }}</a>
         <small class="text-muted">({{ person.dateOfBirth }}–{{ person.dateOfDeath }})</small>
     </li>
 {% endmacro %}
@@ -24,9 +24,15 @@
     <div class="container container-narrow alph-list">
         <div class="col-xs-12" id="letter-list">
             <header>
-                <small class="pull-right text-muted" style="margin-top: 20px; line-height: 28px;"><em>{{ jesuitCount }} Jesuits and {{ nonJesuitCount }} <a href="#non-jesuit">non-Jesuits</a></em></small>
+                <small class="pull-right text-muted" style="margin-top: 20px; line-height: 28px;"><em>
+                        {% if jesuitview %}
+                        <a href="{{ path('list_nonjesuits') }}">{{ otherCount }} non-Jesuits</a>
+                        {% else %}
+                        <a href="{{ path('list') }}">{{ otherCount }} Jesuits</a>
+                        {% endif %}
+                    </em></small>
                 <h2>
-                    <span class="text-muted">{{ fullCount }}</span> persons
+                    <span class="text-muted">{{ personCount }}</span> {% if not jesuitview %}non-{% endif %}Jesuits
                 </h2>
                 <ul class="nav nav-pills letter-list">
                     {% for letter in range('A', 'Z') %}
@@ -36,7 +42,6 @@
                         <li class="disabled" role="presentation"><a>{{ letter }}</a></li>
                     {% endif %}
                     {% endfor %}
-                    <li><a href="#non-jesuit">NJ</a></li>
                 </ul>
             </header>
             <div>
@@ -48,16 +53,6 @@
                 {% endfor %}
                 </ul>
                 {% endfor %}
-
-                <h4 class="jumptarget" id="non-jesuit">non-Jesuits
-                    <small class="text-muted">
-                        {{ nonjesuits|length }}
-                    </small></h4>
-                <ul class="list-unstyled">
-                    {% for person in nonjesuits %}
-                        {{ macro.person(person) }}
-                    {% endfor %}
-                </ul>
             </div>
         </div>
     </div>

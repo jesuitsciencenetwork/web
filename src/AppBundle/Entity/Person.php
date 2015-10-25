@@ -21,13 +21,13 @@ class Person
 
     /**
      * @var string
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $firstName;
 
     /**
      * @var string
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $lastName;
 
@@ -325,6 +325,27 @@ class Person
         }
         if ($this->lastName) {
             $name .= $this->lastName;
+        }
+
+        return trim($name);
+    }
+
+    public function getListName()
+    {
+        $name = '';
+
+        if ($this->lastName) {
+            $name .= $this->lastName . ', ';
+        }
+
+        if ($this->title) {
+            $name .= $this->title . ' ';
+        }
+        if ($this->firstName) {
+            $name .= $this->firstName . ' ';
+        }
+        if ($this->nameLink) {
+            $name .= $this->nameLink;
         }
 
         return trim($name);
