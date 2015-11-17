@@ -1,0 +1,540 @@
+harris_agriculture_and_economics:
+    name: Agriculture and economics
+    scheme: harris
+    subjects:
+        - Agriculture
+        - Agronomy
+        - Forestry
+        - Horticulture
+        - Livestock farming
+        - Trading
+        - Viticulture
+harris_astronomy:
+    name: Astronomy
+    scheme: harris
+    subjects:
+        - Astronomical instruments
+        - Astronomical observations
+        - Astronomical observatories
+        - Astronomical observatory
+        - Astronomical projects
+        - Astronomy
+        - Calendar
+        - Calendars
+        - Chronometry
+        - Horology
+        - Proper instrument use
+        - Sun dials
+        - Watchmaking
+harris_early_modern_sciences:
+    name: Early modern sciences
+    scheme: harris
+    subjects:
+        - Exact sciences
+        - Natural and exact sciences
+        - Natural sciences
+        - Sciences
+harris_grammar:
+    name: Grammar
+    scheme: harris
+    subjects:
+        - Infima
+harris_history:
+    name: History
+    scheme: harris
+    subjects:
+        - Archaeology
+        - Church history
+        - Egyptology
+        - Hieroglyphs
+        - History
+harris_languages:
+    name: Languages
+    scheme: harris
+    subjects:
+        - Arabic
+        - Catalan
+        - Chinese writing system
+        - Classical languages
+        - Classical literature
+        - Classics
+        - Czech
+        - English
+        - French
+        - German
+        - Grammar
+        - Greek
+        - Hebrew
+        - Italian
+        - Languages
+        - Latin
+        - Latin poetry
+        - Linguistics
+        - Literature
+        - Oriental languages
+        - Poetics
+        - Poetry
+        - Portuguese
+        - Rhetoric
+        - Russian
+        - Sinology
+        - Spanish
+        - Syntax
+        - Turkish
+harris_medicine:
+    name: Medicine
+    scheme: harris
+    subjects:
+        - Biology
+        - Medical botany
+        - Medicine
+        - Pharmaceutics
+        - Pharmacy
+harris_mixed_mathematics:
+    name: Mixed mathematics
+    scheme: harris
+    subjects:
+        - Acoustics
+        - Aerostatics
+        - Applied mathematics
+        - Aquaeducts
+        - Architectural engineering
+        - Architecture
+        - Astrology
+        - Aviation
+        - Ballistics
+        - Cartography
+        - Civil architecture
+        - Combustion
+        - Cryptography
+        - Elasticity
+        - Electricity
+        - Engineering
+        - Experimental physics
+        - Fortifications
+        - Hydraulic engineering
+        - Hydraulics
+        - Hydrography
+        - Hydrostatics
+        - Land surveying
+        - Mathematical cabinet
+        - Mathematics
+        - Mechanics
+        - Military architecture
+        - Mixed mathematics
+        - Music
+        - Naval construction
+        - Naval maps
+        - Navigation
+        - Numismatics
+        - Optics
+        - Perspective
+        - Physical cabinet
+        - Physics
+        - Practical mechanics
+        - Probabilism
+        - Pyrostatics
+        - Scientific instruments
+        - Statics
+        - Statistics
+        - Tactics
+        - Technology
+        - Theoretical physics
+        - Thermal conductivity
+        - Vehicular dynamics
+        - World map
+harris_natural_history:
+    name: Natural history
+    scheme: harris
+    subjects:
+        - Biology
+        - Botany
+        - Cosmography
+        - Ethnology
+        - Geography
+        - Geology
+        - Magnetism
+        - Meteorological observations
+        - Meteorology
+        - Mineralogy
+        - Mining
+        - Natural history
+        - Topography
+        - Zoology
+harris_natural_philosophy:
+    name: Natural philosophy
+    scheme: harris
+    subjects:
+        - Chemistry
+        - Cosmology
+        - Metaphysics
+        - Natural philosophy
+harris_other:
+    name: Other
+    scheme: harris
+    subjects:
+        - Canon law
+        - Diplomacy
+        - Drawing
+        - Epigraphy
+        - Heraldry
+        - Law
+        - Painting
+harris_philosophy:
+    name: Philosophy
+    scheme: harris
+    subjects:
+        - Aristotelian logic
+        - Casuistry
+        - Eclectic philosophy
+        - Ethics
+        - Logic
+        - Moral philosophy
+        - Philosophy
+harris_pure_mathematics:
+    name: Pure mathematics
+    scheme: harris
+    subjects:
+        - Algebra
+        - Arithmetic
+        - Calculus
+        - Combinatorics
+        - Differential and integral calculus
+        - Euclidean geometry
+        - Geometry
+        - Higher mathematics
+        - Logarithms
+        - Mathematics
+        - Pure mathematics
+        - Squaring of the circle
+harris_theology:
+    name: Theology
+    scheme: harris
+    subjects:
+        - Cases of conscience
+        - Catechesis
+        - Controversial theology
+        - Dialectic theology
+        - Dogmatic theology
+        - Exegesis
+        - Liturgy
+        - Moral theology
+        - Patristics
+        - Polemic theology
+        - Positive theology
+        - Scholastic theology
+        - Scripture
+modern_agriculture_and_economics:
+    name: Agriculture and economics
+    scheme: modern
+    subjects:
+        - Agriculture
+        - Agronomy
+        - Forestry
+        - Horticulture
+        - Livestock farming
+        - Trading
+        - Viticulture
+modern_applied_science:
+    name: Applied science
+    scheme: modern
+    subjects:
+        - Aviation
+        - Hydraulic engineering
+        - Hydraulics
+        - Hydrography
+        - Naval construction
+        - Navigation
+        - Scientific instruments
+modern_architecture:
+    name: Architecture
+    scheme: modern
+    subjects:
+        - Aquaeducts
+        - Architectural engineering
+        - Architecture
+        - Civil architecture
+        - Fortifications
+        - Military architecture
+modern_art:
+    name: Art
+    scheme: modern
+    subjects:
+        - Drawing
+        - Painting
+modern_astrology:
+    name: Astrology
+    scheme: modern
+    subjects:
+        - Astrology
+modern_astronomy:
+    name: Astronomy
+    scheme: modern
+    subjects:
+        - Astronomical instruments
+        - Astronomical observations
+        - Astronomical observatories
+        - Astronomical observatory
+        - Astronomical projects
+        - Astronomy
+        - Calendar
+        - Calendars
+        - Proper instrument use
+modern_biology:
+    name: Biology
+    scheme: modern
+    subjects:
+        - Biology
+        - Botany
+        - Medical botany
+        - Zoology
+modern_chemistry:
+    name: Chemistry
+    scheme: modern
+    subjects:
+        - Chemistry
+modern_cosmography:
+    name: Cosmography
+    scheme: modern
+    subjects:
+        - Cosmography
+modern_cosmology:
+    name: Cosmology
+    scheme: modern
+    subjects:
+        - Cosmology
+modern_cryptography:
+    name: Cryptography
+    scheme: modern
+    subjects:
+        - Cryptography
+modern_dealing_with_data_about_the_condition_of_a_state:
+    name: Dealing with data about the condition of a state
+    scheme: modern
+    subjects:
+        - Statistics
+modern_diplomacy:
+    name: Diplomacy
+    scheme: modern
+    subjects:
+        - Diplomacy
+        - Tactics
+modern_engineering:
+    name: Engineering
+    scheme: modern
+    subjects:
+        - Aviation
+        - Combustion
+        - Engineering
+        - Hydraulic engineering
+        - Hydraulics
+        - Hydrography
+        - Naval construction
+        - Scientific instruments
+modern_ethnology:
+    name: Ethnology
+    scheme: modern
+    subjects:
+        - Ethnology
+modern_geography:
+    name: Geography
+    scheme: modern
+    subjects:
+        - Cartography
+        - Geography
+        - Land surveying
+        - Naval maps
+        - Navigation
+        - Topography
+        - World map
+modern_geology:
+    name: Geology
+    scheme: modern
+    subjects:
+        - Geology
+        - Mineralogy
+        - Mining
+modern_history:
+    name: History
+    scheme: modern
+    subjects:
+        - Archaeology
+        - Church history
+        - Egyptology
+        - Epigraphy
+        - Heraldry
+        - Hieroglyphs
+        - History
+        - Numismatics
+modern_languages:
+    name: Languages
+    scheme: modern
+    subjects:
+        - Arabic
+        - Catalan
+        - Chinese writing system
+        - Classical languages
+        - Classical literature
+        - Classics
+        - Czech
+        - English
+        - French
+        - German
+        - Grammar
+        - Greek
+        - Hebrew
+        - Infima
+        - Italian
+        - Languages
+        - Latin
+        - Latin poetry
+        - Linguistics
+        - Literature
+        - Oriental languages
+        - Poetics
+        - Poetry
+        - Portuguese
+        - Rhetoric
+        - Russian
+        - Sinology
+        - Spanish
+        - Syntax
+        - Turkish
+modern_law:
+    name: Law
+    scheme: modern
+    subjects:
+        - Canon law
+        - Law
+modern_mathematics:
+    name: Mathematics
+    scheme: modern
+    subjects:
+        - Algebra
+        - Applied mathematics
+        - Arithmetic
+        - Calculus
+        - Combinatorics
+        - Differential and integral calculus
+        - Euclidean geometry
+        - Geometry
+        - Higher mathematics
+        - Logarithms
+        - Mathematics
+        - Mixed mathematics
+        - Perspective
+        - Pure mathematics
+        - Squaring of the circle
+modern_mechanics:
+    name: Mechanics
+    scheme: modern
+    subjects:
+        - Aerostatics
+        - Ballistics
+        - Hydrostatics
+        - Mechanics
+        - Practical mechanics
+        - Pyrostatics
+        - Statics
+        - Vehicular dynamics
+modern_medicine:
+    name: Medicine
+    scheme: modern
+    subjects:
+        - Medical botany
+        - Medicine
+        - Pharmaceutics
+        - Pharmacy
+modern_meteorology:
+    name: Meteorology
+    scheme: modern
+    subjects:
+        - Meteorological observations
+        - Meteorology
+modern_music:
+    name: Music
+    scheme: modern
+    subjects:
+        - Music
+modern_natural_history:
+    name: Natural history
+    scheme: modern
+    subjects:
+        - Natural history
+modern_optics:
+    name: Optics
+    scheme: modern
+    subjects:
+        - Optics
+        - Perspective
+modern_philosophy:
+    name: Philosophy
+    scheme: modern
+    subjects:
+        - Aristotelian logic
+        - Casuistry
+        - Eclectic philosophy
+        - Ethics
+        - Logic
+        - Metaphysics
+        - Moral philosophy
+        - Natural philosophy
+        - Philosophy
+modern_physics:
+    name: Physics
+    scheme: modern
+    subjects:
+        - Acoustics
+        - Elasticity
+        - Electricity
+        - Experimental physics
+        - Magnetism
+        - Physics
+        - Theoretical physics
+        - Thermal conductivity
+modern_science:
+    name: Science
+    scheme: modern
+    subjects:
+        - Exact sciences
+        - Natural and exact sciences
+        - Natural sciences
+        - Sciences
+modern_scientific_collections:
+    name: Scientific collections
+    scheme: modern
+    subjects:
+        - Mathematical cabinet
+        - Physical cabinet
+        - Scientific instruments
+modern_technology:
+    name: Technology
+    scheme: modern
+    subjects:
+        - Technology
+modern_theology:
+    name: Theology
+    scheme: modern
+    subjects:
+        - Cases of conscience
+        - Catechesis
+        - Controversial theology
+        - Dialectic theology
+        - Dogmatic theology
+        - Exegesis
+        - Liturgy
+        - Moral theology
+        - Patristics
+        - Polemic theology
+        - Positive theology
+        - Probabilism
+        - Scholastic theology
+        - Scripture
+modern_timekeeping:
+    name: Timekeeping
+    scheme: modern
+    subjects:
+        - Chronometry
+        - Horology
+        - Sun dials
+        - Watchmaking
