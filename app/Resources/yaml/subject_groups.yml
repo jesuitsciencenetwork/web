@@ -13,6 +13,7 @@ harris_astronomy:
     name: Astronomy
     scheme: harris
     subjects:
+    	- Astronomical facilities
         - Astronomical instruments
         - Astronomical observations
         - Astronomical observatories
@@ -81,6 +82,11 @@ harris_languages:
         - Spanish
         - Syntax
         - Turkish
+harris_literae_humaniores:
+	name: Literae humaniores
+	scheme: harris
+	subjects:
+		- Literae humaniores
 harris_medicine:
     name: Medicine
     scheme: harris
@@ -121,6 +127,7 @@ harris_mixed_mathematics:
         - Mathematics
         - Mechanics
         - Military architecture
+        - Military art
         - Mixed mathematics
         - Music
         - Naval construction
@@ -272,6 +279,7 @@ modern_astronomy:
     name: Astronomy
     scheme: modern
     subjects:
+    	- Astronomical facilities
         - Astronomical instruments
         - Astronomical observations
         - Astronomical observatories
@@ -319,6 +327,7 @@ modern_diplomacy:
     scheme: modern
     subjects:
         - Diplomacy
+        - Military art
         - Tactics
 modern_engineering:
     name: Engineering
@@ -407,6 +416,11 @@ modern_law:
     subjects:
         - Canon law
         - Law
+modern_literae_humaniores:
+	name: Literae humaniores
+	scheme: modern
+	subjects:
+		- Literae humaniores
 modern_mathematics:
     name: Mathematics
     scheme: modern
@@ -531,6 +545,7 @@ modern_theology:
         - Probabilism
         - Scholastic theology
         - Scripture
+        - Theology
 modern_timekeeping:
     name: Timekeeping
     scheme: modern
