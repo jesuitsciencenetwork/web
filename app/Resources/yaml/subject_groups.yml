@@ -106,7 +106,7 @@ harris_mixed_mathematics:
         - Cartography
         - Civil architecture
         - Combustion
-        - Cryptography
+        - Cryptology
         - Elasticity
         - Electricity
         - Engineering
@@ -303,11 +303,11 @@ modern_cosmology:
     scheme: modern
     subjects:
         - Cosmology
-modern_cryptography:
-    name: Cryptography
+modern_cryptology:
+    name: Cryptology
     scheme: modern
     subjects:
-        - Cryptography
+        - Cryptology
 modern_dealing_with_data_about_the_condition_of_a_state:
     name: Dealing with data about the condition of a state
     scheme: modern
