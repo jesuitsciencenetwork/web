@@ -28,7 +28,8 @@
         "fortawesome/font-awesome": "~4.4",
         "gregwar/cache": "1.0.*",
         "jolicode/jolitypo": "~0.2",
-        "twitter/typeahead.js": "~0.11"
+        "twitter/typeahead.js": "~0.11",
+        "jms/serializer-bundle": "1.1.*"
     },
     "require-dev": {
         "sensio/generator-bundle": "~2.3"
