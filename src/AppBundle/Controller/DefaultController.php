@@ -484,8 +484,9 @@ class DefaultController extends Controller
      */
     public function debugSourcesAction()
     {
+        $sources = $this->getDoctrine()->getManager()->createQuery('SELECT s FROM AppBundle:Source s WHERE s.genre <> ?0 and s.genre <> ?1 order by s.id asc')->execute(array('VIAF', 'GND'));
         return $this->render('default/sources.html.twig', array(
-            'sources' => $this->getDoctrine()->getRepository('AppBundle:Source')->findAll()
+            'sources' => $sources
         ));
     }
 
