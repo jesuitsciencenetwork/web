@@ -139,7 +139,7 @@ class PdrConnector
 
         // collect sources
         foreach ($xml->xpath('//ro:mods') as $mods) {
-            $data['sources'][(string)$mods['ID']] = $this->processMods($mods);
+            $data['sources'][(string)$mods['ID']] = $this->processMods($mods, $pdrId);
         }
 
         //$data['subjects'] = array_unique($data['subjects']);
@@ -147,10 +147,11 @@ class PdrConnector
         return $data;
     }
 
-    protected function processMods($mods)
+    protected function processMods($mods, $poId)
     {
         $captured = (string)$mods->originInfo->dateCaptured;
         $data = array(
+            'payload' => $poId,
             'title' => (string)$mods->titleInfo->title,
             'dateIssued' => (string)$mods->originInfo->dateIssued,
             'dateCaptured' => '0000' == $captured ? null : $captured,

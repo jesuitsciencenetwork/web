@@ -122,7 +122,7 @@ class ImportDataCommand extends Command
             'INSERT INTO aspect_subject (aspect_id, subject_id) VALUES (:aspectId, :subjectId) ON DUPLICATE KEY UPDATE aspect_id=aspect_id'
         );
         $sourceStatement = $connection->prepare(
-            'INSERT INTO source (id, genre, title, series_title, authors, publisher, place, date_issued, date_captured, url, note, editors) VALUES (:id, :genre, :title, :seriesTitle, :authors, :publisher, :place, :dateIssued, :dateCaptured, :url, :note, :editors) ON DUPLICATE KEY UPDATE id=id'
+            'INSERT INTO source (id, genre, title, series_title, authors, publisher, place, date_issued, date_captured, url, note, editors, payload) VALUES (:id, :genre, :title, :seriesTitle, :authors, :publisher, :place, :dateIssued, :dateCaptured, :url, :note, :editors, :payload) ON DUPLICATE KEY UPDATE id=id'
         );
         $groupStatement = $connection->prepare(
             'INSERT INTO subject_group (title, slug, scheme) VALUES (:title, :slug, :scheme) ON DUPLICATE KEY UPDATE id=id'
@@ -237,6 +237,7 @@ class ImportDataCommand extends Command
                 ':url' => $sourceData['url'],
                 ':note' => $sourceData['note'],
                 ':editors' => json_encode($sourceData['editors']),
+                ':payload' => $sourceData['payload'],
             ));
         }
 
