@@ -5,25 +5,23 @@
         <div class="col-xs-12">
             <header class="clearfix">
                 <h2>
-                    <span class="text-muted">{{ count }}</span> occupations
+                    {#<span class="text-muted">{{ count }}</span> occupations#}
+                    {{ occupation }}
                 </h2>
             </header>
             <div>
-                {% for occupation, persons in occupations %}
-                    <h4>{{ occupation }} <small class="text-muted">{{ persons|length }}</small></h4>
-                    <ul class="list-unstyled">
-                        {% for person in persons %}
-                        <li>
-                            <a href="{{ path('detail', {id: person.person.id}) }}">{{ person.person.displayName }}</a>
-                            <ul>
-                            {% for aspect in person.aspects %}
-                                <li>{{ aspect.id }}</li>
-                            {% endfor %}
-                            </ul>
-                        </li>
+                <ul class="list-unstyled">
+                    {% for person in persons %}
+                    <li>
+                        <a href="{{ path('detail', {id: person.person.id}) }}">{{ person.person.displayName }}</a>
+                        <ul>
+                        {% for aspect in person.aspects %}
+                            <li>{{ aspect.id }}</li>
                         {% endfor %}
-                    </ul>
-                {% endfor %}
+                        </ul>
+                    </li>
+                    {% endfor %}
+                </ul>
             </div>
         </div>
     </div>

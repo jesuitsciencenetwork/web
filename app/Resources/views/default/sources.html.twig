@@ -1,0 +1,14 @@
+{% extends "::base.html.twig" %}
+
+{% block body %}
+    <div class="container">
+        <ol>
+            {% for source in sources %}
+            <li value="{{ source.id }}">
+                <p>{% include "include/source.html.twig" %}</p>
+            </li>
+            {% endfor %}
+        </ol>
+    </div>
+
+{% endblock %}

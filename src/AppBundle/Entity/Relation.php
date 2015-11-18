@@ -5,6 +5,7 @@ namespace AppBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping\UniqueConstraint;
+use JMS\Serializer\Annotation\Groups;
 
 /**
  * Class Subject
@@ -24,12 +25,14 @@ class Relation
     /**
      * @var Person[]|Collection
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Person", inversedBy="relationsOutgoing")
+     * @Groups({"Relation"})
      */
     private $source;
 
     /**
      * @var Person[]|Collection
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Person", inversedBy="relationsIncoming")
+     * @Groups({"Relation"})
      */
     private $target;
 

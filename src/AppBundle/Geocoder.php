@@ -2,12 +2,14 @@
 
 namespace AppBundle;
 
-use AppBundle\DTO\Position;
+use AppBundle\DTO\Location;
 use Gregwar\Cache\Cache;
+use Psr\Log\LoggerInterface;
 
 class Geocoder
 {
     private $cache;
+    private $logger;
 
     private $replacementMap = array(
         'Dobrzyń Land' => 'Dobrzyń nad Wisłą',
@@ -19,20 +21,29 @@ class Geocoder
         'Red Ruthenia' => array(49.59, 24.41, 'PL'),
     );
 
-    public function __construct($cacheDir)
+    private static $continentCodes = array(
+        'Europe' => 'EU',
+        'Asia' => 'AS',
+        'North America' => 'NA',
+    );
+
+    public function __construct($cacheDir, LoggerInterface $logger)
     {
         $this->cache = new Cache($cacheDir);
+        $this->logger = $logger;
     }
 
     /**
      * @param $placeName
-     * @return Position
+     * @return Location
+     * @throws \Exception
+     * @throws \Gregwar\Cache\InvalidArgumentException
      */
     public function geocode($placeName)
     {
         if (array_key_exists($placeName, $this->manualLookup)) {
             list($lat, $lng, $country) = $this->manualLookup[$placeName];
-            return new Position($lat, $lng, $country);
+            return new Location($lat, $lng, $country);
         }
 
         if (array_key_exists($placeName, $this->replacementMap)) {
@@ -64,7 +75,24 @@ class Geocoder
             $country = $comp['short_name'];
         }
 
-        return new Position($loc['lat'], $loc['lng'], $country);
+        $continent = null;
+        if (!$country) {
+            foreach ($data['results'][0]['address_components'] as $comp) {
+                if (!in_array('continent', $comp['types'])) {
+                    continue;
+                }
+                if (!array_key_exists($comp['short_name'], self::$continentCodes)) {
+                    throw new \Exception('Continent '.$comp['short_name'] . ' unknown');
+                }
+                $continent = self::$continentCodes[$comp['short_name']];
+            }
+        }
+
+        if (!$country && !$continent) {
+            //$this->logger->warning('Geocoding did not yield a country or continent for "{placeName}"', array('placeName'=>$placeName));
+        }
+
+        return new Location($loc['lat'], $loc['lng'], $country, $continent);
     }
 
     protected function fetch($placeName)

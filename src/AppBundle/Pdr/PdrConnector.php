@@ -2,17 +2,14 @@
 
 namespace AppBundle\Pdr;
 
-use AppBundle\Geocoder;
 use AppBundle\Helper;
 
 class PdrConnector
 {
     private $idiProvider;
-    private $geocoder;
 
-    public function __construct(IdiProviderInterface $idiProvider, Geocoder $geocoder)
+    public function __construct(IdiProviderInterface $idiProvider)
     {
-        $this->geocoder = $geocoder;
         $this->idiProvider = $idiProvider;
     }
 
@@ -39,6 +36,7 @@ class PdrConnector
             'sources' => array(),
             'aspects' => array(),
             'subjects' => array(),
+            'places' => array(),
             'personRefs' => array(),
             'nonjesuit' => false,
             'alternateNames' => array()
@@ -95,6 +93,8 @@ class PdrConnector
             foreach ($aspectData['subjects'] as $slug => $subject) {
                 $data['subjects'][$slug] = $subject;
             }
+            $data['places'] = array_merge($data['places'], $aspectData['places']);
+
             if ($aspectData['type'] == 'beginningOfLife') {
                 $data['beginningOfLife'] = $aspectData['dateExact'];
             } elseif ($aspectData['type'] == 'endOfLife') {
@@ -124,18 +124,81 @@ class PdrConnector
                 );
             }
 
-            // semanticStm
-            // do not import: validationStm/reference
+            // validationStm
+            foreach ($aspect->validation->validationStm->reference as $ref) {
+                $refText = (string)$ref;
+                if (false === strpos($refText, 'pdrRo')) {
+                    echo "found ref: $refText\n";
+                }
+                $aspectData['source'] = $refText;
+            }
 
             $data['aspects'][] = $aspectData;
         }
 
         // collect sources
         foreach ($xml->xpath('//ro:mods') as $mods) {
-            $data['sources'][] = (string)$mods['ID'];//$mods->asXML();
+            $data['sources'][(string)$mods['ID']] = $this->processMods($mods);
         }
 
         //$data['subjects'] = array_unique($data['subjects']);
+
+        return $data;
+    }
+
+    protected function processMods($mods)
+    {
+        $captured = (string)$mods->originInfo->dateCaptured;
+        $data = array(
+            'title' => (string)$mods->titleInfo->title,
+            'dateIssued' => (string)$mods->originInfo->dateIssued,
+            'dateCaptured' => '0000' == $captured ? null : $captured,
+            'place' => (string)$mods->originInfo->place->placeTerm,
+            'note' => (string)$mods->note,
+            'genre' => (string)$mods->genre,
+            'url' => (string)$mods->location->url,
+            'publisher' => (string)$mods->originInfo->publisher,
+            'authors' => array(),
+            'editors' => array(),
+            'seriesTitle' => $mods->relatedItem ? (string)$mods->relatedItem->titleInfo->title : null,
+        );
+
+        if ('VIAF' === $data['genre'] && false !== strpos($data['url'], '/gnd/')) {
+            $data['genre'] = 'GND';
+        }
+
+        foreach ($mods->name as $name) {
+            $role = (string)$name->role->roleTerm;
+            $family = '';
+            $given = '';
+            foreach ($name->namePart as $namePart) {
+                switch ((string)$namePart['type']) {
+                    case 'given':
+                        $given = (string)$namePart;
+                        break;
+                    case 'family':
+                        $family = (string)$namePart;
+                        break;
+                    default:
+                        throw new \Exception('Unknown namePart type in source: '.(string)$namePart['type']);
+                }
+            }
+            switch ($role) {
+                case 'edt':
+                    $data['editors'][] = array($given, $family);
+                    break;
+                case 'aut':
+                case 'prg': // Wikipedia entries tagged this way
+                    $data['authors'][] = array($given, $family);
+                    break;
+                default:
+                    throw new \Exception("Unknown role \"$role\" for source ".(string)$mods['ID']);
+            }
+        }
+
+        $data = array_map(function($e) {
+            return '' === $e ? null : $e;
+        }, $data);
 
         return $data;
     }
@@ -233,18 +296,17 @@ class PdrConnector
 
     }
 
-    private function processNotification($xml, $currentPoId)
+    private function processNotification(\SimpleXMLElement $xml, $currentPoId)
     {
         $output = array(
             'dateFrom' => null,
             'dateTo' => null,
             'dateExact' => null,
-            'placeName' => null,
-            'lat' => null,
-            'lng' => null,
-            'country' => null,
+            'places' => array(),
+            'occupation' => null,
             'subjects' => array(),
-            'description' => '',
+            'comments' => array(),
+            'raw' => $xml->asXml()
         );
         $textParts = array();
         $dom = dom_import_simplexml($xml);
@@ -278,17 +340,15 @@ class PdrConnector
                 $slug = Helper::slugify($childNode->nodeValue);
                 $output['subjects'][$slug] = $childNode->nodeValue;
                 $textParts[] = '{S:' . $slug . '|' . $childNode->nodeValue . '}';
+            } elseif ($tag == 'name' && $type == 'occupation') {
+                $output['occupation'] = $childNode->nodeValue;
+            } elseif ($tag == 'name' && $type == 'Comment') {
+                $output['comments'][] = $childNode->nodeValue;
             } elseif ($tag == 'placeName') {
-                $pos = $this->geocoder->geocode($childNode->nodeValue);
-
-                $output['lat'] = $pos->getLatitude();
-                $output['lng'] = $pos->getLongitude();
-                $output['country'] = $pos->getCountry();
-                $output['placeName'] = $childNode->nodeValue;
-
-                $textParts[] = '{M:' . $pos->getLatitude(
-                    ) . ',' . $pos->getLongitude(
-                    ) . '|' . $childNode->nodeValue . '}';
+                $output['places'][] = $childNode->nodeValue;
+//                $textParts[] = '{M:' . $childNode->nodeValue . '}';
+                // @TODO
+                $textParts[] = $childNode->nodeValue;
             } elseif ($tag == 'name') {
                 $textParts[] = $childNode->nodeValue;
             } elseif ($tag == 'date') {
@@ -321,7 +381,7 @@ class PdrConnector
 
         //$output['subjects'] = array_unique($output['subjects']);
 
-        $output['description'] = implode(' ', $textParts);
+        //$output['description'] = implode(' ', $textParts);
 
         return $output;
     }

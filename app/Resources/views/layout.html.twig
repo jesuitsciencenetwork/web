@@ -23,18 +23,22 @@
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     <li{% if 'search' == route %} class="active"{% endif %}><a href="{{ path('search') }}">Advanced search</a></li>
-                    <li class="dropdown{% if 'list' == route or 'subjects' == route or 'map' == route or 'graph' == route %} active{% endif %}">
+                    <li class="dropdown{% if 'list' == route or 'subjects' == route or 'subjects_grouped' == route or 'places' == route or 'places_grouped' == route or 'occupations' == route or 'map' == route or 'graph' == route %} active{% endif %}">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Browse <span class="caret"></span></a>
                         <ul class="dropdown-menu">
-                            <li class="dropdown-header">Lists</li>
+                            <li class="dropdown-header">Persons</li>
                             <li><a href="{{ path('list') }}">Jesuits</a></li>
                             <li><a href="{{ path('list_nonjesuits') }}">Non-Jesuits</a></li>
+                            <li role="separator" class="divider"></li>
+                            <li class="dropdown-header">Lists</li>
                             <li><a href="{{ path('subjects') }}">Subjects</a></li>
-                            {#<li><a href="#">Something else here</a></li>#}
+                            <li><a href="{{ path('places') }}">Places</a></li>
+                            <li><a href="{{ path('occupations') }}">Occupations</a></li>
                             <li role="separator" class="divider"></li>
                             <li class="dropdown-header">Visualizations</li>
                             <li><a href="{{ path('map') }}">Map</a></li>
-                            <li{% if 'graph' == route %} class="active"{% endif %}><a href="#">Graph</a></li>
+                            <li><a href="#">Graphs</a></li>
+                            <li><a href="{{ path('graph_relations') }}">Relations</a></li>
                         </ul>
                     </li>
                 </ul>

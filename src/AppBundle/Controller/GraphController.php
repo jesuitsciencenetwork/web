@@ -2,6 +2,8 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\Person;
+use Doctrine\Common\Collections\Collection;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
@@ -20,6 +22,7 @@ class GraphController extends Controller
      */
     public function relationsAction()
     {
+        /** @var Collection|Person[] $persons */
         $persons = $this->getDoctrine()->getManager()->createQuery('SELECT p FROM AppBundle:Person p INNER JOIN p.aspects a WITH a.country = :country')->setParameter('country', 'PL')->execute();
         $nodes = array();
         foreach ($persons as $person) {

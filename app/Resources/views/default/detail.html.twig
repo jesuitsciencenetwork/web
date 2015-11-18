@@ -9,7 +9,7 @@
             <header>
                 <h1>{{ person.displayName }} <small class="text-muted">({{ person.dateOfBirth }}–{{ person.dateOfDeath }})</small></h1>
                 <p class="small text-muted pref">
-                    IDI: <a href="https://pdrprod.bbaw.de/idi/pdr/{{ person.pdrId }}" title="Download raw data as XML" download><code>{{ person.pdrId }}</code></a>{% if person.viafId %} &bull; VIAF: <a target="_blank" href="http://viaf.org/viaf/{{ person.viafId }}"><code>{{ person.viafId }}</code></a>{% endif %}
+                    IDI: <a href="https://pdrprod.bbaw.de/idi/pdrnc/{{ person.pdrId }}" title="Download raw data as XML" download><code>{{ person.pdrId }}</code></a>{% if person.viafId %} &bull; VIAF: <a target="_blank" href="http://viaf.org/viaf/{{ person.viafId }}"><code>{{ person.viafId }}</code></a>{% endif %}
                 </p>
 
 
@@ -26,9 +26,9 @@
                             {{ aspect.dateFrom }} – {{ aspect.dateTo }}
                         {% endif %}
                     </span>
-                    {% if aspect.placeName %}
-                    <span class="place"><button type="button" data-lat="{{ aspect.latitude }}" data-lng="{{ aspect.longitude }}" class="geo btn btn-link">{{ icon('map-marker') }} {{ aspect.placeName }}</button></span>
-                    {% endif %}
+                    {% for place in aspect.places %}
+                    <span class="place"><button type="button" data-lat="{{ place.latitude }}" data-lng="{{ place.longitude }}" class="geo btn btn-link">{{ icon('map-marker') }} {{ place.placeName }}</button></span>
+                    {% endfor %}
                     {% if "entryInTheOrder" == aspect.type %}
                         <em>Entered the order</em>
                     {% elseif "beginningOfLife" == aspect.type %}
@@ -39,9 +39,8 @@
                         <em>Resigned from the order</em>
                     {% elseif "expulsionFromTheOrder" == aspect.type %}
                         <em>Expelled from the order</em>
-                    {% else %}
-                    {{ aspect.description|replace_links([person.id])|smart_quotes }}
                     {% endif %}
+                    {{ aspect.comment }}
                     {% if aspect.subjects|length %}
                         <ul class="list-inline">
                             {% for subject in aspect.subjects %}
@@ -108,8 +107,14 @@
     <div class="container detail">
         <h4>Sources</h4>
         <ol>
-            <li>Jezuici polscy a nauki ścisłe od XVI do XIX wieku: słownik bio-bibliograficzny</li>
-            <li>Diccionario histórico de la Compañía de Jesús</li>
+            {% for source in person.sources %}
+            <li>
+                <strong>{{ source.id }}</strong>
+                <pre>
+                    {{ source.payload }}
+                </pre>
+            </li>
+            {% endfor %}
         </ol>
     </div>
 

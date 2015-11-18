@@ -4,6 +4,8 @@ namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\Collection;
+use JMS\Serializer\Annotation\Exclude;
+use JMS\Serializer\Annotation\Groups;
 
 /**
  * Class Subject
@@ -35,14 +37,24 @@ class Subject
     /**
      * @var Person[]|Collection
      * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Person", mappedBy="subjects")
+     * @Groups({"Subject"})
      */
     private $associatedPersons;
 
     /**
      * @var Aspect[]|Collection
      * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Aspect", mappedBy="subjects")
+     * @Groups({"Subject"})
      */
     private $associatedAspects;
+
+    /**
+     * @var SubjectGroup[]|Collection
+     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\SubjectGroup", mappedBy="subjects")
+     * @Groups({"Subject"})
+     */
+    private $subjectGroups;
+
     /**
      * Constructor
      */
@@ -175,5 +187,39 @@ class Subject
     public function getAssociatedAspects()
     {
         return $this->associatedAspects;
+    }
+
+    /**
+     * Add subjectGroup
+     *
+     * @param \AppBundle\Entity\SubjectGroup $subjectGroup
+     *
+     * @return Subject
+     */
+    public function addSubjectGroup(\AppBundle\Entity\SubjectGroup $subjectGroup)
+    {
+        $this->subjectGroups[] = $subjectGroup;
+
+        return $this;
+    }
+
+    /**
+     * Remove subjectGroup
+     *
+     * @param \AppBundle\Entity\SubjectGroup $subjectGroup
+     */
+    public function removeSubjectGroup(\AppBundle\Entity\SubjectGroup $subjectGroup)
+    {
+        $this->subjectGroups->removeElement($subjectGroup);
+    }
+
+    /**
+     * Get subjectGroups
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getSubjectGroups()
+    {
+        return $this->subjectGroups;
     }
 }

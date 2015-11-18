@@ -52,32 +52,24 @@ class Aspect
      * @var string
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $placeName;
+    private $occupation;
 
     /**
      * @var string
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $country;
+    private $occupationSlug;
 
     /**
-     * @var string
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @var Place[]|Collection
+     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Place", inversedBy="associatedAspects")
      */
-    private $continent;
+    private $places;
 
     /**
-     * @var float
-     * @ORM\Column(type="decimal", precision=11, scale=8, nullable=true)
+     * @var Source
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Source", inversedBy="associatedAspects")
      */
-    private $latitude;
-
-    /**
-     * @var float
-     * @ORM\Column(type="decimal", precision=11, scale=8, nullable=true)
-     */
-    private $longitude;
-
     private $source;
 
     /**
@@ -91,7 +83,13 @@ class Aspect
      * @var string
      * @ORM\Column(type="string", length=10000, nullable=true)
      */
-    private $description;
+    private $comment;
+
+    /**
+     * @var string
+     * @ORM\Column(type="string", length=100000, nullable=true)
+     */
+    private $rawXml;
 
     /**
      * Set id
@@ -187,78 +185,6 @@ class Aspect
     public function getDateTo()
     {
         return $this->dateTo;
-    }
-
-    /**
-     * Set placeName
-     *
-     * @param string $placeName
-     *
-     * @return Aspect
-     */
-    public function setPlaceName($placeName)
-    {
-        $this->placeName = $placeName;
-
-        return $this;
-    }
-
-    /**
-     * Get placeName
-     *
-     * @return string
-     */
-    public function getPlaceName()
-    {
-        return $this->placeName;
-    }
-
-    /**
-     * Set latitude
-     *
-     * @param string $latitude
-     *
-     * @return Aspect
-     */
-    public function setLatitude($latitude)
-    {
-        $this->latitude = $latitude;
-
-        return $this;
-    }
-
-    /**
-     * Get latitude
-     *
-     * @return string
-     */
-    public function getLatitude()
-    {
-        return $this->latitude;
-    }
-
-    /**
-     * Set longitude
-     *
-     * @param string $longitude
-     *
-     * @return Aspect
-     */
-    public function setLongitude($longitude)
-    {
-        $this->longitude = $longitude;
-
-        return $this;
-    }
-
-    /**
-     * Get longitude
-     *
-     * @return string
-     */
-    public function getLongitude()
-    {
-        return $this->longitude;
     }
 
     /**
@@ -372,5 +298,159 @@ class Aspect
     public function getSubjects()
     {
         return $this->subjects;
+    }
+
+    /**
+     * Set occupation
+     *
+     * @param string $occupation
+     *
+     * @return Aspect
+     */
+    public function setOccupation($occupation)
+    {
+        $this->occupation = $occupation;
+
+        return $this;
+    }
+
+    /**
+     * Get occupation
+     *
+     * @return string
+     */
+    public function getOccupation()
+    {
+        return $this->occupation;
+    }
+
+    /**
+     * Set rawXml
+     *
+     * @param string $rawXml
+     *
+     * @return Aspect
+     */
+    public function setRawXml($rawXml)
+    {
+        $this->rawXml = $rawXml;
+
+        return $this;
+    }
+
+    /**
+     * Get rawXml
+     *
+     * @return string
+     */
+    public function getRawXml()
+    {
+        return $this->rawXml;
+    }
+
+    /**
+     * Add place
+     *
+     * @param \AppBundle\Entity\Place $place
+     *
+     * @return Aspect
+     */
+    public function addPlace(\AppBundle\Entity\Place $place)
+    {
+        $this->places[] = $place;
+
+        return $this;
+    }
+
+    /**
+     * Remove place
+     *
+     * @param \AppBundle\Entity\Place $place
+     */
+    public function removePlace(\AppBundle\Entity\Place $place)
+    {
+        $this->places->removeElement($place);
+    }
+
+    /**
+     * Get places
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getPlaces()
+    {
+        return $this->places;
+    }
+
+    /**
+     * Set source
+     *
+     * @param \AppBundle\Entity\Source $source
+     *
+     * @return Aspect
+     */
+    public function setSource(\AppBundle\Entity\Source $source = null)
+    {
+        $this->source = $source;
+
+        return $this;
+    }
+
+    /**
+     * Get source
+     *
+     * @return \AppBundle\Entity\Source
+     */
+    public function getSource()
+    {
+        return $this->source;
+    }
+
+    /**
+     * Set comment
+     *
+     * @param string $comment
+     *
+     * @return Aspect
+     */
+    public function setComment($comment)
+    {
+        $this->comment = $comment;
+
+        return $this;
+    }
+
+    /**
+     * Get comment
+     *
+     * @return string
+     */
+    public function getComment()
+    {
+        return $this->comment;
+    }
+
+    /**
+     * Set occupationSlug
+     *
+     * @param string $occupationSlug
+     *
+     * @return Aspect
+     */
+    public function setOccupationSlug($occupationSlug)
+    {
+        $this->occupationSlug = $occupationSlug;
+
+        return $this;
+    }
+
+    /**
+     * Get occupationSlug
+     *
+     * @return string
+     */
+    public function getOccupationSlug()
+    {
+        return $this->occupationSlug;
     }
 }

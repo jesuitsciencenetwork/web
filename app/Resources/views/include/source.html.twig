@@ -1,0 +1,58 @@
+{% macro namelist(list, reverse, join) %}
+{% for name in list %}{% if reverse %}{{ name.1 }}, {{ name.0 }}{% else %}{{ name.0 }} {{ name.1 }}{% endif %}{% if not loop.last %}{{ join }}{% endif %}{% endfor %}
+{% endmacro %}
+{% macro color(source) %}{% spaceless %}
+    {% import _self as macro %}
+    {% set editor = macro.namelist(source.editors, false, "")|raw %}
+    {% set author = macro.namelist(source.authors, false, "")|raw %}
+    {% if "Carlos Sommervogel" == editor %}
+        color-sommervogel
+    {% elseif "Charles O&#039;Neill" == editor %}
+        color-oneill
+    {% elseif "Maria Reindl" == author %}
+        color-reindl
+    {% elseif ("VIAF" == source.genre or "GND" == source.genre) %}
+        color-viaf
+    {% elseif "Bogdan Lisiak" == author %}
+        color-lisiak
+    {% elseif "Ludwik Grzebień" == author %}
+        color-grzebien
+    {% elseif "Georg Schuppener" == author %}
+        color-schuppener
+    {% elseif "database" == source.genre %}
+        color-database
+    {% elseif "József Szinnyei" == author %}
+        color-szinnyei
+    {% else %}
+        color-other
+    {% endif %}
+{% endspaceless %}{% endmacro %}
+{% import _self as macro %}
+
+{% set color = macro.color(source) %}
+<div class="source {{ color }} border">
+{% if source.editors|length > 0 and ["Carlos", "Sommervogel"] == source.editors.0 %}
+    Sommervogel, Carlos (Ed., Reprint 1960): <em>Bibliothèque de la Compagnie de Jésus</em>. {{ source.title }}.
+{% else %}
+    {% if "Aufsatz" == source.genre %}
+    {{ macro.namelist(source.authors, true, "; ") }}{% if source.dateIssued %}  ({{ source.dateIssued }}){% endif %}: “{{ source.title }}”. In: <em>{{ source.seriesTitle }}</em>. {% if source.editors %}Ed. by {{ macro.namelist(source.editors, false, " and ") }}, {% endif %}{{ source.publisher }}{% if source.publisher and source.place %}, {% endif %}{{ source.place }}{% if source.note %}{% if source.publisher or source.place %}, {% endif %}{% if "-" in source.note %}pp.{% else %}p.{% endif %} {{ source.note }}{% endif %}.
+    {% elseif "database" == source.genre %}
+        {% if not "wikipedia" in source.url %}{{ macro.namelist(source.authors, true, "; ") }}: {% endif %}<a href="{{ source.url }}">“{{ source.title }}”</a>. Accessed {{ source.dateCaptured|date("F j, Y") }}.
+    {% elseif "book" == source.genre %}
+        {% if source.editors %}
+            {% if source.seriesTitle %}
+                {{ macro.namelist(source.editors, true, "; ") }} (Ed.{% if source.dateIssued %}, {{ source.dateIssued }}{% endif %}): <em>{{ source.seriesTitle }}</em>.{% if source.title %} {{ source.title }}.{% endif %}
+            {% else %}
+                {{ macro.namelist(source.editors, true, "; ") }} (Ed.{% if source.dateIssued %}, {{ source.dateIssued }}{% endif %}): “{{ source.title }}”.
+            {% endif %}
+        {% else %}
+            {{ macro.namelist(source.authors, true, "; ") }}{% if source.dateIssued %} ({{ source.dateIssued }}){% endif %}: “{{ source.title }}”. {{ source.publisher }}{% if source.publisher and source.place %}, {% endif %}{{ source.place }}.
+        {% endif %}
+    {% elseif "VIAF" == source.genre %}
+    VIAF: <a href="{{ source.url }}">{{ source.url }}</a>
+    {% elseif "GND" == source.genre %}
+    GND: <a href="{{ source.url }}">{{ source.url }}</a>
+    {% endif %}
+{% endif %}
+    <span class="citation label label-default pull-right {{ color }} bg">1</span>
+</div>

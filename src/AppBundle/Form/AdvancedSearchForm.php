@@ -2,11 +2,21 @@
 
 namespace AppBundle\Form;
 
+use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Query;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 
 class AdvancedSearchForm extends AbstractType
 {
+    private $em;
+
+    public function __construct(ObjectManager $em)
+    {
+        $this->em = $em;
+
+    }
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -27,6 +37,10 @@ class AdvancedSearchForm extends AbstractType
                 'property' => 'title',
                 'multiple' => true,
                 'required' => false,
+                'attr' => array(
+                    'class' => 'selectpicker',
+                    'data-live-search' => 'true'
+                )
             ))
 
             ->add('place', 'text', array(
@@ -48,13 +62,12 @@ class AdvancedSearchForm extends AbstractType
                     'before' => 'before',
                     'after' => 'after',
                     'in' => 'in'
-                )
+                ),
+                'expanded' => true
             ))
 
-            ->add('birthDate', 'choice', array(
+            ->add('birthDate', 'text', array(
                 'required' => false,
-                'placeholder' => '',
-                'choices' => array_combine(range(1600, 1800), range(1600, 1800)),
             ))
 
             ->add('deathDateOperator', 'choice', array(
@@ -62,17 +75,22 @@ class AdvancedSearchForm extends AbstractType
                     'before' => 'before',
                     'after' => 'after',
                     'in' => 'in'
-                )
+                ),
+                'expanded' => true
             ))
 
-            ->add('deathDate', 'choice', array(
+            ->add('deathDate', 'text', array(
                 'required' => false,
-                'placeholder' => '',
-                'choices' => array_combine(range(1600, 1800), range(1600, 1800)),
             ))
 
-            ->add('position', 'text', array(
-                'required' => false
+            ->add('occupation', 'choice', array(
+                'required' => false,
+                'choices' => $this->getOccupationChoices(),
+                'multiple' => true,
+                'attr' => array(
+                   'class' => 'selectpicker',
+                    'data-live-search' => 'true'
+                )
             ))
 
             ->add('membership', 'text', array(
@@ -87,4 +105,16 @@ class AdvancedSearchForm extends AbstractType
         return 'advanced_search';
     }
 
+    private function getOccupationChoices()
+    {
+        $results = $this->em->createQuery('SELECT a.occupation, a.occupationSlug FROM AppBundle:Aspect a WHERE a.occupation IS NOT NULL GROUP BY a.occupation ORDER BY a.occupation ASC')
+            ->getResult(Query::HYDRATE_ARRAY);
+
+        $choices = array();
+        foreach ($results as $row) {
+            $choices[$row['occupationSlug']] = $row['occupation'];
+        }
+
+        return $choices;
+    }
 }

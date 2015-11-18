@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation\Groups;
 
 /**
  * Class Name
@@ -20,6 +21,7 @@ class AlternateName
     /**
      * @var Person
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Person", inversedBy="alternateNames")
+     * @Groups({"AlternateName"})
      */
     private $person;
 

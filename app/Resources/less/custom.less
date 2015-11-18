@@ -260,12 +260,40 @@ a.list-group-item, a.list-group-item:hover {
     color: #888;
     font-size: 9px;
   }
-  header {
-    background-color: #fff;
-    position:fixed;
+
+  p.total-count {
+    margin-top: 10px;
+    margin-bottom: 30px;
   }
-  header + div {
-    padding-top: 120px;
+
+  h3 {
+    border-bottom: 1px solid @gray-lighter;
+    padding-bottom:(@line-height-computed / 4);
+    margin-top: (@line-height-computed * 2)
+  }
+
+  header ul.nav-pills.group-nav {
+    margin-top: 5px;
+
+    a {
+      font-size: 11px;
+      border-radius: 30px;
+      padding: 3px 10px;
+    }
+  }
+
+  &.fixed {
+    header {
+      background-color: #fff;
+      position: fixed;
+      ul.nav-pills.group-nav {
+        margin-top: 25px;
+        margin-right: -5px;
+      }
+    }
+    header + div {
+      padding-top: 120px;
+    }
   }
 }
 
@@ -689,4 +717,35 @@ p.viaf-notice {
 
 li.list-separator {
   border-bottom: 1px solid @gray-lighter;
+}
+
+
+
+.colorBuilder(@name, @color) {
+  .color-@{name} {
+    &.border {
+      border-color: @color;
+    }
+    &.bg {
+      background-color: @color;
+    }
+  }
+}
+
+.colorBuilder(sommervogel, #9b59b6);
+.colorBuilder(oneill,      #e74c3c);
+.colorBuilder(reindl,      #e67e22);
+.colorBuilder(viaf,        #34495e);
+.colorBuilder(lisiak,      #1abc9c);
+.colorBuilder(grzebien,    #2ecc71);
+.colorBuilder(schuppener,  #3498db);
+.colorBuilder(database,    #34495e);
+.colorBuilder(szinnyei,    #f1c40f);
+.colorBuilder(other,       #7f8c8d);
+
+
+.source {
+  padding: 5px;
+  background-color: #f6f6f6;
+  border-right: 5px solid #f6f6f6;
 }

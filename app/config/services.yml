@@ -45,10 +45,10 @@ services:
     class: AppBundle\Geocoder
     arguments:
       - %geo_cache_dir%
+      - @logger
 
   jsn.provider.pdr.ids:
     class: AppBundle\Pdr\IdProvider
-
 
   jsn.command.import_data:
     class: AppBundle\Command\ImportDataCommand
@@ -57,6 +57,8 @@ services:
       - @jsn.connector.pdr
       - @jsn.connector.viaf
       - @jsn.provider.pdr.ids
+      - @jsn.geocoder
+      - "%kernel.root_dir%/Resources/yaml/subject_groups.yml"
     tags:
       - { name: console.command }
 
@@ -69,7 +71,6 @@ services:
     class: AppBundle\Pdr\PdrConnector
     arguments:
       - @jsn.idi_provider
-      - @jsn.geocoder
 
   jsn.twig.extension.app:
     class: AppBundle\Twig\AppExtension

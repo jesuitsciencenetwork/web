@@ -5,6 +5,7 @@ namespace AppBundle\Entity;
 use AppBundle\Helper;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as JMS;
 
 /**
  * Class Person
@@ -91,6 +92,18 @@ class Person
      * @ORM\JoinTable(name="person_subject")
      */
     private $subjects;
+
+    /**
+     * @var Place[]|Collection
+     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Place", inversedBy="associatedPersons")
+     */
+    private $places;
+
+    /**
+     * @var Source[]|Collection
+     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Source", inversedBy="associatedPersons")
+     */
+    private $sources;
 
     /**
      * @var Aspect[]|Collection
@@ -602,5 +615,73 @@ class Person
     public function getRelationsOutgoing()
     {
         return $this->relationsOutgoing;
+    }
+
+    /**
+     * Add place
+     *
+     * @param \AppBundle\Entity\Place $place
+     *
+     * @return Person
+     */
+    public function addPlace(\AppBundle\Entity\Place $place)
+    {
+        $this->places[] = $place;
+
+        return $this;
+    }
+
+    /**
+     * Remove place
+     *
+     * @param \AppBundle\Entity\Place $place
+     */
+    public function removePlace(\AppBundle\Entity\Place $place)
+    {
+        $this->places->removeElement($place);
+    }
+
+    /**
+     * Get places
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getPlaces()
+    {
+        return $this->places;
+    }
+
+    /**
+     * Add source
+     *
+     * @param \AppBundle\Entity\Source $source
+     *
+     * @return Person
+     */
+    public function addSource(\AppBundle\Entity\Source $source)
+    {
+        $this->sources[] = $source;
+
+        return $this;
+    }
+
+    /**
+     * Remove source
+     *
+     * @param \AppBundle\Entity\Source $source
+     */
+    public function removeSource(\AppBundle\Entity\Source $source)
+    {
+        $this->sources->removeElement($source);
+    }
+
+    /**
+     * Get sources
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getSources()
+    {
+        return $this->sources;
     }
 }

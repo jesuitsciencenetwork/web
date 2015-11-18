@@ -4,13 +4,14 @@ namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\Collection;
+use JMS\Serializer\Annotation\Groups;
 
 /**
- * Class Subject
+ * Class Place
  * @ORM\Entity
- * @ORM\Table(indexes={@ORM\Index(name="slug", columns={"slug"})})
+ * @ORM\Table(indexes={@ORM\Index(name="place_name", columns={"place_name"}),@ORM\Index(name="slug", columns={"slug"})})
  */
-class Subject
+class Place
 {
     /**
      * @ORM\Id()
@@ -24,7 +25,7 @@ class Subject
      * @var string
      * @ORM\Column(type="string", length=255)
      */
-    private $title;
+    private $placeName;
 
     /**
      * @var string
@@ -33,22 +34,50 @@ class Subject
     private $slug;
 
     /**
+     * @var string
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $country;
+
+    /**
+     * @var string
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $continent;
+
+    /**
+     * @var float
+     * @ORM\Column(type="decimal", precision=11, scale=8, nullable=true)
+     */
+    private $latitude;
+
+    /**
+     * @var float
+     * @ORM\Column(type="decimal", precision=11, scale=8, nullable=true)
+     */
+    private $longitude;
+
+    /**
      * @var Person[]|Collection
-     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Person", mappedBy="subjects")
+     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Person", mappedBy="places")
+     * @Groups({"Place"})
      */
     private $associatedPersons;
 
     /**
      * @var Aspect[]|Collection
-     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Aspect", mappedBy="subjects")
+     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Aspect", mappedBy="places")
+     * @Groups({"Source"})
      */
     private $associatedAspects;
+
     /**
      * Constructor
      */
     public function __construct()
     {
         $this->associatedPersons = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->associatedAspects = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     /**
@@ -62,27 +91,147 @@ class Subject
     }
 
     /**
-     * Set title
+     * Set placeName
      *
-     * @param string $title
+     * @param string $placeName
      *
-     * @return Subject
+     * @return Place
      */
-    public function setTitle($title)
+    public function setPlaceName($placeName)
     {
-        $this->title = $title;
+        $this->placeName = $placeName;
 
         return $this;
     }
 
     /**
-     * Get title
+     * Get placeName
      *
      * @return string
      */
-    public function getTitle()
+    public function getPlaceName()
     {
-        return $this->title;
+        return $this->placeName;
+    }
+
+    /**
+     * Set slug
+     *
+     * @param string $slug
+     *
+     * @return Place
+     */
+    public function setSlug($slug)
+    {
+        $this->slug = $slug;
+
+        return $this;
+    }
+
+    /**
+     * Get slug
+     *
+     * @return string
+     */
+    public function getSlug()
+    {
+        return $this->slug;
+    }
+
+    /**
+     * Set country
+     *
+     * @param string $country
+     *
+     * @return Place
+     */
+    public function setCountry($country)
+    {
+        $this->country = $country;
+
+        return $this;
+    }
+
+    /**
+     * Get country
+     *
+     * @return string
+     */
+    public function getCountry()
+    {
+        return $this->country;
+    }
+
+    /**
+     * Set continent
+     *
+     * @param string $continent
+     *
+     * @return Place
+     */
+    public function setContinent($continent)
+    {
+        $this->continent = $continent;
+
+        return $this;
+    }
+
+    /**
+     * Get continent
+     *
+     * @return string
+     */
+    public function getContinent()
+    {
+        return $this->continent;
+    }
+
+    /**
+     * Set latitude
+     *
+     * @param string $latitude
+     *
+     * @return Place
+     */
+    public function setLatitude($latitude)
+    {
+        $this->latitude = $latitude;
+
+        return $this;
+    }
+
+    /**
+     * Get latitude
+     *
+     * @return string
+     */
+    public function getLatitude()
+    {
+        return $this->latitude;
+    }
+
+    /**
+     * Set longitude
+     *
+     * @param string $longitude
+     *
+     * @return Place
+     */
+    public function setLongitude($longitude)
+    {
+        $this->longitude = $longitude;
+
+        return $this;
+    }
+
+    /**
+     * Get longitude
+     *
+     * @return string
+     */
+    public function getLongitude()
+    {
+        return $this->longitude;
     }
 
     /**
@@ -90,7 +239,7 @@ class Subject
      *
      * @param \AppBundle\Entity\Person $associatedPerson
      *
-     * @return Subject
+     * @return Place
      */
     public function addAssociatedPerson(\AppBundle\Entity\Person $associatedPerson)
     {
@@ -120,35 +269,11 @@ class Subject
     }
 
     /**
-     * Set slug
-     *
-     * @param string $slug
-     *
-     * @return Subject
-     */
-    public function setSlug($slug)
-    {
-        $this->slug = $slug;
-
-        return $this;
-    }
-
-    /**
-     * Get slug
-     *
-     * @return string
-     */
-    public function getSlug()
-    {
-        return $this->slug;
-    }
-
-    /**
      * Add associatedAspect
      *
      * @param \AppBundle\Entity\Aspect $associatedAspect
      *
-     * @return Subject
+     * @return Place
      */
     public function addAssociatedAspect(\AppBundle\Entity\Aspect $associatedAspect)
     {

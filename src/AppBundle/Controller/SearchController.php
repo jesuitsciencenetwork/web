@@ -21,7 +21,7 @@ class SearchController extends Controller
      */
     public function searchAction(Request $request)
     {
-        $form = $this->createForm(new AdvancedSearchForm());
+        $form = $this->createForm(new AdvancedSearchForm($this->getDoctrine()->getManager()));
 
         $form->handleRequest($request);
 
@@ -133,6 +133,7 @@ class SearchController extends Controller
 
         /** @var Collection|Person[] $personList */
         $personList = $qb
+            ->select('p, a, s')
             ->leftJoin('p.aspects', 'a')
             ->leftJoin('a.subjects', 's')
             ->add('where', $qb->expr()->in('p.id', '?1'))

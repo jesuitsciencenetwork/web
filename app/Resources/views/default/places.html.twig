@@ -1,0 +1,71 @@
+{% extends "layout.html.twig" %}
+
+{% if not grouping %}
+{% block bodyAttributes %} data-spy="scroll" data-target="#letter-list"{% endblock %}
+
+{% block stylesheets %}
+    <style type="text/css">
+        .jumptarget:before {
+            height:170px; /* fixed header height*/
+            margin:-170px 0 0; /* negative fixed header height */
+        }
+    </style>
+{% endblock %}
+{% endif %}
+
+{% block content %}
+    <div class="container container-narrow alph-list{% if not grouping %} fixed{% endif %}">
+        <div class="col-xs-12" id="letter-list">
+            <header class="clearfix">
+                <small class="pull-right text-muted" style="margin-top: 20px; line-height: 28px;"><em>
+                        {% if grouping %}
+                            <a href="{{ path('places') }}">alphabetically</a>
+                        {% else %}
+                            <a href="{{ path('places_grouped') }}">by country</a>
+                        {% endif %}
+                    </em></small>
+                <h2>
+                    <span class="text-muted">{{ placeCount }}</span> places
+                </h2>
+                {% if not grouping %}
+                <div id="letter-list">
+                <ul class="nav nav-pills letter-list">
+                    {% for letter in range('A', 'Z') %}
+                        {% if letters[letter] is defined %}
+                            <li><a href="#{{ letter }}">{{ letter }}</a></li>
+                        {% else %}
+                            <li class="disabled" role="presentation"><a>{{ letter }}</a></li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+                </div>
+                {% endif %}
+            </header>
+            <div>
+                {% if not grouping %}
+                {% for letter, places in letters %}
+                    <h4 class="jumptarget" id="{{ letter }}">{{ letter }} <small class="text-muted">{{ places|length }}</small></h4>
+                    <ul class="list-unstyled">
+                        {% for place in places %}
+                            <li><a href="">{{ place.placeName }}</a></li>
+                        {% endfor %}
+                    </ul>
+                {% endfor %}
+                {% else %}
+                {% for continent, countries in continents %}
+                <h3>{{ continent|format_continent }}</h3>
+                {% for country, places in countries %}
+                    <h4>{{ country|format_country }} <small class="text-muted">{{ places|length }}</small></h4>
+                    <ul class="list-unstyled">
+                        {% for place in places %}
+                            <li><a href="">{{ place.placeName }}</a></li>
+                        {% endfor %}
+                    </ul>
+                {% endfor %}
+                {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
