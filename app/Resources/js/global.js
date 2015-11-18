@@ -22,6 +22,11 @@ $(function () {
     //    $body.scroll($body.scrollTop - 70);
     //}
 
+    $('.selectpicker').selectpicker({
+        iconBase: 'fa',
+        tickIcon: 'fa-check'
+    });
+
     $('.js-show-hiddennames').click(function() {
         $(this).closest('div').addClass('hidden').closest('div.panel-body').find('li.hidden').removeClass('hidden');
     });

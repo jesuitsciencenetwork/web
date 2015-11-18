@@ -68,6 +68,8 @@ assetic:
                 - "%kernel.root_dir%/../vendor/cross-solution/bootstrap3-dialog/dist/js/bootstrap-dialog.js"
                 - "%kernel.root_dir%/Resources/vendor/vis/dist/vis.min.js"
                 - "%kernel.root_dir%/Resources/js/typeahead.bundle.js"
+                - "%kernel.root_dir%/Resources/vendor/bootstrap-select/dist/js/bootstrap-select.js"
+                - "%kernel.root_dir%/Resources/vendor/bootstrap-select/dist/js/i18n/defaults-en_US.js"
                 - "%kernel.root_dir%/Resources/js/global.js"
             output: js/scripts.js
         styles:
