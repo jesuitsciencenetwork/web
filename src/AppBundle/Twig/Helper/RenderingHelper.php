@@ -20,7 +20,7 @@ class RenderingHelper
 
     public function renderDescription($description, $exclude = array())
     {
-        return preg_replace_callback('/\{(S|P|R|M):(.+?)\|(.+?)\}/', function($matches) use ($exclude) {
+        return preg_replace_callback('/\{(S|P|R|M|O):(.+?)\|(.+?)\}/', function($matches) use ($exclude) {
             if (in_array($matches[2], $exclude)) {
                 return $matches[3];
             }
@@ -30,6 +30,9 @@ class RenderingHelper
                     break;
                 case "P":
                     $url = $this->router->generate('detail', array('id' => $matches[2]));
+                    break;
+                case "O":
+                    $url = $this->router->generate('occupation', array('slug' => $matches[2]));
                     break;
                 case "M":
                     list($lat,$lng) = explode(',', $matches[2]);

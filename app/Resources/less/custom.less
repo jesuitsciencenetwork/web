@@ -339,7 +339,7 @@ ul.timeline {
     bottom: 0;
     left: 100px;
     width: 3px;
-    background: #ccc;
+    background: #f6f6f6;
     -webkit-border-radius: 3px;
     -moz-border-radius: 3px;
     border-radius: 3px;
@@ -353,38 +353,17 @@ ul.timeline {
     &:before {
       content: "";
       display: block;
-      width: 11px;
-      height: 11px;
+      width: 7px;
+      height: 7px;
       border: 3px solid #fff;
       box-sizing: content-box;
       position: absolute;
-      left: 93px;
-      margin-top: 2px;
-      background-color: #444;
+      left: 95px;
+      margin-top: 4px;
+      background-color: @brand-primary;
       -webkit-border-radius: 20px;
       -moz-border-radius: 20px;
       border-radius: 20px;
-    }
-    &.type-entryInTheOrder:before, &.type-resignationFromTheOrder:before, &.type-expulsionFromTheOrder:before {
-      background-color: #22A7F0;
-    }
-    &.type-education:before {
-      background-color: #26A65B;
-    }
-    &.type-miscellaneous:before {
-      background-color: #48929B;
-    }
-    &.type-career:before {
-      background-color: #F9690E;
-    }
-    &.type-biographicalData:before {
-      background-color: #8E44AD;
-    }
-    &.type-beginningOfLife:before {
-      background-color: #9B59B6;
-    }
-    &.type-endOfLife:before {
-      background-color: #000;
     }
     span.date {
       display: block;
@@ -407,23 +386,19 @@ ul.timeline {
       }
     }
 
-    span.place {
+    a.citation {
+      .label;
+      background-color: transparent;
+      font-family: @font-family-sans-serif;
       float: right;
-      font-size: 75%;
-      margin-left: 15px;
+      margin-top: 2px;
+      margin-left: 10px;
+    }
 
-      button {
-        color: #666;
-        font-size: 11px;
-        padding: 0;
-      }
-      button:hover, button:active, button:focus {
-        color: #333;
-        text-decoration: none;
-        i {
-          color: @link-color;
-        }
-      }
+    a.subject {
+    }
+    a.place {
+
     }
   }
 }
@@ -724,10 +699,14 @@ li.list-separator {
 .colorBuilder(@name, @color) {
   .color-@{name} {
     &.border {
-      border-color: @color;
+      border-color: @color !important;
     }
     &.bg {
-      background-color: @color;
+      background-color: @color !important;
+      color: #fff !important;
+    }
+    &.fg {
+      color: @color !important;
     }
   }
 }
@@ -746,6 +725,31 @@ li.list-separator {
 
 .source {
   padding: 5px;
-  background-color: #f6f6f6;
-  border-right: 5px solid #f6f6f6;
+  padding-left: 55px;
+  position: relative;
+
+  .ident {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 45px;
+    text-align: right;
+    height: 100%;
+    padding: 5px 10px 5px 5px;
+
+    font-weight: bold;
+    font-family: @font-family-sans-serif;
+
+    border-right-width: 3px;
+    border-right-style: solid;
+  }
+}
+
+ol.source-list, ul.aspect-list {
+  .list-unstyled;
+
+  li {
+    margin-bottom: (@line-height-computed / 2);
+  }
 }

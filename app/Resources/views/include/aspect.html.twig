@@ -1,0 +1,51 @@
+{% import "macros.html.twig" as macro %}
+
+<span class="date">
+    {% if aspect.dateExact %}
+        {{ aspect.dateExact }}
+    {% elseif aspect.dateFrom or aspect.dateTo %}
+        {{ aspect.dateFrom }} – {{ aspect.dateTo }}
+    {% endif %}
+</span>
+
+<a class="citation {{ macro.color(aspect.source) }} fg js-popover jumphighlight" href="#source-{{ aspect.source.id }}" data-toggle="popover" data-placement="top" data-html="true" data-trigger="hover" data-content="{% filter escape %}<small>{% include "include/sourcetext.html.twig" with {source:aspect.source} only %}</small>{% endfilter %}">{{ aspect.source.id }}</a>
+
+{% if renderRelation is defined and renderRelation and aspect.relations %}
+<ul class="list-inline">
+    {% for relation in aspect.relations %}
+    <li>
+        {% if relation.source.id == aspect.person.id %}
+        {% set other = relation.target %}
+        {% else %}
+        {% set other = relation.source %}
+        {% endif %}
+        {{ icon('angle-double-right') }} <a href="{{ path('detail', {id: other.id}) }}">{{ other.displayName }}</a>
+    </li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+{% if "entryInTheOrder" == aspect.type %}
+    Entered the Society of Jesus {{ macro.places(aspect) }}
+{% elseif "beginningOfLife" == aspect.type %}
+    Born {{ macro.places(aspect) }}
+{% elseif "endOfLife" == aspect.type %}
+    Died {{ macro.places(aspect) }}
+{% elseif "resignationFromTheOrder" == aspect.type %}
+    Left the Society {{ macro.places(aspect) }}
+{% elseif "expulsionFromTheOrder" == aspect.type %}
+    Was expelled from the Society {{ macro.places(aspect) }}
+{% elseif "education" == aspect.type %}
+    Studied {{ macro.subjects(aspect) }}{{ macro.places(aspect) }}
+    {{ macro.comment(aspect) }}
+{% elseif "career" == aspect.type %}
+    {% if not aspect.occupation %}
+        Occupied himself with {{ macro.subjects(aspect) }}{{ macro.places(aspect) }}
+    {% elseif "Teacher" == aspect.occupation %}
+        Taught {{ macro.subjects(aspect) }}{{ macro.places(aspect) }}
+    {% else %}
+        {{ aspect.occupation }}{{ macro.places(aspect) }}
+    {% endif %}
+{% else %}
+    {{ aspect.description|replace_links|smart_quotes }}
+{% endif %}

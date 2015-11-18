@@ -80,10 +80,22 @@ class Aspect
     private $subjects;
 
     /**
+     * @var Relation[]|Collection
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Relation", mappedBy="aspect")
+     */
+    private $relations;
+
+    /**
      * @var string
      * @ORM\Column(type="string", length=10000, nullable=true)
      */
     private $comment;
+
+    /**
+     * @var string
+     * @ORM\Column(type="string", length=10000, nullable=true)
+     */
+    private $description;
 
     /**
      * @var string
@@ -452,5 +464,39 @@ class Aspect
     public function getOccupationSlug()
     {
         return $this->occupationSlug;
+    }
+
+    /**
+     * Add relation
+     *
+     * @param \AppBundle\Entity\Relation $relation
+     *
+     * @return Aspect
+     */
+    public function addRelation(\AppBundle\Entity\Relation $relation)
+    {
+        $this->relations[] = $relation;
+
+        return $this;
+    }
+
+    /**
+     * Remove relation
+     *
+     * @param \AppBundle\Entity\Relation $relation
+     */
+    public function removeRelation(\AppBundle\Entity\Relation $relation)
+    {
+        $this->relations->removeElement($relation);
+    }
+
+    /**
+     * Get relations
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getRelations()
+    {
+        return $this->relations;
     }
 }

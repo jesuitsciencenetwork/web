@@ -54,6 +54,11 @@ class Relation
      */
     private $value;
 
+    /**
+     * @var Aspect
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Aspect", inversedBy="relations")
+     */
+    private $aspect;
 
     /**
      * Get id
@@ -183,5 +188,29 @@ class Relation
     public function getTarget()
     {
         return $this->target;
+    }
+
+    /**
+     * Set aspect
+     *
+     * @param \AppBundle\Entity\Aspect $aspect
+     *
+     * @return Relation
+     */
+    public function setAspect(\AppBundle\Entity\Aspect $aspect = null)
+    {
+        $this->aspect = $aspect;
+
+        return $this;
+    }
+
+    /**
+     * Get aspect
+     *
+     * @return \AppBundle\Entity\Aspect
+     */
+    public function getAspect()
+    {
+        return $this->aspect;
     }
 }

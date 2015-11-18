@@ -1,0 +1,26 @@
+{% spaceless %}
+{% import "macros.html.twig" as macro %}
+{% if source.editors|length > 0 and ["Carlos", "Sommervogel"] == source.editors.0 %}
+    Sommervogel, Carlos (Ed., Reprint 1960): <em>Bibliothèque de la Compagnie de Jésus</em>. {{ source.title }}.
+{% else %}
+    {% if "Aufsatz" == source.genre %}
+        {{ macro.namelist(source.authors, true, "; ") }}{% if source.dateIssued %}  ({{ source.dateIssued }}){% endif %}: “{{ source.title }}”. In: <em>{{ source.seriesTitle }}</em>. {% if source.editors %}Ed. by {{ macro.namelist(source.editors, false, " and ") }}, {% endif %}{{ source.publisher }}{% if source.publisher and source.place %}, {% endif %}{{ source.place }}{% if source.note %}{% if source.publisher or source.place %}, {% endif %}{% if "-" in source.note %}pp.{% else %}p.{% endif %} {{ source.note }}{% endif %}.
+    {% elseif "database" == source.genre %}
+        {% if not "wikipedia" in source.url %}{{ macro.namelist(source.authors, true, "; ") }}: {% endif %}<a href="{{ source.url }}">“{{ source.title }}”</a>. Accessed {{ source.dateCaptured|date("F j, Y") }}.
+    {% elseif "book" == source.genre %}
+        {% if source.editors %}
+            {% if source.seriesTitle %}
+                {{ macro.namelist(source.editors, true, "; ") }} (Ed.{% if source.dateIssued %}, {{ source.dateIssued }}{% endif %}): <em>{{ source.seriesTitle }}</em>.{% if source.title %} {{ source.title }}.{% endif %}
+            {% else %}
+                {{ macro.namelist(source.editors, true, "; ") }} (Ed.{% if source.dateIssued %}, {{ source.dateIssued }}{% endif %}): “{{ source.title }}”.
+            {% endif %}
+        {% else %}
+            {{ macro.namelist(source.authors, true, "; ") }}{% if source.dateIssued %} ({{ source.dateIssued }}){% endif %}: “{{ source.title }}”. {{ source.publisher }}{% if source.publisher and source.place %}, {% endif %}{{ source.place }}.
+        {% endif %}
+    {% elseif "VIAF" == source.genre %}
+        VIAF: <a href="{{ source.url }}">{{ source.url }}</a>
+    {% elseif "GND" == source.genre %}
+        GND: <a href="{{ source.url }}">{{ source.url }}</a>
+    {% endif %}
+{% endif %}
+{% endspaceless %}

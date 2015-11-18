@@ -24,6 +24,27 @@ class AppExtension extends \Twig_Extension
         'SA' => 'South America'
     );
 
+    private static $forceUppercase = array(
+        'Arabic',
+        'Aristotelian logic',
+        'Catalan',
+        'Chinese writing system',
+        'Czech',
+        'English',
+        'French',
+        'German',
+        'Greek',
+        'Hebrew',
+        'Infima',
+        'Italian',
+        'Latin',
+        'Latin poetry',
+        'Portuguese',
+        'Russian',
+        'Spanish',
+        'Turkish',
+    );
+
     public function __construct(RenderingHelper $helper)
     {
         $this->helper = $helper;
@@ -44,6 +65,13 @@ class AppExtension extends \Twig_Extension
         );
     }
 
+    public function getTests()
+    {
+        return array(
+            new \Twig_SimpleTest('lowercaseable', array($this, 'lowercaseable')),
+        );
+    }
+
     public function smartQuotes($value)
     {
         return $this->fixer->fix($value);
@@ -56,6 +84,15 @@ class AppExtension extends \Twig_Extension
     public function formatCountry($value)
     {
         return Intl::getRegionBundle()->getCountryName($value, 'en_US');
+    }
+
+    public function lowercaseable($value)
+    {
+        if (in_array($value, self::$forceUppercase)) {
+            return false;
+        }
+
+        return true;
     }
 
     public function formatContinent($value)

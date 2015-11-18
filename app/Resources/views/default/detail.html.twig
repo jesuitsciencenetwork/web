@@ -9,48 +9,49 @@
             <header>
                 <h1>{{ person.displayName }} <small class="text-muted">({{ person.dateOfBirth }}–{{ person.dateOfDeath }})</small></h1>
                 <p class="small text-muted pref">
-                    IDI: <a href="https://pdrprod.bbaw.de/idi/pdrnc/{{ person.pdrId }}" title="Download raw data as XML" download><code>{{ person.pdrId }}</code></a>{% if person.viafId %} &bull; VIAF: <a target="_blank" href="http://viaf.org/viaf/{{ person.viafId }}"><code>{{ person.viafId }}</code></a>{% endif %}
+                    <a href="{{ path('data', {format: 'xml', id: person.id}) }}" title="View as XML"><code>XML</code></a>
+                    <a href="{{ path('data', {format: 'json', id: person.id}) }}" title="View as JSON"><code>JSON</code></a>
+                    <a href="https://pdrprod.bbaw.de/idi/pdrnc/{{ person.pdrId }}" title="Download raw, unprocessed data as XML" download><code>RAW</code></a>
+                    {% if person.viafId %} &bull; VIAF: <a target="_blank" href="http://viaf.org/viaf/{{ person.viafId }}"><code>{{ person.viafId }}</code></a>{% endif %}
                 </p>
 
 
             </header>
 
-            <ul class="list-unstyled timeline">
-                {% for aspect in aspects %}
-                    {% set aspect = aspect.0 %}
-                <li class="timeline-entry type-{{ aspect.type }}">
-                    <span class="date">
-                        {% if aspect.dateExact %}
-                            {{ aspect.dateExact }}
-                        {% elseif aspect.dateFrom or aspect.dateTo %}
-                            {{ aspect.dateFrom }} – {{ aspect.dateTo }}
-                        {% endif %}
-                    </span>
-                    {% for place in aspect.places %}
-                    <span class="place"><button type="button" data-lat="{{ place.latitude }}" data-lng="{{ place.longitude }}" class="geo btn btn-link">{{ icon('map-marker') }} {{ place.placeName }}</button></span>
-                    {% endfor %}
-                    {% if "entryInTheOrder" == aspect.type %}
-                        <em>Entered the order</em>
-                    {% elseif "beginningOfLife" == aspect.type %}
-                        <em>Born</em>
-                    {% elseif "endOfLife" == aspect.type %}
-                        <em>Died</em>
-                    {% elseif "resignationFromTheOrder" == aspect.type %}
-                        <em>Resigned from the order</em>
-                    {% elseif "expulsionFromTheOrder" == aspect.type %}
-                        <em>Expelled from the order</em>
-                    {% endif %}
-                    {{ aspect.comment }}
-                    {% if aspect.subjects|length %}
-                        <ul class="list-inline">
-                            {% for subject in aspect.subjects %}
-                                <li><a href="{{ path('subject', {slug:subject.slug}) }}"><span class="badge badge-default">{{ subject.title }}</span></a></li>
-                            {% endfor %}
-                        </ul>
-                    {% endif %}
-                </li>
+            {% for section, subSections in aspects %}
+            <h4>{{ section }}</h4>
+            <ul class="aspect-list timeline">
+            {% for aspectList in subSections %}
+                {% for aspect in aspectList %}
+                    <li class="aspect timeline-entry">
+                        {% include "include/aspect.html.twig" with {aspect: aspect} only %}
+                    </li>
                 {% endfor %}
+            {% endfor %}
             </ul>
+            {% endfor %}
+
+            {% if person.relationsOutgoing|length %}
+                <h4>Relations</h4>
+                <ul class="aspect-list timeline">
+                    {% for relation in person.relationsOutgoing %}
+                        <li class="aspect timeline-entry">
+                            {% include "include/aspect.html.twig" with {aspect: relation.aspect, renderRelations: true} only %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+
+            {% if person.relationsIncoming|length %}
+                <h4>Relations from others</h4>
+                <ul class="aspect-list timeline">
+                    {% for relation in person.relationsIncoming %}
+                        <li class="aspect timeline-entry">
+                            {% include "include/aspect.html.twig" with {aspect: relation.aspect, renderRelations: true} only %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
 
         </div>
         <div class="col-sm-4 col-right">
@@ -99,6 +100,17 @@
                 </ul>
             </div>
             {% endif %}
+
+            {% if person.relationsIncoming|length %}
+                <h4>Relations from others</h4>
+                <div class="panel panel-default">
+                    <ul class="list-group">
+                        {% for relation in person.relationsIncoming %}
+                            <a class="list-group-item" href="{{ path('detail', {id:relation.id}) }}">{{ relation.source.displayName }}</a>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
         </div>
     </div>
 
@@ -106,13 +118,10 @@
 
     <div class="container detail">
         <h4>Sources</h4>
-        <ol>
+        <ol class="source-list">
             {% for source in person.sources %}
-            <li>
-                <strong>{{ source.id }}</strong>
-                <pre>
-                    {{ source.payload }}
-                </pre>
+            <li id="source-{{ source.id }}">
+                {% include "include/source.html.twig" with {source: source} only %}
             </li>
             {% endfor %}
         </ol>

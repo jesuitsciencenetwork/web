@@ -59,6 +59,7 @@ assetic:
         scripts:
             inputs:
                 - "%kernel.root_dir%/../vendor/components/jquery/jquery.js"
+                - "%kernel.root_dir%/Resources/vendor/jquery-ui.js"
                 - "%kernel.root_dir%/../vendor/twbs/bootstrap/js/dropdown.js"
                 - "%kernel.root_dir%/../vendor/twbs/bootstrap/js/modal.js"
                 - "%kernel.root_dir%/../vendor/twbs/bootstrap/js/tooltip.js"

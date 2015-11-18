@@ -1,0 +1,42 @@
+{% macro namelist(list, reverse, join) %}
+    {% for name in list %}{% if reverse %}{{ name.1 }}, {{ name.0 }}{% else %}{{ name.0 }} {{ name.1 }}{% endif %}{% if not loop.last %}{{ join }}{% endif %}{% endfor %}
+{% endmacro %}
+
+{% macro color(source) %}{% spaceless %}
+    {% import _self as macro %}
+    {% set editor = macro.namelist(source.editors, false, "")|raw|trim %}
+    {% set author = macro.namelist(source.authors, false, "")|raw|trim %}
+    {% if "Carlos Sommervogel" == editor %}
+        color-sommervogel
+    {% elseif "Charles O&#039;Neill" == editor %}
+        color-oneill
+    {% elseif "Maria Reindl" == author %}
+        color-reindl
+    {% elseif ("VIAF" == source.genre or "GND" == source.genre) %}
+        color-viaf
+    {% elseif "Bogdan Lisiak" == author %}
+        color-lisiak
+    {% elseif "Ludwik Grzebień" == author %}
+        color-grzebien
+    {% elseif "Georg Schuppener" == author %}
+        color-schuppener
+    {% elseif "database" == source.genre %}
+        color-database
+    {% elseif "József Szinnyei" == author %}
+        color-szinnyei
+    {% else %}
+        color-other
+    {% endif %}
+{% endspaceless %}{% endmacro %}
+
+{% macro person(person) %}
+    <li class="entry">
+        <a href="{{ path('detail', {id:person.id}) }}">{{ person.listName }}</a>
+        <small class="text-muted">({{ person.dateOfBirth }}–{{ person.dateOfDeath }})</small>
+    </li>
+{% endmacro %}
+
+{% macro places(aspect) %}{% if aspect.places|length %} in {% for place in aspect.places %}<a href="#place-{{ place.slug }}" data-lat="{{ place.latitude }}" data-lng="{{ place.longitude }}" class="geo">{{ icon('map-marker') }} {{ place.placeName }}</a>{% if not loop.last %}, {% endif %}{% endfor %}{% endif %}{% endmacro %}
+{% macro comment(aspect) %}{% if aspect.comment %}<br><em>{{ aspect.comment }}</em>{% endif %}{% endmacro %}
+{% macro subjects(aspect, lower=true) %}{% for subject in aspect.subjects %}{% if "Infima" == subject.title %}the {% endif %}<a class="subject" href="{{ path('subject', {slug:subject.slug}) }}">{% if lower and subject.title is lowercaseable %}{{ subject.title|lower }}{% else %}{{ subject.title }}{% endif %}</a>{% if not loop.last %}, {% endif %}{% endfor %}{% endmacro %}
+

@@ -9,8 +9,14 @@ window.scrollTo = function scrollTo(fragment, offset) {
 $(function () {
     $('a[href^="#"]').click(function (event) {
         event.preventDefault();
-        scrollTo($(this).attr('href'));
+        var $this = $(this), fragment = $(this).attr('href');
+        if ($this.hasClass('jumphighlight')) {
+            $(fragment).effect('highlight', 2500);
+        }
+        scrollTo(fragment);
     });
+
+    $('.js-popover').popover();
 
     $(window).on('hashchange', function(event) {
         event.preventDefault();

@@ -69,18 +69,6 @@ class Person
     private $dateOfDeath;
 
     /**
-     * @var string
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $placeOfBirth;
-
-    /**
-     * @var string
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $placeOfDeath;
-
-    /**
      * @var AlternateName[]|Collection
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\AlternateName", mappedBy="person")
      */
@@ -499,54 +487,6 @@ class Person
     public function getNameLink()
     {
         return $this->nameLink;
-    }
-
-    /**
-     * Set placeOfBirth
-     *
-     * @param string $placeOfBirth
-     *
-     * @return Person
-     */
-    public function setPlaceOfBirth($placeOfBirth)
-    {
-        $this->placeOfBirth = $placeOfBirth;
-
-        return $this;
-    }
-
-    /**
-     * Get placeOfBirth
-     *
-     * @return string
-     */
-    public function getPlaceOfBirth()
-    {
-        return $this->placeOfBirth;
-    }
-
-    /**
-     * Set placeOfDeath
-     *
-     * @param string $placeOfDeath
-     *
-     * @return Person
-     */
-    public function setPlaceOfDeath($placeOfDeath)
-    {
-        $this->placeOfDeath = $placeOfDeath;
-
-        return $this;
-    }
-
-    /**
-     * Get placeOfDeath
-     *
-     * @return string
-     */
-    public function getPlaceOfDeath()
-    {
-        return $this->placeOfDeath;
     }
 
     /**

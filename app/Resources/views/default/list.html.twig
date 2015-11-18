@@ -1,13 +1,6 @@
 {% extends "layout.html.twig" %}
 
-{% macro person(person) %}
-    <li class="entry">
-        <a href="{{ path('detail', {id:person.id}) }}">{{ person.listName }}</a>
-        <small class="text-muted">({{ person.dateOfBirth }}–{{ person.dateOfDeath }})</small>
-    </li>
-{% endmacro %}
-
-{% import _self as macro %}
+{% import "macros.html.twig" as macro %}
 
 {% block bodyAttributes %} data-spy="scroll" data-target="#letter-list"{% endblock %}
 

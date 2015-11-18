@@ -120,7 +120,8 @@ class PdrConnector
                     $object,
                     $class,
                     $context,
-                    $value
+                    $value,
+                    Helper::pdr2num($aspectData['aoId'])
                 );
             }
 
@@ -321,7 +322,7 @@ class PdrConnector
                 } elseif (strpos(strtolower($childNode->nodeValue), 'resignation') !== false) {
                     $output['type'] = 'resignationFromTheOrder';
                 }
-                $textParts[] = trim($childNode->nodeValue);
+                $textParts[] = $childNode->nodeValue;
                 continue;
             }
 
@@ -334,16 +335,18 @@ class PdrConnector
             if ($tag == 'persName') {
                 $textParts[] = '{P:' . $ana . '|' . $childNode->nodeValue . '}';
             } elseif ($tag == 'name' && $type == 'science' && $subtype == 'subject') {
-                if ($href && $ana !== $currentPoId) {
-                    continue;
-                }
                 $slug = Helper::slugify($childNode->nodeValue);
-                $output['subjects'][$slug] = $childNode->nodeValue;
                 $textParts[] = '{S:' . $slug . '|' . $childNode->nodeValue . '}';
+                if (!$href || $ana === $currentPoId) {
+                    $output['subjects'][$slug] = $childNode->nodeValue;
+                }
             } elseif ($tag == 'name' && $type == 'occupation') {
                 $output['occupation'] = $childNode->nodeValue;
+                $slug = Helper::slugify($childNode->nodeValue);
+                $textParts[] = '{O:' . $slug . '|' . $childNode->nodeValue . '}';
             } elseif ($tag == 'name' && $type == 'Comment') {
                 $output['comments'][] = $childNode->nodeValue;
+                $textParts[] = $childNode->nodeValue;
             } elseif ($tag == 'placeName') {
                 $output['places'][] = $childNode->nodeValue;
 //                $textParts[] = '{M:' . $childNode->nodeValue . '}';
@@ -368,20 +371,15 @@ class PdrConnector
                     $output['dateTo'] = $date;
                 }
                 $textParts[] = $childNode->nodeValue;
+//            } elseif ($tag == 'orgName' && $subtype == 'academy') { // @TODO
+
             } else {
                 $textParts[] = $childNode->nodeValue;
-//                var_dump($tag);
-//                var_dump($type);
-//                var_dump($subtype);
-//                var_dump($href);
-//                echo " == \n";
             }
 
         }
 
-        //$output['subjects'] = array_unique($output['subjects']);
-
-        //$output['description'] = implode(' ', $textParts);
+        $output['description'] = implode('', $textParts);
 
         return $output;
     }

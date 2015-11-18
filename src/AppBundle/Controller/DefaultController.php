@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\Aspect;
 use AppBundle\Entity\Person;
 use AppBundle\Helper;
 use Doctrine\ORM\EntityRepository;
@@ -33,11 +34,16 @@ class DefaultController extends Controller
             ->getDoctrine()
             ->getRepository('AppBundle:Person')
             ->createQueryBuilder('p')
-            ->select('p, sbj, src, nam, rel')
+            ->select('p, sbj, src, nam, relout, relin, relouta, relina, relins, reloutt')
             ->leftJoin('p.subjects', 'sbj')
             ->leftJoin('p.sources', 'src')
             ->leftJoin('p.alternateNames', 'nam')
-            ->leftJoin('p.relationsOutgoing', 'rel')
+            ->leftJoin('p.relationsOutgoing', 'relout')
+            ->leftJoin('p.relationsIncoming', 'relin')
+            ->leftJoin('relout.aspect', 'relouta')
+            ->leftJoin('relout.target', 'reloutt')
+            ->leftJoin('relin.aspect', 'relina')
+            ->leftJoin('relin.source', 'relins')
             ->where('p.id = :id')
             ->setParameter('id', $id)
             ->getQuery()
@@ -48,11 +54,11 @@ class DefaultController extends Controller
             throw new NotFoundHttpException('Person not found');
         }
 
-        $aspects = $this
+        $aspectsResult = $this
             ->getDoctrine()
             ->getRepository('AppBundle:Aspect')
             ->createQueryBuilder('a')
-            ->select('a, p, subj, COALESCE(a.dateExact, a.dateFrom, a.dateTo, 99999) as orderDate')
+            ->select('a, p, subj, COALESCE(a.dateExact, a.dateFrom, a.dateTo, 99999) as orderDate, (SELECT COUNT(r.id) FROM AppBundle:Relation r WHERE r.aspect = a.id) as relationCount')
             ->addSelect("FIELD(a.type, 'beginningOfLife', 'entryInTheOrder', 'resignationFromTheOrder', 'expulsionFromTheOrder', 'endOfLife', 'education', 'career', 'miscellaneous') as HIDDEN typeField")
             ->addOrderBy('typeField', 'ASC')
             ->addOrderBy('orderDate', 'ASC')
@@ -64,6 +70,33 @@ class DefaultController extends Controller
             ->execute()
         ;
 
+        $aspects = array();
+        foreach ($aspectsResult as $aspectRow) {
+            /** @var Aspect $aspect */
+            $aspect = $aspectRow[0];
+
+            if ($aspect->getDateExact() || $aspect->getDateFrom() || $aspect->getDateTo()) {
+                $key = 'Dated';
+            } else {
+                $key = 'Undated';
+            }
+
+            $type = ucfirst($aspect->getType());
+            if (in_array($type, array('BeginningOfLife', 'EntryInTheOrder', 'ResignationFromTheOrder', 'ExpulsionFromTheOrder', 'EndOfLife'))) {
+                $type = 'Biographical data';
+            } elseif ('Miscellaneous' === $type) {
+                if ($aspectRow['relationCount']) {
+                    continue;
+                }
+            }
+
+            if (!array_key_exists($type, $aspects)) {
+                $aspects[$type] = array('Dated' => array(), 'Undated' => array());
+            }
+
+            $aspects[$type][$key][] = $aspect;
+        }
+
         return $this->render('default/detail.html.twig', array(
             'person' => $person,
             'aspects' => $aspects
@@ -72,8 +105,11 @@ class DefaultController extends Controller
 
     /**
      * @Route("/p/{id}.{format}", requirements={"format" = "json|yml|xml"}, name="data")
+     * @param $id
+     * @param $format
+     * @return Response
      */
-    public function jsonAction($id, $format, Request $request)
+    public function serializeAction($id, $format)
     {
         $person = $this
             ->getDoctrine()
@@ -110,26 +146,6 @@ class DefaultController extends Controller
         }
 
         return $response;
-//        $aspects = $this
-//            ->getDoctrine()
-//            ->getRepository('AppBundle:Aspect')
-//            ->createQueryBuilder('a')
-//            ->select('a, p, subj, COALESCE(a.dateExact, a.dateFrom, a.dateTo, 99999) as orderDate')
-//            ->addSelect("FIELD(a.type, 'beginningOfLife', 'entryInTheOrder', 'resignationFromTheOrder', 'expulsionFromTheOrder', 'endOfLife', 'education', 'career', 'miscellaneous') as HIDDEN typeField")
-//            ->addOrderBy('typeField', 'ASC')
-//            ->addOrderBy('orderDate', 'ASC')
-//            ->leftJoin('a.places', 'p')
-//            ->leftJoin('a.subjects', 'subj')
-//            ->where('a.person = :person')
-//            ->setParameter('person', $person->getId())
-//            ->getQuery()
-//            ->execute()
-//        ;
-//
-//        return $this->render('default/detail.html.twig', array(
-//            'person' => $person,
-//            'aspects' => $aspects
-//        ));
     }
 
     /**
