@@ -13,7 +13,7 @@ harris_astronomy:
     name: Astronomy
     scheme: harris
     subjects:
-    	- Astronomical facilities
+        - Astronomical facilities
         - Astronomical instruments
         - Astronomical observations
         - Astronomical observatories
@@ -83,10 +83,10 @@ harris_languages:
         - Syntax
         - Turkish
 harris_literae_humaniores:
-	name: Literae humaniores
-	scheme: harris
-	subjects:
-		- Literae humaniores
+    name: Literae humaniores
+    scheme: harris
+    subjects:
+        - Literae humaniores
 harris_medicine:
     name: Medicine
     scheme: harris
@@ -279,7 +279,7 @@ modern_astronomy:
     name: Astronomy
     scheme: modern
     subjects:
-    	- Astronomical facilities
+        - Astronomical facilities
         - Astronomical instruments
         - Astronomical observations
         - Astronomical observatories
@@ -417,10 +417,10 @@ modern_law:
         - Canon law
         - Law
 modern_literae_humaniores:
-	name: Literae humaniores
-	scheme: modern
-	subjects:
-		- Literae humaniores
+    name: Literae humaniores
+    scheme: modern
+    subjects:
+        - Literae humaniores
 modern_mathematics:
     name: Mathematics
     scheme: modern
