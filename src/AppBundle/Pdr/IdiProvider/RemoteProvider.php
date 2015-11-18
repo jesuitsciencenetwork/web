@@ -8,7 +8,7 @@ class RemoteProvider implements IdiProviderInterface
 {
     public function getXml($pdrId)
     {
-        $url = 'https://pdrprod.bbaw.de/idi/pdr/'.$pdrId;
+        $url = 'https://pdrprod.bbaw.de/idi/pdrnc/'.$pdrId;
 
         $ch = curl_init($url);
         curl_setopt_array($ch, array(
