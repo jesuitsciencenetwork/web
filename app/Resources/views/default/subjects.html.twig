@@ -17,7 +17,7 @@
     <div class="container container-narrow alph-list{% if scheme is not defined %} fixed{% endif %}">
         <div class="col-xs-12">
             <header>
-                <ul class="pull-right nav nav-pills group-nav">
+                <ul class="pull-right nav nav-pills nav-pills-small group-nav">
                     <li{% if scheme is not defined %} class="active"{% endif %}><a href="{{ path('subjects') }}">alphabetical</a></li>
                     <li{% if scheme is defined and scheme == 'harris' %} class="active"{% endif %}><a href="{{ path('subjects_grouped', {scheme: 'harris'}) }}">contemporary grouping</a></li>
                     <li{% if scheme is defined and scheme == 'modern' %} class="active"{% endif %}><a href="{{ path('subjects_grouped', {scheme: 'modern'}) }}">modern grouping</a></li>

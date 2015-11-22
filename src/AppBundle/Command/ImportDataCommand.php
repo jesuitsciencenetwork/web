@@ -104,7 +104,7 @@ class ImportDataCommand extends Command
             'INSERT INTO relations (source_id, target_id, class, context, `value`, aspect_id) VALUES (?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE id=id'
         );
         $personStatement = $connection->prepare(
-            'INSERT INTO person (id, first_name, name_link, last_name, title, is_jesuit, viaf_id, date_of_birth, date_of_death) VALUES (:id, :firstName, :nameLink, :lastName, :title, :isJesuit, :viafId, :dateOfBirth, :dateOfDeath)'
+            'INSERT INTO person (id, display_name, list_name, is_jesuit, viaf_id, lastmod, date_of_birth, date_of_death) VALUES (:id, :displayName, :listName, :isJesuit, :viafId, :lastmod, :dateOfBirth, :dateOfDeath)'
         );
         $nameStatement = $connection->prepare(
             'INSERT INTO alternate_name (person_id, display_name) VALUES (:personId, :displayName)'
@@ -283,11 +283,10 @@ class ImportDataCommand extends Command
             $po = Helper::pdr2num($personData['pdrId']);
             $personStatement->execute(array(
                 ':id' => $po,
-                ':firstName' => $personData['firstName'] ?: null ,
-                ':nameLink' => $personData['nameLink'] ?: null,
-                ':lastName' => $personData['lastName'] ?: null,
-                ':title' => $personData['title'] ?: null,
+                ':displayName' => $personData['displayName'],
+                ':listName' => $personData['listName'],
                 ':viafId' => $personData['viaf'] ?: null,
+                ':lastmod' => $personData['lastmod'],
                 ':dateOfBirth' => $personData['beginningOfLife'] ?: null,
                 ':dateOfDeath' => $personData['endOfLife'] ?: null,
                 ':isJesuit' => $personData['nonjesuit'] ? false : true

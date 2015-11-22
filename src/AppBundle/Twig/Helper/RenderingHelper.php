@@ -9,6 +9,37 @@ class RenderingHelper
     /** @var Router */
     private $router;
 
+    private static $continents = array(
+        'AF' => 'Africa',
+        'AN' => 'Antarctica',
+        'AS' => 'Asia',
+        'EU' => 'Europe',
+        'NA' => 'North America',
+        'OC' => 'Oceania',
+        'SA' => 'South America'
+    );
+
+    private static $forceUppercase = array(
+        'Arabic',
+        'Aristotelian logic',
+        'Catalan',
+        'Chinese writing system',
+        'Czech',
+        'English',
+        'French',
+        'German',
+        'Greek',
+        'Hebrew',
+        'Infima',
+        'Italian',
+        'Latin',
+        'Latin poetry',
+        'Portuguese',
+        'Russian',
+        'Spanish',
+        'Turkish',
+    );
+
     /**
      * RenderingHelper constructor.
      * @param Router $router

@@ -8,7 +8,7 @@ use JMS\Serializer\Annotation\Groups;
 
 /**
  * Class Place
- * @ORM\Entity
+ * @ORM\Entity()
  * @ORM\Table(indexes={@ORM\Index(name="place_name", columns={"place_name"}),@ORM\Index(name="slug", columns={"slug"})})
  */
 class Place

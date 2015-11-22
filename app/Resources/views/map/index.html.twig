@@ -1,5 +1,7 @@
 {% extends "layout.html.twig" %}
 
+{% set renderFooter = false %}
+
 {% block content %}
 <div id="map"></div>
     <div id="map-filters">
@@ -10,13 +12,15 @@
 {% block stylesheets %}
     <style type="text/css">
         body, html {
-            height: 100%;
-            margin: 0;
-            padding: 0;
+            height: 100%;;
         }
         #map {
-            height: 100%;
-            margin-top: 50px;
+            height: auto;
+            position: absolute;
+            top: 50px;
+            bottom: 0;
+            left: 0;
+            right: 0;
         }
         #map-filters {
             font-size: 75%;
@@ -41,15 +45,16 @@
     </style>
 {% endblock %}
 
+{% set enableMap = true %}
+
 {% block javascripts %}
     <script type="text/javascript">
         var map;
-        function initMap() {
+        $('body').one('map:ready', function() {
             map = new google.maps.Map(document.getElementById('map'), {
                 center: {lat: -34.397, lng: 150.644},
                 zoom: 8
             });
-        }
+        });
     </script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBAj3xGeT4xh_SJyqeiPJqMKHY0UnQV2Eg&callback=initMap" async defer></script>
 {% endblock %}

@@ -4,13 +4,14 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Aspect;
 use AppBundle\Entity\Person;
+use AppBundle\Entity\Subject;
+use AppBundle\Entity\SubjectGroup;
 use AppBundle\Helper;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query;
 use JMS\Serializer\SerializationContext;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -22,9 +23,126 @@ class DefaultController extends Controller
      */
     public function indexAction()
     {
-        return $this->render('default/index.html.twig', array());
+        $stats = $this->getDoctrine()->getManager()->createQuery(
+            'SELECT COUNT(p.id) as nb, MAX(p.lastMod) as lm FROM AppBundle:Person p'
+        )->getResult(Query::HYDRATE_ARRAY);
+
+        return $this->render('static/index.html.twig', array(
+            'subjectGroupTree' => $this->getSubjectGroupTree(),
+//            'subjects' => $subjects,
+            'stats' => $stats[0]
+        ));
     }
 
+    private function getSubjectGroupTree()
+    {
+        $q = $this
+            ->getDoctrine()
+            ->getRepository('AppBundle:SubjectGroup')
+            ->createQueryBuilder('g')
+            ->select('g, s')
+            ->leftJoin('g.subjects', 's')
+            ->where('g.scheme = :scheme')
+            ->addOrderBy('g.title', 'ASC')
+            ->addOrderBy('s.title', 'ASC')
+            ->getQuery()
+        ;
+
+        $contemporary = $q->execute(array('scheme' => 'harris'));
+        $modern = $q->execute(array('scheme' => 'modern'));
+
+        $callback = function (SubjectGroup $group) {
+            return array(
+                'text' => $group->getTitle(),
+                'selectable' => false,
+                'disableCheckbox' => true,
+                'nodes' => $group->getSubjects()->map(function (Subject $s) {
+                    return array(
+                        'text' => $s->getTitle(),
+                        'id' => $s->getId()
+                    );
+                })->toArray(),
+                'state' => array('expanded' => $group->getSubjects()->count() <= 3)
+            );
+        };
+
+        return array(
+            array(
+                'text' =>  '<em>Contemporary grouping</em>',
+                'selectable' => false,
+                'disableCheckbox' => true,
+                'nodes' => array_map($callback, $contemporary)
+            ),
+            array(
+                'text' =>  '<em>Modern grouping</em>',
+                'selectable' => false,
+                'disableCheckbox' => true,
+                'nodes' => array_map($callback, $modern)
+            ),
+        );
+    }
+
+    /**
+     * @Route("/results/", name="results")
+     */
+    public function resultsAction(Request $request)
+    {
+        return $this->render('search/results.html.twig');
+    }
+
+    /**
+     * @Route("/search/", name="search")
+     */
+    public function searchAction(Request $request)
+    {
+        $q = $request->query;
+
+        $searchService = $this->get('jsn.search');
+
+        $query = new \AppBundle\Query();
+
+        if ($q->has('lat') && $q->has('lng') && $q->has('radius')) {
+            // where query
+            $message = 'performing where query';
+        } elseif ($q->has('continent')) {
+            $message = 'performing where query';
+            $query->setContinent($q->get('continent'));
+        } elseif ($q->has('country')) {
+            $message = 'performing where query';
+            $query->setCountry($q->get('country'));
+        } elseif ($q->has('subjects')) {
+            // what query
+            $message = 'performing what query';
+        } elseif ($q->has('from') && $q->has('to')) {
+            // when query
+            $message = 'performing when query';
+        } else {
+            if ($q->count() > 0) {
+                $this->get('braincrafted_bootstrap.flash')->alert('Your search query could not be understood.');
+            }
+
+            return $this->render('default/search.html.twig', array(
+                'subjectGroupTree' => $this->getSubjectGroupTree()
+            ));
+        }
+
+        return $searchService->render($query, $request->get('page', 1));
+
+    }
+
+
+
+    /**
+     * @Route("/sources/", name="sources")
+     */
+    public function sourcesAction()
+    {
+        $sources = $this->getDoctrine()->getManager()->createQuery('SELECT s FROM AppBundle:Source s WHERE s.genre <> ?0 and s.genre <> ?1 order by s.id asc')->execute(array('VIAF', 'GND'));
+
+        return $this->render('default/sources.html.twig', array(
+            'sources' => $sources
+        ));
+    }
     /**
      * @Route("/p/{id}/", requirements={"id" = "\d+"}, name="detail")
      */
@@ -34,16 +152,12 @@ class DefaultController extends Controller
             ->getDoctrine()
             ->getRepository('AppBundle:Person')
             ->createQueryBuilder('p')
-            ->select('p, sbj, src, nam, relout, relin, relouta, relina, relins, reloutt')
+            ->select('p, sbj, relout, relin, relouta, relina')
             ->leftJoin('p.subjects', 'sbj')
-            ->leftJoin('p.sources', 'src')
-            ->leftJoin('p.alternateNames', 'nam')
             ->leftJoin('p.relationsOutgoing', 'relout')
             ->leftJoin('p.relationsIncoming', 'relin')
             ->leftJoin('relout.aspect', 'relouta')
-            ->leftJoin('relout.target', 'reloutt')
             ->leftJoin('relin.aspect', 'relina')
-            ->leftJoin('relin.source', 'relins')
             ->where('p.id = :id')
             ->setParameter('id', $id)
             ->getQuery()
@@ -53,6 +167,11 @@ class DefaultController extends Controller
         if (null === $person) {
             throw new NotFoundHttpException('Person not found');
         }
+
+        $relations = $this->getDoctrine()->getConnection()->executeQuery(
+            'SELECT IF(:id = r.source_id, t.id, s.id) as id, IF(:id = r.source_id, t.display_name, s.display_name) as name FROM relations r LEFT JOIN person t ON r.target_id = t.id LEFT JOIN person s ON r.source_id = s.id WHERE r.source_id = :id OR r.target_id = :id GROUP BY id ORDER BY IF(:id = r.source_id, t.list_name, s.list_name) ASC',
+            array('id' => $person->getId())
+        )->fetchAll();
 
         $aspectsResult = $this
             ->getDoctrine()
@@ -99,6 +218,7 @@ class DefaultController extends Controller
 
         return $this->render('default/detail.html.twig', array(
             'person' => $person,
+            'relations' => $relations,
             'aspects' => $aspects
         ));
     }
@@ -161,11 +281,10 @@ class DefaultController extends Controller
             ->getDoctrine()
             ->getRepository('AppBundle:Person')
             ->createQueryBuilder('p')
-            ->select('p, s, COALESCE(p.lastName, p.firstName) as sortOrder')
+            ->select('p, s')
             ->leftJoin('p.subjects', 's')
             ->where('p.isJesuit = 1')
-            ->addOrderBy('sortOrder', 'ASC')
-            ->addOrderBy('p.firstName', 'ASC')
+            ->addOrderBy('p.listName', 'ASC')
             ->getQuery()
             ->execute()
         ;
@@ -191,11 +310,10 @@ class DefaultController extends Controller
             ->getDoctrine()
             ->getRepository('AppBundle:Person')
             ->createQueryBuilder('p')
-            ->select('p, s, COALESCE(p.lastName, p.firstName) as sortOrder')
+            ->select('p, s')
             ->leftJoin('p.subjects', 's')
             ->where('p.isJesuit = 0')
-            ->addOrderBy('sortOrder', 'ASC')
-            ->addOrderBy('p.firstName', 'ASC')
+            ->addOrderBy('p.listName', 'ASC')
             ->getQuery()
             ->execute()
         ;
@@ -342,8 +460,8 @@ class DefaultController extends Controller
         $letters = array();
 
         foreach ($persons as $person) {
-            $person = $person[0]; // 0 = entity, 1 = coalesce(...)
-            $letter = strtoupper(Helper::removeAccents(mb_substr($person->getLastName() ? $person->getLastName() : $person->getFirstName(), 0, 1)));
+//            $person = $person[0]; // 0 = entity, 1 = coalesce(...)
+            $letter = strtoupper(Helper::removeAccents(mb_substr($person->getListName(), 0, 1)));
             if (!array_key_exists($letter, $letters)) {
                 $letters[$letter] = array();
             }
@@ -463,31 +581,6 @@ class DefaultController extends Controller
         return $this->redirect($this->generateUrl('detail', array('id' => $person->getId())));
     }
 
-    /**
-     * @Route("/imprint/", name="imprint")
-     */
-    public function imprintAction()
-    {
-        return $this->render('default/imprint.html.twig');
-    }
 
-    /**
-     * @Route("/workshop/2015/", name="workshop")
-     */
-    public function workshopAction()
-    {
-        return $this->render('default/workshop.html.twig', array());
-    }
-
-    /**
-     * @Route("/debug-sources/", name="debug_sources")
-     */
-    public function debugSourcesAction()
-    {
-        $sources = $this->getDoctrine()->getManager()->createQuery('SELECT s FROM AppBundle:Source s WHERE s.genre <> ?0 and s.genre <> ?1 order by s.id asc')->execute(array('VIAF', 'GND'));
-        return $this->render('default/sources.html.twig', array(
-            'sources' => $sources
-        ));
-    }
 
 }

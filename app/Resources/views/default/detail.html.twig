@@ -36,7 +36,7 @@
                 <ul class="aspect-list timeline">
                     {% for relation in person.relationsOutgoing %}
                         <li class="aspect timeline-entry">
-                            {% include "include/aspect.html.twig" with {aspect: relation.aspect, renderRelations: true} only %}
+                            {% include "include/aspect.html.twig" with {aspect: relation.aspect, renderRelations: true, currentPo: person.id} only %}
                         </li>
                     {% endfor %}
                 </ul>
@@ -47,7 +47,7 @@
                 <ul class="aspect-list timeline">
                     {% for relation in person.relationsIncoming %}
                         <li class="aspect timeline-entry">
-                            {% include "include/aspect.html.twig" with {aspect: relation.aspect, renderRelations: true} only %}
+                            {% include "include/aspect.html.twig" with {aspect: relation.aspect, renderRelations: true, currentPo: person.id} only %}
                         </li>
                     {% endfor %}
                 </ul>
@@ -90,26 +90,15 @@
             </div>
             {% endif %}
 
-            {% if person.relationsOutgoing|length %}
+            {% if relations|length %}
             <h4>Relations</h4>
             <div class="panel panel-default">
                 <ul class="list-group">
-                    {% for relation in person.relationsOutgoing %}
-                    <a class="list-group-item" href="{{ path('detail', {id:relation.id}) }}">{{ relation.target.displayName }}</a>
+                    {% for relation in relations %}
+                    <a class="list-group-item" href="{{ path('detail', {id:relation.id}) }}">{{ relation.name }}</a>
                     {% endfor %}
                 </ul>
             </div>
-            {% endif %}
-
-            {% if person.relationsIncoming|length %}
-                <h4>Relations from others</h4>
-                <div class="panel panel-default">
-                    <ul class="list-group">
-                        {% for relation in person.relationsIncoming %}
-                            <a class="list-group-item" href="{{ path('detail', {id:relation.id}) }}">{{ relation.source.displayName }}</a>
-                        {% endfor %}
-                    </ul>
-                </div>
             {% endif %}
         </div>
     </div>
@@ -129,10 +118,12 @@
 
 {% endblock %}
 
+{% set enableMap = true %}
+
 {% block javascripts %}
     <script type="text/javascript">
         var map;
-        function initMap() {
+        $('body').on('map:ready', function initMap() {
             map = new google.maps.Map(document.getElementById('map'), {
                 center: {lat: -34.397, lng: 150.644},
                 zoom: 8,
@@ -157,10 +148,6 @@
                 });
             });
             map.fitBounds(bounds);
-        }
-    </script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBAj3xGeT4xh_SJyqeiPJqMKHY0UnQV2Eg&callback=initMap" async defer></script>
-    <script type="text/javascript">
-
+        });
     </script>
 {% endblock %}

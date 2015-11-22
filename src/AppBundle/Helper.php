@@ -2,8 +2,33 @@
 
 namespace AppBundle;
 
+use Symfony\Component\Intl\Intl;
+
 class Helper
 {
+    private static $continents = array(
+        'AF' => 'Africa',
+        'AN' => 'Antarctica',
+        'AS' => 'Asia',
+        'EU' => 'Europe',
+        'NA' => 'North America',
+        'OC' => 'Oceania',
+        'SA' => 'South America'
+    );
+
+    public static function formatCountry($value)
+    {
+        return Intl::getRegionBundle()->getCountryName($value, 'en_US');
+    }
+
+    public static function formatContinent($value)
+    {
+        if (!array_key_exists($value, self::$continents)) {
+            return '';
+        }
+        return self::$continents[$value];
+    }
+
     public static function num2pdr($id, $type = 'P')
     {
         return 'pdr' . $type . 'o.001.042.' . str_pad($id, 9, '0', STR_PAD_LEFT);

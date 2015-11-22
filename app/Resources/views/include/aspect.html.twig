@@ -8,22 +8,7 @@
     {% endif %}
 </span>
 
-<a class="citation {{ macro.color(aspect.source) }} fg js-popover jumphighlight" href="#source-{{ aspect.source.id }}" data-toggle="popover" data-placement="top" data-html="true" data-trigger="hover" data-content="{% filter escape %}<small>{% include "include/sourcetext.html.twig" with {source:aspect.source} only %}</small>{% endfilter %}">{{ aspect.source.id }}</a>
-
-{% if renderRelation is defined and renderRelation and aspect.relations %}
-<ul class="list-inline">
-    {% for relation in aspect.relations %}
-    <li>
-        {% if relation.source.id == aspect.person.id %}
-        {% set other = relation.target %}
-        {% else %}
-        {% set other = relation.source %}
-        {% endif %}
-        {{ icon('angle-double-right') }} <a href="{{ path('detail', {id: other.id}) }}">{{ other.displayName }}</a>
-    </li>
-    {% endfor %}
-</ul>
-{% endif %}
+<a class="citation {{ macro.color(aspect.source) }} fg js-popover jumphighlight" href="#source-{{ aspect.source.id }}" data-toggle="popover" data-placement="top" data-html="true" data-trigger="hover" title="Source for this aspect" data-content="{% filter escape %}<small>{% include "include/sourcetext.html.twig" with {source:aspect.source} only %}</small>{% endfilter %}">{{ aspect.source.id }}</a>
 
 {% if "entryInTheOrder" == aspect.type %}
     Entered the Society of Jesus {{ macro.places(aspect) }}
@@ -47,5 +32,5 @@
         {{ aspect.occupation }}{{ macro.places(aspect) }}
     {% endif %}
 {% else %}
-    {{ aspect.description|replace_links|smart_quotes }}
+    {{ aspect.description|replace_links(currentPo is defined ? [currentPo] : [])|smart_quotes }}
 {% endif %}

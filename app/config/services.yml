@@ -76,6 +76,7 @@ services:
     class: AppBundle\Twig\AppExtension
     arguments:
       - @jsn.twig.helper.rendering
+      - @jsn.stats_provider
     tags:
       - { name: twig.extension }
 
@@ -83,3 +84,15 @@ services:
     class: AppBundle\Twig\Helper\RenderingHelper
     arguments:
       - @router
+
+  jsn.stats_provider:
+    class: AppBundle\StatsProvider
+    arguments:
+      - @doctrine.orm.default_entity_manager
+
+  jsn.search:
+    class: AppBundle\SearchService
+    arguments:
+      - @templating
+      - @doctrine.orm.default_entity_manager
+      - @knp_paginator

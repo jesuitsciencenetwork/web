@@ -18,20 +18,25 @@ class GraphController extends Controller
     }
 
     /**
-     * @Route("/graph/relations/", name="graph_relations")
+     * @Route("/graph/relations/", name="relations")
      */
     public function relationsAction()
     {
         /** @var Collection|Person[] $persons */
-        $persons = $this->getDoctrine()->getManager()->createQuery('SELECT p FROM AppBundle:Person p INNER JOIN p.aspects a WITH a.country = :country')->setParameter('country', 'PL')->execute();
+        $persons = $this->getDoctrine()->getManager()
+            ->createQuery(
+                'SELECT p, (select count(r.id) from AppBundle:Relation r where r.source = p.id or r.target = p.id) as nodeValue FROM AppBundle:Person p INNER JOIN p.aspects a'
+            )
+            ->execute();
         $nodes = array();
-        foreach ($persons as $person) {
-//            $person = $row[0];
+        foreach ($persons as $row) {
+            $person = $row[0];
             $nodes[] = array(
                 'id' => (string)$person->getId(),
+                'group' => (int)$person->isJesuit(),
                 'label' => $person->getDisplayName(),
                 'title' => $person->getDisplayName(),
-//                'value' => (int)$row['nodeValue']
+                'value' => (int)$row['nodeValue']
             );
         }
 
@@ -42,7 +47,8 @@ class GraphController extends Controller
             $edges[] = array(
                 'from' => (string)$row['source_id'],
                 'to' => (string)$row['target_id'],
-                'label' => $row['class']."/".$row['context']."/".$row['value']
+                'label' => $row['value'],
+                'arrows' => 'to'
             );
         }
         return $this->render('graph/relations.html.twig', array(

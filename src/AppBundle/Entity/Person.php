@@ -24,25 +24,13 @@ class Person
      * @var string
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $firstName;
+    private $displayName;
 
     /**
      * @var string
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $lastName;
-
-    /**
-     * @var string
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $nameLink;
-
-    /**
-     * @var string
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $title;
+    private $listName;
 
     /**
      * @var boolean
@@ -55,6 +43,12 @@ class Person
      * @ORM\Column(type="integer", nullable=true)
      */
     private $viafId;
+
+    /**
+     * @var integer
+     * @ORM\Column(name="lastmod", type="datetime", nullable=true)
+     */
+    private $lastMod;
 
     /**
      * @var integer
@@ -261,99 +255,6 @@ class Person
         return $this->subjects;
     }
 
-    /**
-     * Set firstName
-     *
-     * @param string $firstName
-     *
-     * @return Person
-     */
-    public function setFirstName($firstName)
-    {
-        $this->firstName = $firstName;
-
-        return $this;
-    }
-
-    /**
-     * Get firstName
-     *
-     * @return string
-     */
-    public function getFirstName()
-    {
-        return $this->firstName;
-    }
-
-    /**
-     * Set lastName
-     *
-     * @param string $lastName
-     *
-     * @return Person
-     */
-    public function setLastName($lastName)
-    {
-        $this->lastName = $lastName;
-
-        return $this;
-    }
-
-    /**
-     * Get lastName
-     *
-     * @return string
-     */
-    public function getLastName()
-    {
-        return $this->lastName;
-    }
-
-    public function getDisplayName()
-    {
-        $name = '';
-
-        if ($this->title) {
-            $name .= $this->title . ' ';
-        }
-        if ($this->firstName) {
-            $name .= $this->firstName . ' ';
-        }
-        if ($this->nameLink) {
-            if (substr($this->nameLink, -1, 1) == "'") {
-                $name .= $this->nameLink;
-            } else {
-                $name .= $this->nameLink . ' ';
-            }
-        }
-        if ($this->lastName) {
-            $name .= $this->lastName;
-        }
-
-        return trim($name);
-    }
-
-    public function getListName()
-    {
-        $name = '';
-
-        if ($this->lastName) {
-            $name .= $this->lastName . ', ';
-        }
-
-        if ($this->title) {
-            $name .= $this->title . ' ';
-        }
-        if ($this->firstName) {
-            $name .= $this->firstName . ' ';
-        }
-        if ($this->nameLink) {
-            $name .= $this->nameLink;
-        }
-
-        return trim($name);
-    }
-
     public function getPdrId()
     {
         return Helper::num2pdr($this->id);
@@ -394,27 +295,35 @@ class Person
     }
 
     /**
-     * Set title
-     *
-     * @param string $title
-     *
-     * @return Person
+     * @return string
      */
-    public function setTitle($title)
+    public function getDisplayName()
     {
-        $this->title = $title;
-
-        return $this;
+        return $this->displayName;
     }
 
     /**
-     * Get title
-     *
+     * @param string $displayName
+     */
+    public function setDisplayName($displayName)
+    {
+        $this->displayName = $displayName;
+    }
+
+    /**
      * @return string
      */
-    public function getTitle()
+    public function getListName()
     {
-        return $this->title;
+        return $this->listName;
+    }
+
+    /**
+     * @param string $listName
+     */
+    public function setListName($listName)
+    {
+        $this->listName = $listName;
     }
 
     /**
@@ -463,30 +372,6 @@ class Person
     public function getIsJesuit()
     {
         return $this->isJesuit;
-    }
-
-    /**
-     * Set nameLink
-     *
-     * @param string $nameLink
-     *
-     * @return Person
-     */
-    public function setNameLink($nameLink)
-    {
-        $this->nameLink = $nameLink;
-
-        return $this;
-    }
-
-    /**
-     * Get nameLink
-     *
-     * @return string
-     */
-    public function getNameLink()
-    {
-        return $this->nameLink;
     }
 
     /**
@@ -624,4 +509,22 @@ class Person
     {
         return $this->sources;
     }
+
+    /**
+     * @return int
+     */
+    public function getLastMod()
+    {
+        return $this->lastMod;
+    }
+
+    /**
+     * @param int $lastMod
+     */
+    public function setLastMod($lastMod)
+    {
+        $this->lastMod = $lastMod;
+    }
+
+
 }

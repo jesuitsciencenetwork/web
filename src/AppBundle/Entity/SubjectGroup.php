@@ -41,6 +41,7 @@ class SubjectGroup
     /**
      * @var Subject[]|Collection
      * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Subject", inversedBy="subjectGroups")
+     * @ORM\OrderBy({"title" = "ASC"})
      */
     private $subjects;
 

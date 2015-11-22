@@ -1,10 +1,11 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "4af13c5434b183329a7a2dd859008b43",
+    "hash": "83eec900281a09470db27df44fa7e7d3",
+    "content-hash": "991a2bf7ff6d36f47fb498b4db74252f",
     "packages": [
         {
             "name": "braincrafted/bootstrap-bundle",
@@ -1904,6 +1905,58 @@
             "time": "2012-12-21 11:40:51"
         },
         {
+            "name": "seiyria/bootstrap-slider",
+            "version": "5.2.6",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/seiyria/bootstrap-slider.git",
+                "reference": "cc89b08faebf82d84ba53c07210d6143f2bb3c04"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/seiyria/bootstrap-slider/zipball/cc89b08faebf82d84ba53c07210d6143f2bb3c04",
+                "reference": "cc89b08faebf82d84ba53c07210d6143f2bb3c04",
+                "shasum": ""
+            },
+            "type": "library",
+            "license": [
+                "Apache 2.0"
+            ],
+            "authors": [
+                {
+                    "name": "Kyle Kemp",
+                    "email": "kyle@seiyria.com",
+                    "homepage": "http://seiyria.com",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Rohit Kalkur",
+                    "email": "rohit.kalkur@gmail.com",
+                    "homepage": "http://www.rovolutionary.com",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Lucas Zardo",
+                    "email": "lucas@deliverymuch.com.br",
+                    "homepage": "https://deliverymuch.com.br",
+                    "role": "Packagist Editor"
+                }
+            ],
+            "description": "A less buggy fork of the original bootstrap slider found on http://www.eyecon.ro/ by Stefan Petre. It was forked so we could update the slider since the original wasn't under version control.",
+            "homepage": "https://github.com/seiyria/bootstrap-slider",
+            "keywords": [
+                "bootstrap",
+                "css",
+                "javascript",
+                "slider"
+            ],
+            "support": {
+                "source": "https://github.com/seiyria/bootstrap-slider/tree/v5.2.6",
+                "issues": "https://github.com/seiyria/bootstrap-slider/issues"
+            },
+            "time": "2015-11-03 02:41:26"
+        },
+        {
             "name": "sensio/distribution-bundle",
             "version": "v4.0.3",
             "target-dir": "Sensio/Bundle/DistributionBundle",
@@ -2249,12 +2302,12 @@
             "version": "v2.3.8",
             "source": {
                 "type": "git",
-                "url": "https://github.com/symfony/SwiftmailerBundle.git",
+                "url": "https://github.com/symfony/swiftmailer-bundle.git",
                 "reference": "970b13d01871207e81d17b17ddda025e7e21e797"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/SwiftmailerBundle/zipball/970b13d01871207e81d17b17ddda025e7e21e797",
+                "url": "https://api.github.com/repos/symfony/swiftmailer-bundle/zipball/970b13d01871207e81d17b17ddda025e7e21e797",
                 "reference": "970b13d01871207e81d17b17ddda025e7e21e797",
                 "shasum": ""
             },
@@ -2536,7 +2589,7 @@
         },
         {
             "name": "twitter/typeahead.js",
-            "version": "v0.11.1",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/twitter/typeahead.js.git",
@@ -2621,7 +2674,8 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "cross-solution/bootstrap3-dialog": 20
+        "cross-solution/bootstrap3-dialog": 20,
+        "twitter/typeahead.js": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

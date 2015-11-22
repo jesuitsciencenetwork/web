@@ -1,82 +1,14 @@
 {% extends "layout.html.twig" %}
 
+{% set enableMap = true %}
+
 {% block content %}
     <div class="container container-narrow topmargin">
+        <h2 style="margin-bottom: 30px;">Search the Database</h2>
+
         {% include "flash.html.twig" %}
 
-        <h2>Advanced search</h2>
-
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aperiam, architecto autem consequatur delectus eos excepturi inventore ipsa laboriosam libero modi nesciunt quidem rerum sequi similique voluptatibus? Consectetur fuga nisi quia.</p>
-
-        {{ form_start(form, {style:"horizontal"}) }}
-
-        <h4>Who</h4>
-
-        {{ form_row(form.name) }}
-
-        <h4>Where</h4>
-        {{ form_row(form.place) }}
-        <div class="form-group">
-            <div class="col-lg-10 col-lg-offset-2">
-                <div class="pull-left" style="padding-top: 7px; padding-right: 20px;"><em>Consider only:</em></div>
-                {{ form_widget(form.placeRestriction, {attr: {inline: true}}) }}
-            </div>
-        </div>
-
-
-        <h4>When</h4>
-        <div class="form-group">
-            {{ form_label(form.birthDate, "Born") }}
-            <div class="col-lg-10">
-                <div class="col-xs-3" style="padding-left: 0;">
-                    {{ form_widget(form.birthDateOperator) }}
-                    {{ form_errors(form.birthDateOperator) }}
-                </div>
-                <div class="col-xs-2">
-                    {{ form_widget(form.birthDate) }}
-                    {{ form_errors(form.birthDate) }}
-                </div>
-            </div>
-        </div>
-
-        <div class="form-group">
-            {{ form_label(form.deathDate, "Died") }}
-            <div class="col-lg-10">
-                <div class="col-xs-3" style="padding-left: 0;">
-                    {{ form_widget(form.deathDateOperator) }}
-                    {{ form_errors(form.deathDateOperator) }}
-                </div>
-                <div class="col-xs-2">
-                    {{ form_widget(form.deathDate) }}
-                    {{ form_errors(form.deathDate) }}
-                </div>
-            </div>
-        </div>
-
-        {{ form_widget(form.deathDate) }}
-        {{ form_widget(form.deathDateOperator) }}
-
-
-        <h4>What</h4>
-        {{ form_row(form.subject) }}
-        {{ form_row(form.occupation) }}
-        {{ form_row(form.membership) }}
-
-        <div class="row"  style="margin-top: 50px;">
-            <h4 class="col-xs-4">
-                Display results as
-            </h4>
-            <div class="col-xs-8">
-                {{ form_widget(form.resultDisplay, {attr:{inline: true}}) }}
-            </div>
-        </div>
-
-
-
-
-        <button type="submit" class="btn btn-primary pull-right">Search</button>
-        <hr>
-        {{ form_end(form) }}
+        {% include "include/searchbox.html.twig" %}
 
     </div>
 {% endblock %}

@@ -7,10 +7,12 @@ use AppBundle\Helper;
 class PdrConnector
 {
     private $idiProvider;
+    private $tz;
 
     public function __construct(IdiProviderInterface $idiProvider)
     {
         $this->idiProvider = $idiProvider;
+        $this->tz = new \DateTimeZone('Europe/Berlin');
     }
 
     public function processIdi($pdrId)
@@ -49,13 +51,28 @@ class PdrConnector
         $xml->registerXPathNamespace('ro', 'http://www.loc.gov/mods/v3');
         $xml->registerXPathNamespace('ao', 'http://pdr.bbaw.de/namespaces/aodl/');
 
+        $maxDate = new \DateTime('0000-00-00T00:00:00', $this->tz);
+
+        // get lastmod
+        foreach ($xml->xpath('//ao:revision') as $rev) {
+            $time = (string)$rev['timestamp'];
+            if ($time) {
+                $dt = new \DateTime($time, $this->tz);
+                if ($dt > $maxDate) {
+                    $maxDate = $dt;
+                }
+            }
+        }
+
+        $data['lastmod'] = $maxDate->format('Y-m-d H:i:s');
+
         // get viaf
         foreach ($xml->xpath('//po:person/*/po:identifier') as $identifier) {
             $provider = (string)($identifier['provider']);
             if ('VIAF' !== $provider) {
                 continue;
             }
-            $data['viaf'] = (string)$identifier;
+            $data['viaf'] = trim((string)$identifier);
         }
 
         foreach ($xml->xpath('//ao:aspect') as $aspect) {
@@ -143,6 +160,46 @@ class PdrConnector
         }
 
         //$data['subjects'] = array_unique($data['subjects']);
+
+        // process names
+        $displayName = '';
+
+        if ($data['title']) {
+            $displayName .= $data['title'] . ' ';
+        }
+        if ($data['firstName']) {
+            $displayName .= $data['firstName'] . ' ';
+        }
+        if ($data['nameLink']) {
+            if (substr($data['nameLink'], -1, 1) == "'") {
+                $displayName .= $data['nameLink'];
+            } else {
+                $displayName .= $data['nameLink'] . ' ';
+            }
+        }
+        if ($data['lastName']) {
+            $displayName .= $data['lastName'];
+        }
+
+        $data['displayName'] = trim($displayName);
+
+        $listName = '';
+
+        if ($data['lastName']) {
+            $listName .= $data['lastName'] . ', ';
+        }
+
+        if ($data['title']) {
+            $listName .= $data['title'] . ' ';
+        }
+        if ($data['firstName']) {
+            $listName .= $data['firstName'] . ' ';
+        }
+        if ($data['nameLink']) {
+            $listName .= $data['nameLink'];
+        }
+
+        $data['listName'] = trim($listName);
 
         return $data;
     }

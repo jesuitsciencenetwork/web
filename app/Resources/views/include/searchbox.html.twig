@@ -1,0 +1,114 @@
+<div class="searchbox">
+
+    <!-- Nav tabs -->
+    <ul class="nav main-nav nav-tabs nav-justified" role="tablist">
+        <li role="presentation" class="active"><a href="#who" aria-controls="who" role="tab" data-toggle="tab">Who</a></li>
+        <li role="presentation" class=""><a href="#where" aria-controls="where" role="tab" data-toggle="tab">Where</a></li>
+        <li role="presentation" class=""><a href="#what" aria-controls="what" role="tab" data-toggle="tab">What</a></li>
+        <li role="presentation" class=""><a href="#when" aria-controls="when" role="tab" data-toggle="tab">When</a></li>
+    </ul>
+
+    <!-- Tab panes -->
+    <div class="tab-content" style="border-left: 1px solid #ddd; border-right: 1px solid #ddd; border-bottom: 1px solid #ddd;">
+        <div role="tabpanel" class="tab-pane fade in active" id="who">
+            <p class="text-center">Type parts of a name to search within names and alternate spellings.</p>
+            <form action="{{ path('search') }}" method="get" class="form-inline text-center" style="margin-bottom: 20px;">
+                <div class="form-group text-left autocomplete">
+                    <input type="text" class="js-autocomplete form-control" />
+                </div>
+            </form>
+
+            <p class="text-center">
+                Other options: <a href="{{ path('random') }}">Random entry</a> &bull;
+                <a href="{{ path('list') }}">Alphabetical list</a>
+            </p>
+        </div>
+        <div role="tabpanel" class="tab-pane fade" id="where">
+            {#<div class="row">#}
+            {#<div class="col-sm-4">#}
+            {#<div id="where-map" style="width: 100%;height: 250px;"></div>#}
+            {#</div>#}
+            {#<div class="col-sm-8">#}
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Consequuntur dolore illo iusto ut. Accusamus cum cupiditate deleniti ea facere facilis hic illum impedit in, maiores optio quaerat rem, sit voluptas.</p>
+
+            <form action="{{ path('search') }}" method="get" class="form-inline text-center" style="margin-bottom: 20px;">
+                <div class="form-group text-left autocomplete">
+                    <input type="text" class="form-control" id="where-search" placeholder="Start typing a place name" />
+                </div>
+                <div id="where-box" class="well well-small hidden" style="margin-top: 20px;">
+                    Find aspects within
+                    <select name="radius">
+                        <option value="10">10 km</option>
+                        <option value="50">50 km</option>
+                        <option value="100" selected>100 km</option>
+                        <option value="250">250 km</option>
+                        <option value="500">500 km</option>
+                    </select>
+                    of <em><span id="where-selection"></span></em>
+                    <button type="submit" id="where-button" disabled="disabled" style="margin-left: 25px;" class="btn btn-sm btn-primary disabled">Search</button>
+                </div>
+                <input type="hidden" name="lat" value="" id="where-lat" />
+                <input type="hidden" name="lng" value="" id="where-lng" />
+            </form>
+
+            <p class="text-center" style="margin-bottom: 0;">
+                Other options: <a href="{{ path('map') }}">Explore on map</a>
+            </p>
+            {#</div>#}
+            {#</div>#}
+        </div>
+        <div role="tabpanel" class="tab-pane fade" id="what">
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Blanditiis dicta dolores eius ipsa odio.</p>
+            <div class="js-tree treeview" data-tree="{{ subjectGroupTree|json_encode }}"></div>
+            <div id="what-box" class="well well-small hidden" style="margin-top: 20px;">
+                <form action="{{ path('search') }}" method="get">
+                <p>Find aspects linked with subject<span id="what-subjects-plural">s</span> <span id="what-subjects"></span></p>
+                <p class="text-right" style="margin-bottom: 0;">
+                    <button type="submit" id="what-button" disabled="disabled" class="btn btn-primary disabled">Search</button>
+                </p>
+                <input type="hidden" id="what-selection" name="subjects" value="" />
+                </form>
+            </div>
+        </div>
+        <div role="tabpanel" class="tab-pane fade" id="when">
+            <p>Adjust the slider to search within a timeframe.</p>
+
+            <form action="{{ path('search') }}" method="get">
+                <div class="row form-group">
+                    <table class="time-slider">
+                        <tr>
+                            <td class="input text-right">
+                                <input type="text" name="from" id="when-from" value="1490" class="form-control"/>
+                            </td>
+                            <td>
+                                <input
+                                        type="text"
+                                        class="when-slider"
+                                        value=""
+                                        data-slider-min="1490"
+                                        data-slider-max="1890"
+                                        data-slider-step="1"
+                                        data-slider-value="[1490,1890]"
+                                />
+                            </td>
+                            <td class="input">
+                                <input type="text" name="to" id="when-to" value="1890" class="form-control"/>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary">Search</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</div>
+
+<p class="text-center text-muted" style="margin-top: 10px;">
+    <small>
+        {% set stats = stats() %}
+        Version {{ stats.lm|date('d/m/Y') }} &bull; {{ stats.nb }} entries in database
+    </small>
+</p>

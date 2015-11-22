@@ -1,0 +1,60 @@
+{% extends "layout.html.twig" %}
+
+{% set enableMap = true %}
+{% set renderFooter = false  %}
+{% block content %}
+
+<div style="width: 250px; position: absolute; top: 50px; left:0; bottom: 0; border-right: 1px solid #ddd;">
+    <div class="panel panel-default" style="border: 0 none; border-bottom: 1px solid #ddd;">
+        <div class="panel-body">
+            <h3>Search Results</h3>
+            <p>Searching for aspects between <em>1
+                    560</em> and <em>1710</em></p>
+            <p style="margin-bottom:0" class="text-right">
+                <a href="{{ path('search') }}" class="btn btn-xs btn-default">Start over</a>
+            </p>
+
+
+        </div>
+    </div>
+
+    <h6>Refine your search</h6>
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <h6>Subjects</h6>
+
+            <h6>Continents</h6>
+
+            <h6>Countries</h6>
+        </div>
+    </div>
+</div>
+
+<div id="map" style="position: absolute; top: 50px; left: 250px; right: 0; height: 300px;">
+    <button type="button" class="pull-right btn-xs btn-default btn" style="position:absolute; top: 5px; right: 5px;border: 0 none; background-color: transparent;">{{ icon('compress')}}</button>
+</div>
+
+<div style="position: absolute; top: 350px; bottom:0; right: 0; left: 200px;">
+                <p>152 results</p>
+                <div class="col-md-4">{% include "search/pagination.html.twig" %}</div>
+
+                ...
+
+                {% include "search/pagination.html.twig" with {top: false} %}
+
+
+</div>
+
+{% endblock %}
+
+{% block javascripts %}
+    <script type="text/javascript">
+        var map;
+        $('body').one('map:ready', function() {
+            map = new google.maps.Map(document.getElementById('map'), {
+                center: {lat: -34.397, lng: 150.644},
+                zoom: 8
+            });
+        });
+    </script>
+{% endblock %}

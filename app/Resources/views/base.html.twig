@@ -32,9 +32,14 @@
         <link rel="stylesheet" href="{{ asset('css/styles.css') }}" />
         {% block stylesheets %}{% endblock %}
     </head>
-    <body {% block bodyAttributes %}{% endblock %}>
+    <body data-url-autocomplete-persons="{{ path('autocomplete_persons') }}?q=%QUERY"
+          data-url-autocomplete-places="{{ path('autocomplete_places') }}?q=%QUERY"
+            {% block bodyAttributes %}{% endblock %}>
         {% block body %}{% endblock %}
         <script src="{{ asset('js/scripts.js') }}"></script>
         {% block javascripts %}{% endblock %}
+        {% if enableMap is defined and enableMap %}
+        <script src="https://maps.googleapis.com/maps/api/js?language=en&amp;key=AIzaSyBAj3xGeT4xh_SJyqeiPJqMKHY0UnQV2Eg&amp;callback=initMap&amp;libraries=places" async defer></script>
+        {% endif %}
     </body>
 </html>
