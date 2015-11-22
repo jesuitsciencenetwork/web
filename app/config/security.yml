@@ -22,6 +22,10 @@ security:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
 
+        splash:
+            pattern: ^/$
+            security: false
+
         main:
             anonymous: false
             # activate different ways to authenticate

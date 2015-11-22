@@ -21,9 +21,17 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class DefaultController extends Controller
 {
     /**
-     * @Route("/", name="homepage")
+     * @Route("/", name="splash")
      */
-    public function indexAction()
+    public function splashAction()
+    {
+        return $this->render('splash.html.twig');
+    }
+
+    /**
+     * @Route("/home/", name="homepage")
+     */
+    public function startAction()
     {
         $stats = $this->getDoctrine()->getManager()->createQuery(
             'SELECT COUNT(p.id) as nb, MAX(p.lastMod) as lm FROM AppBundle:Person p'
