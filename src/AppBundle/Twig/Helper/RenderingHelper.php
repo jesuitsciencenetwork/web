@@ -49,10 +49,10 @@ class RenderingHelper
         $this->router = $router;
     }
 
-    public function renderDescription($description, $exclude = array())
+    public function renderDescription($description, $exclude = array(), $doLinks = true)
     {
-        return preg_replace_callback('/\{(S|P|R|M|O):(.+?)\|(.+?)\}/', function($matches) use ($exclude) {
-            if (in_array($matches[2], $exclude)) {
+        return preg_replace_callback('/\{(S|P|R|M|O):(.+?)\|(.+?)\}/', function($matches) use ($exclude, $doLinks) {
+            if (in_array($matches[2], $exclude) || !$doLinks) {
                 return $matches[3];
             }
             switch ($matches[1]) {

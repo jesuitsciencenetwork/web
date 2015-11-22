@@ -3,6 +3,7 @@
 namespace AppBundle;
 
 
+use AppBundle\DTO\Radius;
 use Doctrine\ORM\QueryBuilder;
 
 class Query
@@ -10,7 +11,13 @@ class Query
     private $continent;
     private $country;
 
+    /** @var Radius */
     private $radius;
+
+    private $from;
+    private $to;
+
+    private $subjects;
 
     /**
      * @return mixed
@@ -44,16 +51,70 @@ class Query
         $this->country = $country;
     }
 
-    public function apply(QueryBuilder $qb)
+    /**
+     * @return Radius
+     */
+    public function getRadius()
     {
-        if ($this->country) {
-            $qb->andWhere('pl.country = :country');
-            $qb->setParameter('country', $this->country);
-        }
-
-        if ($this->continent) {
-            $qb->andWhere('pl.continent = :continent');
-            $qb->setParameter('continent', $this->continent);
-        }
+        return $this->radius;
     }
+
+    /**
+     * @param Radius $radius
+     */
+    public function setRadius($radius)
+    {
+        $this->radius = $radius;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getFrom()
+    {
+        return $this->from;
+    }
+
+    /**
+     * @param mixed $from
+     */
+    public function setFrom($from)
+    {
+        $this->from = $from;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getTo()
+    {
+        return $this->to;
+    }
+
+    /**
+     * @param mixed $to
+     */
+    public function setTo($to)
+    {
+        $this->to = $to;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getSubjects()
+    {
+        return $this->subjects;
+    }
+
+    /**
+     * @param mixed $subjects
+     */
+    public function setSubjects($subjects)
+    {
+        $this->subjects = $subjects;
+    }
+
+
+
 }

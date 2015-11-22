@@ -2,6 +2,8 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\DTO\Location;
+use AppBundle\DTO\Radius;
 use AppBundle\Entity\Aspect;
 use AppBundle\Entity\Person;
 use AppBundle\Entity\Subject;
@@ -104,6 +106,10 @@ class DefaultController extends Controller
         if ($q->has('lat') && $q->has('lng') && $q->has('radius')) {
             // where query
             $message = 'performing where query';
+            $loc = new Location($q->get('lat'), $q->get('lng'), 'XX');
+            $loc->setDescription($q->get('place'));
+            $radius = new Radius($loc, $q->get('radius'));
+            $query->setRadius($radius);
         } elseif ($q->has('continent')) {
             $message = 'performing where query';
             $query->setContinent($q->get('continent'));
@@ -112,10 +118,29 @@ class DefaultController extends Controller
             $query->setCountry($q->get('country'));
         } elseif ($q->has('subjects')) {
             // what query
-            $message = 'performing what query';
+            $ids = explode(',', $q->get('subjects'));
+            $ids = array_map(function($e) {return (int)$e;}, $ids);
+            $ids = array_unique($ids);
+
+            $subjResult = $this->getDoctrine()->getRepository('AppBundle:Subject')
+                ->createQueryBuilder('s')
+                ->select('s.id, s.title')
+                ->orderBy('s.title', 'ASC')
+                ->where('s.id IN(:ids)')
+                ->setParameter('ids', $ids)
+                ->getQuery()
+                ->getResult(\Doctrine\ORM\Query::HYDRATE_ARRAY)
+            ;
+
+            $subjects = array();
+            foreach ($subjResult as $subject) {
+                $subjects[$subject['id']] = $subject['title'];
+            }
+            $query->setSubjects($subjects);
         } elseif ($q->has('from') && $q->has('to')) {
             // when query
-            $message = 'performing when query';
+            $query->setFrom($q->get('from'));
+            $query->setTo($q->get('to'));
         } else {
             if ($q->count() > 0) {
                 $this->get('braincrafted_bootstrap.flash')->alert('Your search query could not be understood.');

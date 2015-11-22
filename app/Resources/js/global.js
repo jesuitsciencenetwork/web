@@ -267,6 +267,7 @@ $(function () {
                                     console.log(loc);
                                     $('#where-lat').val(loc.lat);
                                     $('#where-lng').val(loc.lng);
+                                    $('#where-descr').val(item.description);
                                     $('#where-selection').html(item.description);
                                     $('#where-button').prop('disabled', false).removeClass('disabled');
                                     $('#where-box').removeClass('hidden');

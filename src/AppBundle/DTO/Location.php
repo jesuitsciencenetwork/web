@@ -8,6 +8,7 @@ class Location
     private $lng;
     private $country;
     private $continent;
+    private $description;
 
     private static $continentMap = array(
         'AD' => 'EU',
@@ -299,5 +300,21 @@ class Location
         }
 
         return $this->continent = self::$continentMap[$this->country];
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDescription()
+    {
+        return $this->description;
+    }
+
+    /**
+     * @param mixed $description
+     */
+    public function setDescription($description)
+    {
+        $this->description = $description;
     }
 }

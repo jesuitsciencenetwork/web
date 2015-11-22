@@ -122,7 +122,10 @@ footer {
   h1 {
     font-size: floor((@font-size-base * 3));
     z-index: 9999;
-    margin: 0 auto;
+    position: absolute;
+    text-align:center;
+    width: 100%;
+    top: 30%;
     color: #fff;
     text-shadow: 1px 1px 0 #000;
   }
@@ -848,6 +851,15 @@ ol.source-list, ul.aspect-list {
 
 
 .search-results {
+  dl.query {
+    background-color: #fafafa;
+    padding: 10px 5px;
+    margin-bottom: 0;
+
+    dd:last-child {
+      margin-bottom: 0;
+    }
+  }
   .filter {
     margin-bottom: 10px;
   }

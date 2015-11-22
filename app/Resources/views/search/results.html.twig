@@ -10,19 +10,85 @@
 
         <div class="row">
 
-            <div class="col-md-2">
-                <h6>Refine your search</h6>
+            <div class="col-md-3 text-right">
+                <h3>Refine</h3>
 
-                        <h6>Subjects</h6>
+                {#{{ dump(filter) }}#}
 
-                        <h6>Continents</h6>
+                {% if filter.subjects %}
+                <h6>Subjects</h6>
+                <ul class="list-unstyled">
+                    {% for subj in filter.subjects %}
+                    <li><a href="#">{{ subj.title }}</a></li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
 
-                        <h6>Countries</h6>
+                {% if filter.continents %}
+                <h6>Continents</h6>
+                <ul class="list-unstyled">
+                    {% for c in filter.continents %}
+                    <li><a href="">{{ c|format_continent }}</a></li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+
+                {% if filter.countries %}
+                <h6>Countries</h6>
+                <ul class="list-unstyled">
+                    {% for c in filter.countries %}
+                    <li><a href="">{{ c|format_country }}</a></li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+
+                {% if filter.sources %}
+                <h6>Source</h6>
+                <ul class="list-unstyled">
+                    {% for s in filter.sources %}
+                    <li><a href="">
+                            {#{% include "include/sourcetext.html.twig" with {source: s} only %}#}
+                            {{ macro.namelist(s.authors, true, "; ") }} {{ s.dateIssued }}
+                        </a></li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
             </div>
 
-            <div class="col-md-10 search-results" style="border-left: 1px solid #ddd;">
+            <div class="col-md-9 search-results" style="border-left: 1px solid #ddd;">
 
-                <h3>Search Results</h3>
+                <h3>{{ pagination.getTotalItemCount }} Results</h3>
+
+                <dl class="query dl-horizontal">
+                    {% if query.continent %}
+                        <dt>Continent</dt>
+                        <dd>{{ query.continent|format_continent }}</dd>
+                    {% endif %}
+
+                    {% if query.country %}
+                        <dt>Country</dt>
+                        <dd>{{ query.country|format_country }}</dd>
+                    {% endif %}
+
+                    {% if query.radius %}
+                        <dt>Radius</dt>
+                        <dd>{{ query.radius.radius }} km around {{ query.radius.center.description }}</dd>
+                    {% endif %}
+
+                    {% if query.from %}
+                        <dt>Year</dt>
+                        <dd>between <em>{{ query.from }}</em> and <em>{{ query.to }}</em></dd>
+                    {% endif %}
+
+                    {% if query.subjects %}
+                        <dt>Subjects</dt>
+                        <dd>
+                            {% for subject in query.subjects %}
+                                {{ subject }}{% if not loop.last %}, {% endif %}
+                            {% endfor %}
+                        </dd>
+                    {% endif %}
+                </dl>
 
                 {#<div class="text-right" style="margin-top: 20px;">#}
                     {#<button type="button" class="btn-sm btn-default btn" style="font-family: Montserrat; font-weight: bold; letter-spacing: 0.5px; text-transform:uppercase;">Show map {{ icon('expand')}}</button>#}
@@ -32,7 +98,7 @@
                     {#<button type="button" class="pull-right btn-xs btn-default btn" style="position:absolute; top: 5px; right: 5px;border: 0 none; background-color: transparent;">{{ icon('compress')}}</button>#}
                 {#</div>#}
 
-                <p>{{ pagination.getTotalItemCount }} results</p>
+                {#<p> results</p>#}
 
                 <table class="table table-striped">
                     <thead>
@@ -45,7 +111,7 @@
                     <tbody>
                         {% for aspect in pagination %}
                         <tr>
-                            <td>
+                            <td style="white-space: nowrap;">
                                 <a href="{{ path('detail', {id:aspect.person.id}) }}">{{ aspect.person.listName }}</a>
                             </td>
                             <td style="white-space: nowrap;">
@@ -57,28 +123,28 @@
                             </td>
                             <td>
                                 {% if "entryInTheOrder" == aspect.type %}
-                                    Entered the Society of Jesus {{ macro.places(aspect) }}
+                                    Entered the Society of Jesus {{ macro.places(aspect, false) }}
                                 {% elseif "beginningOfLife" == aspect.type %}
-                                    Born {{ macro.places(aspect) }}
+                                    Born {{ macro.places(aspect, false) }}
                                 {% elseif "endOfLife" == aspect.type %}
-                                    Died {{ macro.places(aspect) }}
+                                    Died {{ macro.places(aspect, false) }}
                                 {% elseif "resignationFromTheOrder" == aspect.type %}
-                                    Left the Society {{ macro.places(aspect) }}
+                                    Left the Society {{ macro.places(aspect, false) }}
                                 {% elseif "expulsionFromTheOrder" == aspect.type %}
-                                    Was expelled from the Society {{ macro.places(aspect) }}
+                                    Was expelled from the Society {{ macro.places(aspect, false) }}
                                 {% elseif "education" == aspect.type %}
-                                    Studied {{ macro.subjects(aspect) }}{{ macro.places(aspect) }}
+                                    Studied {{ macro.subjects(aspect, true, false) }}{{ macro.places(aspect, false) }}
                                     {{ macro.comment(aspect) }}
                                 {% elseif "career" == aspect.type %}
                                     {% if not aspect.occupation %}
-                                        Occupied himself with {{ macro.subjects(aspect) }}{{ macro.places(aspect) }}
+                                        Occupied himself with {{ macro.subjects(aspect, true, false) }}{{ macro.places(aspect, false) }}
                                     {% elseif "Teacher" == aspect.occupation %}
-                                        Taught {{ macro.subjects(aspect) }}{{ macro.places(aspect) }}
+                                        Taught {{ macro.subjects(aspect, true, false) }}{{ macro.places(aspect, false) }}
                                     {% else %}
-                                        {{ aspect.occupation }}{{ macro.places(aspect) }}
+                                        {{ aspect.occupation }}{{ macro.places(aspect, false) }}
                                     {% endif %}
                                 {% else %}
-                                    {{ aspect.description|replace_links(currentPo is defined ? [currentPo] : [])|smart_quotes }}
+                                    {{ aspect.description|replace_links(currentPo is defined ? [currentPo] : [], false)|smart_quotes }}
                                 {% endif %}
                             </td>
                         </tr>

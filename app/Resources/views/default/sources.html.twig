@@ -1,7 +1,58 @@
 {% extends "::layout.html.twig" %}
 
 {% block content %}
-    <div class="container">
+    <div class="container container-narrow">
+        <div class="col-xs-12">
+
+            <h3 id="sources">Sources</h3>
+
+        <p>
+            The main source for the biographical data collected and
+            presented in the JSN is the twelve-volume
+            &quot;Biblioth&egrave;que de la Compagnie de J&eacute;sus&quot;.
+            Using Harris' list of topics considered
+            Jesuit science, one can
+            identify approximately 1000 names of interest in the Biblioth&egrave;que.
+            Several other works, mostly with a
+            specific regional focus, provide further biographical details or
+            even add people not covered by the
+            Biblioth&egrave;que.
+        </p>
+
+        <h4>Regionally overarching sources</h4>
+
+        <ul>
+            <li>Sommervogel, Carlos et al., eds. (Reprint 1960).
+                Bibliothèque de la Compagnie de Jésus. Vol. I-XII.
+                Louvain: Éditions de la Bibliothèque S.J. : Collège
+                Philosophique et Théologique.
+            </li>
+            <li>O'Neill, Charles et al., eds. (2011). Diccionario Histórico
+                de la Compañía de Jesús. Vol. I-IV. Madrid:
+                Universidad Pontifica Comillas.
+            </li>
+        </ul>
+
+        <h4>Sources with a regional focus</h4>
+
+        <ul>
+            <li>Lisiak, Bogdan (2000). Jezuici polscy a nauki ścisłe od XVI
+                do XIX wieku: słownik bio-bibliograficzny.
+                Kraków: Wyzsza Szkoła Filozoficzno-Pedagogiczna Ignatianum.
+            </li>
+
+            <li>Grzebień, Ludwik et al., eds.</li>
+
+            <li>Schuppener, Georg (1999)</li>
+            <li>-- (2002)</li>
+
+            <li>Reindl, Maria</li>
+
+            <li>Baldini, Ugo</li>
+
+            <li>Fischer, Karl</li>
+        </ul>
+
         <ol class="source-list">
             {% for source in sources %}
             <li>
@@ -10,5 +61,6 @@
             {% endfor %}
         </ol>
     </div>
+</div>
 
 {% endblock %}
