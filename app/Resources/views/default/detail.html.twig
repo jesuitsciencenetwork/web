@@ -3,6 +3,11 @@
 
 
 {% block content %}
+    <style type="text/css">
+        .gm-style-iw .citation, .gm-style-iw .marker {
+            display: none;
+        }
+    </style>
     <div class="container detail">
         <div class="col-sm-8">
 
@@ -11,7 +16,7 @@
                 <p class="small text-muted pref">
                     <a target="_blank" href="{{ path('data', {format: 'xml', id: person.id}) }}" title="View as XML"><code>XML</code></a>
                     <a target="_blank" href="{{ path('data', {format: 'json', id: person.id}) }}" title="View as JSON"><code>JSON</code></a>
-                    <a target="_blank" href="https://pdrprod.bbaw.de/idi/pdrnc/{{ person.pdrId }}" title="Download raw, unprocessed data as XML" download><code>RAW</code></a>
+                    <a target="_blank" href="https://pdrprod.bbaw.de/idi/pdrnc/{{ person.pdrId }}" title="Download raw, unprocessed data as XML"><code>RAW</code></a>
                     {% if person.viafId %} &bull; VIAF: <a target="_blank" href="http://viaf.org/viaf/{{ person.viafId }}"><code>{{ person.viafId }}</code></a>{% endif %}
                 </p>
 
@@ -23,8 +28,11 @@
             <ul class="aspect-list timeline">
             {% for aspectList in subSections %}
                 {% for aspect in aspectList %}
-                    <li class="aspect timeline-entry">
-                        {% include "include/aspect.html.twig" with {aspect: aspect} only %}
+                    <li class="aspect timeline-entry" data-symbol="{{ section[:1]|capitalize }}">
+                        <div class="aspect-inner">
+                            {% include "include/aspect.html.twig" with {aspect: aspect} only %}
+                        </div>
+                        {% include "include/marker.html.twig" with {aspect: aspect} only %}
                     </li>
                 {% endfor %}
             {% endfor %}
@@ -35,8 +43,10 @@
                 <h4>Relations</h4>
                 <ul class="aspect-list timeline">
                     {% for relation in person.relationsOutgoing %}
-                        <li class="aspect timeline-entry">
-                            {% include "include/aspect.html.twig" with {aspect: relation.aspect, renderRelations: true, currentPo: person.id} only %}
+                        <li class="aspect timeline-entry" data-symbol="I">
+                            <div class="aspect-inner">
+                                {% include "include/aspect.html.twig" with {aspect: relation.aspect, currentPo: person.id} only %}
+                            </div>{% include "include/marker.html.twig" with {aspect: relation.aspect} only %}
                         </li>
                     {% endfor %}
                 </ul>
@@ -46,8 +56,11 @@
                 <h4>Relations from others</h4>
                 <ul class="aspect-list timeline">
                     {% for relation in person.relationsIncoming %}
-                        <li class="aspect timeline-entry">
-                            {% include "include/aspect.html.twig" with {aspect: relation.aspect, renderRelations: true, currentPo: person.id} only %}
+                        <li class="aspect timeline-entry" data-symbol="O">
+                            <div class="aspect-inner">
+                            {% include "include/aspect.html.twig" with {aspect: relation.aspect, currentPo: person.id} only %}
+                            </div>
+                            {% include "include/marker.html.twig" with {aspect: relation.aspect} only %}
                         </li>
                     {% endfor %}
                 </ul>
@@ -84,7 +97,7 @@
             <div class="panel panel-default">
                 <div class="list-group">
                     {% for subject in person.subjects %}
-                    <a class="list-group-item" href="{{ path('subject', {slug:subject.slug}) }}">{{ subject.title }}</a>
+                    <a class="list-group-item" href="{{ path('search', {subjects:subject.id}) }}">{{ subject.title }}</a>
                     {% endfor %}
                 </div>
             </div>
@@ -104,6 +117,11 @@
     </div>
 
     <div id="map" style="height:350px;"></div>
+
+    <div class="tooltip top" role="tooltip" id="map-tooltip">
+        {#<div class="tooltip-arrow"></div>#}
+        <div class="tooltip-inner"></div>
+    </div>
 
     <div class="container detail">
         <h4>Sources</h4>
@@ -126,26 +144,67 @@
         $('body').on('map:ready', function initMap() {
             map = new google.maps.Map(document.getElementById('map'), {
                 center: {lat: -34.397, lng: 150.644},
-                zoom: 8,
+                zoom: 10,
+                minZoom: 3,
+                mapTypeControl: false,
+                streetViewControl: false,
+                maxZoom: 10,
                 scrollwheel: false
             });
 
             var bounds = new google.maps.LatLngBounds();
-            $('.geo').each(function() {
+            $('.geo').on('click', function(e) {
+                e.preventDefault();
+                var $this = $(this),
+                        pos = new google.maps.LatLng(
+                                parseFloat($this.data('lat')),
+                                parseFloat($this.data('lng'))
+                        )
+                        ;
+                map.setCenter(pos);
+                map.setZoom(10);
+                window.scrollTo('#map', 50);
+            });
+
+            var info = new google.maps.InfoWindow({
+                content: ''
+            });
+//            var $tooltip = $('#map-tooltip'), $tooltipInner = $tooltip.find('.tooltip-inner');
+
+
+            $('.marker').each(function() {
                 var $this = $(this),
                     pos = new google.maps.LatLng(
                             parseFloat($this.data('lat')),
                             parseFloat($this.data('lng'))
                     )
                 ;
-                new google.maps.Marker({position: pos, map: map});
-                bounds.extend(pos);
-                $this.click(function(e) {
-                    e.preventDefault();
-                    map.setCenter(pos);
-                    map.setZoom(8);
-                    window.scrollTo('#map', 50);
+
+                var aspect = $this.closest('.aspect').find('.aspect-inner').html();
+                console.log('type:', $this.closest('.aspect').data('symbol'));
+                var marker = new google.maps.Marker({
+                    position: pos,
+                    map: map,
+                    label: $this.closest('.aspect').data('symbol'),
+                    title: $this.data('title')
                 });
+
+//                google.maps.event.addListener(marker, 'mouseover', function(e) {
+//                    console.log(marker);
+//                    //$(marker).tooltip({placement: 'right'});
+//                    $tooltipInner.html($this.data('title'));
+//                    $tooltip.show();
+//                    $tooltip.offset({top: e.pixel.y, left: e.pixel.x });
+//                });
+
+                marker.aspect = aspect;
+
+                marker.addListener('click', function() {
+                    info.setContent(aspect);
+                    info.open(map, marker);
+                });
+
+                bounds.extend(pos);
             });
             map.fitBounds(bounds);
         });

@@ -2,11 +2,8 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Entity\Person;
-use AppBundle\Entity\Subject;
-use AppBundle\Form\AdvancedSearchForm;
-use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\QueryBuilder;
+use AppBundle\DTO\Location;
+use AppBundle\DTO\Radius;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -14,85 +11,64 @@ use Symfony\Component\HttpFoundation\Request;
 class SearchController extends Controller
 {
     /**
-     * @Route("/subject/{slug}/", name="subject")
+     * @Route("/search/", name="search")
      */
-    public function subjectAction(Subject $subject)
+    public function searchAction(Request $request)
     {
-        $personIds = $subject->getAssociatedPersons()->map(function (Person $person) {
-            return $person->getId();
-        });
+        $q = $request->query;
 
-        /** @var QueryBuilder $qb */
-        $qb = $this
-            ->getDoctrine()
-            ->getRepository('AppBundle:Person')
-            ->createQueryBuilder('p');
+        $searchService = $this->get('jsn.search');
 
-        /** @var Collection|Person[] $personList */
-        $personList = $qb
-            ->select('p, a, s')
-            ->leftJoin('p.aspects', 'a')
-            ->leftJoin('a.subjects', 's')
-            ->add('where', $qb->expr()->in('p.id', '?1'))
-            ->setParameter(1, $personIds)
-            ->addOrderBy('p.listName', 'ASC')
-            ->getQuery()
-            ->execute()
-        ;
+        $query = new \AppBundle\Query();
 
-        $persons = array();
+        if ($q->has('lat') && $q->has('lng') && $q->has('radius')) {
+            // where query
+            $loc = new Location($q->get('lat'), $q->get('lng'), 'XX');
+            $loc->setDescription($q->get('place'));
+            $radius = new Radius($loc, $q->get('radius'));
+            $query->setRadius($radius);
+        } elseif ($q->has('continent')) {
+            $query->setContinent($q->get('continent'));
+        } elseif ($q->has('country')) {
+            $query->setCountry($q->get('country'));
+        } elseif ($q->has('subjects')) {
+            // what query
+            $ids = explode(',', $q->get('subjects'));
+            $ids = array_map(function($e) {return (int)$e;}, $ids);
+            $ids = array_unique($ids);
 
-        foreach ($personList as $person) {
-            $highlightedAspect = null;
-            foreach ($person->getAspects() as $aspect) {
-                $subjectFound = false;
-                foreach ($aspect->getSubjects() as $aspectSubject) {
-                    if ($subject->getId() == $aspectSubject->getId()) {
-                        $subjectFound = true;
-                        break;
-                    }
-                }
-                if (!$subjectFound) continue;
+            $subjResult = $this->getDoctrine()->getRepository('AppBundle:Subject')
+                ->createQueryBuilder('s')
+                ->select('s.id, s.title')
+                ->orderBy('s.title', 'ASC')
+                ->where('s.id IN(:ids)')
+                ->setParameter('ids', $ids)
+                ->getQuery()
+                ->getResult(\Doctrine\ORM\Query::HYDRATE_ARRAY)
+            ;
 
-                $highlightedAspect = $aspect;
-                break;
+            $subjects = array();
+            foreach ($subjResult as $subject) {
+                $subjects[$subject['id']] = $subject['title'];
+            }
+            $query->setSubjects($subjects);
+        } elseif ($q->has('from') && $q->has('to')) {
+            // when query
+            $query->setFrom($q->get('from'));
+            $query->setTo($q->get('to'));
+        } elseif ($q->has('occupation')) {
+            $query->setOccupation($q->get('occupation'));
+        } else {
+            if ($q->count() > 0) {
+                $this->get('braincrafted_bootstrap.flash')->alert('Your search query could not be understood.');
             }
 
-            $persons[] = array(
-                'person' => $person,
-                'aspect' => $highlightedAspect
-            );
+            return $this->render('default/search.html.twig', array(
+                'subjectGroupTree' => $searchService->getSubjectGroupTree()
+            ));
         }
 
-        return $this->render('default/subject.html.twig', array(
-            'subject' => $subject,
-            'persons' => $persons
-        ));
-    }
+        return $searchService->render($query, $request->get('page', 1));
 
-    /**
-     * @Route("/viaf/{id}/", name="viaf")
-     */
-    public function viafAction($id)
-    {
-        $person = $this
-            ->getDoctrine()
-            ->getRepository('AppBundle:Person')
-            ->findOneBy(array('viafId' => $id));
-
-        if (!$person) {
-            $this
-                ->get('braincrafted_bootstrap.flash')
-                ->alert(sprintf(
-                    'The VIAF ID "%s" could not be found. Please try searching our database instead.',
-                    $id
-                ))
-            ;
-            return $this->redirect($this->generateUrl('search'));
-        }
-
-        return $this->redirect(
-            $this->generateUrl('detail', array('id' => $person->getId()))
-        );
     }
 }

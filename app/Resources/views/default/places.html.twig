@@ -47,7 +47,7 @@
                     <h4 class="jumptarget" id="{{ letter }}">{{ letter }} <small class="text-muted">{{ places|length }}</small></h4>
                     <ul class="list-unstyled">
                         {% for place in places %}
-                            <li><a href="">{{ place.placeName }}</a></li>
+                            <li><a href="{{ path('search', {place:place.placeName,radius:0,lat:place.latitude,lng:place.longitude}) }}">{{ place.placeName }}</a></li>
                         {% endfor %}
                     </ul>
                 {% endfor %}

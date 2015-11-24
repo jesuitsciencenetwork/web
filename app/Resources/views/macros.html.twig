@@ -36,7 +36,7 @@
     </li>
 {% endmacro %}
 
-{% macro places(aspect, doLinks=true) %}{% if aspect.places|length %} in {% for place in aspect.places %}{% if doLinks %}<a href="#place-{{ place.slug }}" data-lat="{{ place.latitude }}" data-lng="{{ place.longitude }}" class="geo">{{ icon('map-marker') }} {% endif %}{{ place.placeName }}{% if doLinks %}</a>{% endif %}{% if not loop.last %}, {% endif %}{% endfor %}{% endif %}{% endmacro %}
+{% macro places(aspect, doLinks=true) %}{% if aspect.places|length %} in {% for place in aspect.places %}{% if doLinks %}<a href="{{ path('search', {lat: place.latitude, lng: place.longitude, radius:0, place: place.placeName}) }}">{% endif %}{{ place.placeName }}{% if doLinks %}</a> <a class="geo" href="#" data-lat="{{ place.latitude }}" data-lng="{{ place.longitude }}">{{ icon('map-marker') }}</a>{% endif %}{% if not loop.last %}, {% endif %}{% endfor %}{% endif %}{% endmacro %}
 {% macro comment(aspect) %}{% if aspect.comment %}<br><em>{{ aspect.comment }}</em>{% endif %}{% endmacro %}
-{% macro subjects(aspect, lower=true, doLinks=true) %}{% for subject in aspect.subjects %}{% if "Infima" == subject.title %}the {% endif %}{% if doLinks %}<a class="subject" href="{{ path('subject', {slug:subject.slug}) }}">{% endif %}{% if lower and subject.title is lowercaseable %}{{ subject.title|lower }}{% else %}{{ subject.title }}{% endif %}{% if doLinks %}</a>{% endif %}{% if not loop.last %}, {% endif %}{% endfor %}{% endmacro %}
+{% macro subjects(aspect, lower=true, doLinks=true) %}{% for subject in aspect.subjects %}{% if "Infima" == subject.title %}the {% endif %}{% if doLinks %}<a class="subject" href="{{ path('search', {subjects:subject.id}) }}">{% endif %}{% if lower and subject.title is lowercaseable %}{{ subject.title|lower }}{% else %}{{ subject.title }}{% endif %}{% if doLinks %}</a>{% endif %}{% if not loop.last %}, {% endif %}{% endfor %}{% endmacro %}
 

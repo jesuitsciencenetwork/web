@@ -47,8 +47,9 @@ class GraphController extends Controller
             $edges[] = array(
                 'from' => (string)$row['source_id'],
                 'to' => (string)$row['target_id'],
-                'label' => $row['value'],
-                'arrows' => 'to'
+//                'label' => $row['value'],
+                'arrows' => 'to',
+                'group' => $row['value']
             );
         }
         return $this->render('graph/relations.html.twig', array(

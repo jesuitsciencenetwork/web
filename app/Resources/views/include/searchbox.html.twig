@@ -3,8 +3,8 @@
     <!-- Nav tabs -->
     <ul class="nav main-nav nav-tabs nav-justified" role="tablist">
         <li role="presentation" class="active"><a href="#who" aria-controls="who" role="tab" data-toggle="tab">Who</a></li>
-        <li role="presentation" class=""><a href="#where" aria-controls="where" role="tab" data-toggle="tab">Where</a></li>
         <li role="presentation" class=""><a href="#what" aria-controls="what" role="tab" data-toggle="tab">What</a></li>
+        <li role="presentation" class=""><a href="#where" aria-controls="where" role="tab" data-toggle="tab">Where</a></li>
         <li role="presentation" class=""><a href="#when" aria-controls="when" role="tab" data-toggle="tab">When</a></li>
     </ul>
 
@@ -22,6 +22,19 @@
                 Other options: <a href="{{ path('random') }}">Random entry</a> &bull;
                 <a href="{{ path('list') }}">Alphabetical list</a>
             </p>
+        </div>
+        <div role="tabpanel" class="tab-pane fade" id="what">
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Blanditiis dicta dolores eius ipsa odio.</p>
+            <div class="js-tree treeview" data-tree="{{ subjectGroupTree|json_encode }}"></div>
+            <div id="what-box" class="well well-small hidden" style="margin-top: 20px;">
+                <form action="{{ path('search') }}" method="get">
+                    <p>Find aspects linked with subject<span id="what-subjects-plural">s</span> <span id="what-subjects"></span></p>
+                    <p class="text-right" style="margin-bottom: 0;">
+                        <button type="submit" id="what-button" disabled="disabled" class="btn btn-primary disabled">Search</button>
+                    </p>
+                    <input type="hidden" id="what-selection" name="subjects" value="" />
+                </form>
+            </div>
         </div>
         <div role="tabpanel" class="tab-pane fade" id="where">
             {#<div class="row">#}
@@ -58,21 +71,8 @@
             {#</div>#}
             {#</div>#}
         </div>
-        <div role="tabpanel" class="tab-pane fade" id="what">
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Blanditiis dicta dolores eius ipsa odio.</p>
-            <div class="js-tree treeview" data-tree="{{ subjectGroupTree|json_encode }}"></div>
-            <div id="what-box" class="well well-small hidden" style="margin-top: 20px;">
-                <form action="{{ path('search') }}" method="get">
-                <p>Find aspects linked with subject<span id="what-subjects-plural">s</span> <span id="what-subjects"></span></p>
-                <p class="text-right" style="margin-bottom: 0;">
-                    <button type="submit" id="what-button" disabled="disabled" class="btn btn-primary disabled">Search</button>
-                </p>
-                <input type="hidden" id="what-selection" name="subjects" value="" />
-                </form>
-            </div>
-        </div>
         <div role="tabpanel" class="tab-pane fade" id="when">
-            <p>Adjust the slider to search within a timeframe.</p>
+            <p>Adjust the slider to search within a timeframe or enter a date.</p>
 
             <form action="{{ path('search') }}" method="get">
                 <div class="row form-group">
@@ -110,6 +110,6 @@
 <p class="text-center text-muted" style="margin-top: 10px;">
     <small>
         {% set stats = stats() %}
-        Version {{ stats.lm|date('d/m/Y') }} &bull; {{ stats.nb }} entries in database
+        Version {{ stats.lm|date('d/m/Y') }} &bull; {{ stats.nb }} persons in database
     </small>
 </p>

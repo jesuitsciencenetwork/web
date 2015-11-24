@@ -57,6 +57,7 @@
 
             <div class="col-md-9 search-results" style="border-left: 1px solid #ddd;">
 
+                <a href="{{ path('search') }}" style="margin-top: 15px;" class="pull-right btn btn-xs btn-default" title="Discard search and start over">New search</a>
                 <h3>{{ pagination.getTotalItemCount }} Results</h3>
 
                 <dl class="query dl-horizontal">
@@ -71,8 +72,18 @@
                     {% endif %}
 
                     {% if query.radius %}
+                        {% if query.radius.radius %}
                         <dt>Radius</dt>
                         <dd>{{ query.radius.radius }} km around {{ query.radius.center.description }}</dd>
+                        {% else %}
+                        <dt>Place</dt>
+                        <dd>{{ query.radius.center.description }}</dd>
+                        {% endif %}
+                    {% endif %}
+
+                    {% if query.occupation %}
+                        <dt>Occupation</dt>
+                        <dd>{{ query.occupation }}</dd>
                     {% endif %}
 
                     {% if query.from %}
@@ -138,10 +149,8 @@
                                 {% elseif "career" == aspect.type %}
                                     {% if not aspect.occupation %}
                                         Occupied himself with {{ macro.subjects(aspect, true, false) }}{{ macro.places(aspect, false) }}
-                                    {% elseif "Teacher" == aspect.occupation %}
-                                        Taught {{ macro.subjects(aspect, true, false) }}{{ macro.places(aspect, false) }}
                                     {% else %}
-                                        {{ aspect.occupation }}{{ macro.places(aspect, false) }}
+                                        {{ aspect.occupation }}{% if aspect.subjects %} of {{ macro.subjects(aspect, true, false) }}{% endif %}{{ macro.places(aspect, false) }}
                                     {% endif %}
                                 {% else %}
                                     {{ aspect.description|replace_links(currentPo is defined ? [currentPo] : [], false)|smart_quotes }}

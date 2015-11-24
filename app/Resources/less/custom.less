@@ -121,7 +121,7 @@ footer {
 
   h1 {
     font-size: floor((@font-size-base * 3));
-    z-index: 9999;
+    z-index: 99;
     position: absolute;
     text-align:center;
     width: 100%;
@@ -368,6 +368,10 @@ ul.timeline {
       float: right;
       margin-top: 2px;
       margin-left: 10px;
+
+      &:hover, &:active {
+        text-decoration: none;
+      }
     }
     .popover {
       min-width: 600px;

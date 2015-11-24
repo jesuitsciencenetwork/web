@@ -1,0 +1,10 @@
+<ul class="hidden">
+{% for place in aspect.places %}
+<li
+        class="marker"
+        data-lat="{{ place.latitude }}"
+        data-lng="{{ place.longitude }}"
+        data-title="{{ place.placeName }}, {{ place.country|format_country }}"
+></li>
+{% endfor %}
+</ul>

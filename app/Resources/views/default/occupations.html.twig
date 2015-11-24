@@ -34,7 +34,7 @@
                     <ul class="list-unstyled">
                         {% for occupation in occupations %}
                         <li>
-                            <a href="{{ path('occupation', {slug: occupation.occupationSlug}) }}">{{ occupation.occupation|capitalize }}</a>
+                            <a href="{{ path('search', {occupation:occupation.occupation}) }}">{{ occupation.occupation|capitalize }}</a>
                         </li>
                         {% endfor %}
                     </ul>

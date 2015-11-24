@@ -401,15 +401,13 @@ class PdrConnector
             } elseif ($tag == 'name' && $type == 'occupation') {
                 $output['occupation'] = $childNode->nodeValue;
                 $slug = Helper::slugify($childNode->nodeValue);
-                $textParts[] = '{O:' . $slug . '|' . $childNode->nodeValue . '}';
+                $textParts[] = '{O:' . $childNode->nodeValue . '|' . $childNode->nodeValue . '}';
             } elseif ($tag == 'name' && $type == 'Comment') {
                 $output['comments'][] = $childNode->nodeValue;
                 $textParts[] = $childNode->nodeValue;
             } elseif ($tag == 'placeName') {
                 $output['places'][] = $childNode->nodeValue;
-//                $textParts[] = '{M:' . $childNode->nodeValue . '}';
-                // @TODO
-                $textParts[] = $childNode->nodeValue;
+                $textParts[] = '{M:' . $childNode->nodeValue . '|' . $childNode->nodeValue . '}';
             } elseif ($tag == 'name') {
                 $textParts[] = $childNode->nodeValue;
             } elseif ($tag == 'date') {

@@ -8,7 +8,7 @@
     {% endif %}
 </span>
 
-<a class="citation {{ macro.color(aspect.source) }} fg js-popover jumphighlight" href="#source-{{ aspect.source.id }}" data-toggle="popover" data-placement="top" data-html="true" data-trigger="hover" title="Source for this aspect" data-content="{% filter escape %}<small>{% include "include/sourcetext.html.twig" with {source:aspect.source} only %}</small>{% endfilter %}">{{ aspect.source.id }}</a>
+<a class="citation {{ macro.color(aspect.source) }} fg js-popover jumphighlight" href="#source-{{ aspect.source.id }}" data-toggle="popover" data-placement="top" data-html="true" data-trigger="hover" title="Source for this aspect" data-content="{% filter escape %}<small>{% include "include/sourcetext.html.twig" with {source:aspect.source} only %}</small>{% endfilter %}">{{ icon('book') }} {{ aspect.source.id }}</a>
 
 {% if "entryInTheOrder" == aspect.type %}
     Entered the Society of Jesus {{ macro.places(aspect) }}
@@ -26,10 +26,8 @@
 {% elseif "career" == aspect.type %}
     {% if not aspect.occupation %}
         Occupied himself with {{ macro.subjects(aspect) }}{{ macro.places(aspect) }}
-    {% elseif "Teacher" == aspect.occupation %}
-        Taught {{ macro.subjects(aspect) }}{{ macro.places(aspect) }}
     {% else %}
-        {{ aspect.occupation }}{{ macro.places(aspect) }}
+        <a href="{{ path('search', {occupation:aspect.occupation}) }}">{{ aspect.occupation }}</a>{% if aspect.subjects|length %} of {{ macro.subjects(aspect) }}{% endif %}{{ macro.places(aspect) }}
     {% endif %}
 {% else %}
     {{ aspect.description|replace_links(currentPo is defined ? [currentPo] : [])|smart_quotes }}

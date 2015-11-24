@@ -13,13 +13,14 @@ $(function () {
         $body.trigger('map:ready');
     };
 
-    $('a[href^="#"]:not([data-toggle]):not([href="#"])').click(function (event) {
+    $('a[href^="#"]:not([data-toggle="tab"]):not([href="#"])').click(function (event) {
         event.preventDefault();
-        var $this = $(this), fragment = $(this).attr('href');
+        var $this = $(this), fragment = $(this).attr('href'), $fragment = $(fragment);
         if ($this.hasClass('jumphighlight')) {
-            $(fragment).effect('highlight', 2500);
+            $fragment.effect('highlight', 2500);
         }
-        scrollTo(fragment);
+        scrollTo(fragment, $fragment.hasClass('jumptarget') ? 0 : 70);
+        return false;
     });
 
     $('.js-popover').popover();
@@ -66,6 +67,12 @@ $(function () {
         datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
         queryTokenizer: Bloodhound.tokenizers.whitespace,
         prefetch: '/occupations.json'
+    });
+
+    $('#jsn-search').on('focus', function() {
+        $(this).attr('placeholder', 'Person, place, or subject');
+    }).on('blur', function() {
+        $(this).attr('placeholder', 'Quick Search');
     });
 
     $('.js-autocomplete').each(function() {

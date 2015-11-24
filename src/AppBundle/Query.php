@@ -4,7 +4,6 @@ namespace AppBundle;
 
 
 use AppBundle\DTO\Radius;
-use Doctrine\ORM\QueryBuilder;
 
 class Query
 {
@@ -18,6 +17,8 @@ class Query
     private $to;
 
     private $subjects;
+
+    private $occupation;
 
     /**
      * @return mixed
@@ -113,6 +114,22 @@ class Query
     public function setSubjects($subjects)
     {
         $this->subjects = $subjects;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getOccupation()
+    {
+        return $this->occupation;
+    }
+
+    /**
+     * @param mixed $occupation
+     */
+    public function setOccupation($occupation)
+    {
+        $this->occupation = $occupation;
     }
 
 

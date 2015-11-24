@@ -3,6 +3,8 @@
 namespace AppBundle;
 
 use AppBundle\DTO\Radius;
+use AppBundle\Entity\Subject;
+use AppBundle\Entity\SubjectGroup;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query;
 use AppBundle\Query as QueryDTO;
@@ -87,6 +89,11 @@ class SearchService
             $qb->setParameter('pids', $pids);
         }
 
+        if ($query->getOccupation()) {
+            $qb->andWhere('a.occupation = :occupation');
+            $qb->setParameter('occupation', $query->getOccupation());
+        }
+
         $filter = $this->getFilters(clone $qb);
 
         $pagination = $this->paginator->paginate($qb->getQuery(), $page, 20);
@@ -142,5 +149,53 @@ class SearchService
         }
 
         return $ids;
+    }
+
+    public function getSubjectGroupTree()
+    {
+        $q = $this
+            ->em
+            ->getRepository('AppBundle:SubjectGroup')
+            ->createQueryBuilder('g')
+            ->select('g, s')
+            ->leftJoin('g.subjects', 's')
+            ->where('g.scheme = :scheme')
+            ->addOrderBy('g.title', 'ASC')
+            ->addOrderBy('s.title', 'ASC')
+            ->getQuery()
+        ;
+
+        $contemporary = $q->execute(array('scheme' => 'harris'));
+        $modern = $q->execute(array('scheme' => 'modern'));
+
+        $callback = function (SubjectGroup $group) {
+            return array(
+                'text' => $group->getTitle(),
+                'selectable' => false,
+                'disableCheckbox' => true,
+                'nodes' => $group->getSubjects()->map(function (Subject $s) {
+                    return array(
+                        'text' => $s->getTitle(),
+                        'id' => $s->getId()
+                    );
+                })->toArray(),
+                'state' => array('expanded' => $group->getSubjects()->count() <= 3)
+            );
+        };
+
+        return array(
+            array(
+                'text' =>  '<em>Contemporary grouping</em>',
+                'selectable' => false,
+                'disableCheckbox' => true,
+                'nodes' => array_map($callback, $contemporary)
+            ),
+            array(
+                'text' =>  '<em>Modern grouping</em>',
+                'selectable' => false,
+                'disableCheckbox' => true,
+                'nodes' => array_map($callback, $modern)
+            ),
+        );
     }
 }

@@ -263,7 +263,7 @@ class ImportDataCommand extends Command
             ));
 
             $placeId = $connection->lastInsertId();
-            $placeMap[$placeName] = $placeId;
+            $placeMap[$placeName] = array($placeId, $pos);
         }
 
         $masterProgress->advance();
@@ -321,7 +321,7 @@ class ImportDataCommand extends Command
                 if (array_key_exists($placeName, $placesAdded)) {
                     continue;
                 }
-                $placeId = $placeMap[$placeName];
+                $placeId = $placeMap[$placeName][0];
 
                 $personPlaceStatement->execute(array(
                     ':personId' => $po,
@@ -336,6 +336,17 @@ class ImportDataCommand extends Command
                 $sourceId = Helper::pdr2num($aspectData['source']);
 
                 $personSources[] = $sourceId;
+
+                // resolve maps and subject links
+                $aspectData['description'] = preg_replace_callback('/\{(S|M):(.+?)\|(.+?)\}/', function($matches) use ($placeMap, $subjectMap) {
+                    if ('S' === $matches[1]) {
+                        $id = $subjectMap[$matches[2]];
+                        return '{S:'.$id.'|'.$matches[3].'}';
+                    } else {
+                        $pos = $placeMap[$matches[2]][1];
+                        return '{M:'.$pos->getLatitude().','.$pos->getLongitude().'|'.$matches[3].'}';
+                    }
+                }, $aspectData['description']);
 
                 $aspectStatement->execute(array(
                     ':id' => $ao,
@@ -363,7 +374,7 @@ class ImportDataCommand extends Command
                 }
 
                 foreach (array_unique($aspectData['places']) as $placeName) {
-                    $placeId = $placeMap[$placeName];
+                    $placeId = $placeMap[$placeName][0];
 
                     $aspectPlaceStatement->execute(array(
                         ':aspectId' => $ao,
