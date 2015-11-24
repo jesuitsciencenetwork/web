@@ -67,7 +67,8 @@ class RenderingHelper
                     break;
                 case "M":
                     list($lat,$lng) = explode(',', $matches[2]);
-                    return '<a class="geo" href="#" data-lat="'.$lat.'" data-lng="'.$lng.'">'. $matches[3] . '</a>';
+                    $url = $this->router->generate('search', array('lat' => $lat, 'lng'=>$lng, 'radius'=>0, 'place'=>$matches[3]));
+                    return '<a href="'.$url.'">' . $matches[3] . '</a><a class="geo" href="#" data-lat="'.$lat.'" data-lng="'.$lng.'"><i class="fa fa-map-marker"></i></a>';
                 default:
                     // should not happen - return unmodified
                     return $matches[0];

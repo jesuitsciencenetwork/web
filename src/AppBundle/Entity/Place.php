@@ -301,4 +301,9 @@ class Place
     {
         return $this->associatedAspects;
     }
+
+    public function getMarkerLabel()
+    {
+
+    }
 }

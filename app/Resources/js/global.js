@@ -6,12 +6,12 @@ window.scrollTo = function scrollTo(fragment, offset) {
     }, 250);
 };
 
+window.initMap = function initMap() {
+    $('body').trigger('map:ready');
+};
+
 $(function () {
     var $body = $('body');
-
-    window.initMap = function initMap() {
-        $body.trigger('map:ready');
-    };
 
     $('a[href^="#"]:not([data-toggle="tab"]):not([href="#"])').click(function (event) {
         event.preventDefault();

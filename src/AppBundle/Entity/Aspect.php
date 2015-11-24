@@ -387,7 +387,7 @@ class Aspect
     /**
      * Get places
      *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return Place[]|\Doctrine\Common\Collections\Collection
      */
     public function getPlaces()
     {
@@ -498,5 +498,18 @@ class Aspect
     public function getRelations()
     {
         return $this->relations;
+    }
+
+    public function getMarkerLabel()
+    {
+        $type = $this->getType();
+        if (in_array($type, array('beginningOfLife', 'entryInTheOrder', 'resignationFromTheOrder', 'expulsionFromTheOrder', 'endOfLife'))) {
+            return 'B';
+        }
+        if ('miscellaneous' == $type && $this->relations->count()) {
+            return $this->relations[0]->getSource()->getId() == $this->person->getId() ? 'O' : 'I';
+        }
+
+        return strtoupper(substr($type, 0, 1));
     }
 }

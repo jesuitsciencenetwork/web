@@ -112,7 +112,7 @@ class JsonController extends Controller
 
         foreach ($subjects as $subject) {
             $data[] = array(
-                'url' => $this->generateUrl('subject', ['slug' => $subject->getSlug()], UrlGenerator::ABSOLUTE_URL),
+                'url' => $this->generateUrl('search', ['subjects' => $subject->getId()], UrlGenerator::ABSOLUTE_URL),
                 'value' => $subject->getTitle()
             );
         }

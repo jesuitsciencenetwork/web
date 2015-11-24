@@ -6,6 +6,7 @@ use AppBundle\Entity\Aspect;
 use AppBundle\Entity\Person;
 use AppBundle\Entity\Subject;
 use AppBundle\Entity\SubjectGroup;
+use AppBundle\Helper;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query;
 use JMS\Serializer\SerializationContext;
@@ -87,10 +88,28 @@ class DefaultController extends Controller
             ->execute()
         ;
 
+        $twig = $this->get('twig');
+        $places = array();
         $aspects = array();
         foreach ($aspectsResult as $aspectRow) {
             /** @var Aspect $aspect */
             $aspect = $aspectRow[0];
+
+            foreach ($aspect->getPlaces() as $place) {
+                if (!array_key_exists($place->getId(), $places)) {
+                    $places[$place->getId()] = array(
+                        'lat' => $place->getLatitude(),
+                        'lng' => $place->getLongitude(),
+                        'name' => $place->getPlaceName() . ', ' . Helper::formatCountry($place->getCountry()),
+                        'types' => array(),
+                        'aspects' => array()
+                    );
+                }
+                $places[$place->getId()]['aspects'][] = $twig->render('include/aspect.html.twig', array(
+                    'aspect' => $aspect
+                ));
+                $places[$place->getId()]['types'][] = $aspect->getMarkerLabel();
+            }
 
             if ($aspect->getDateExact() || $aspect->getDateFrom() || $aspect->getDateTo()) {
                 $key = 'Dated';
@@ -114,10 +133,22 @@ class DefaultController extends Controller
             $aspects[$type][$key][] = $aspect;
         }
 
+        foreach ($places as &$place) {
+            $place['types'] = array_unique($place['types']);
+
+            if (count($place['types']) == 1) {
+                $place['label'] = $place['types'][0];
+            } else {
+                $place['label'] = null;
+            }
+            unset($place['types']);
+        }
+
         return $this->render('default/detail.html.twig', array(
             'person' => $person,
             'relations' => $relations,
-            'aspects' => $aspects
+            'aspects' => $aspects,
+            'places' => $places
         ));
     }
 

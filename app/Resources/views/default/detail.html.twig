@@ -7,6 +7,12 @@
         .gm-style-iw .citation, .gm-style-iw .geo {
             display: none;
         }
+        .gm-style-iw {
+            z-index: 9999;
+        }
+        #map-tooltip {
+            z-index: 99;
+        }
     </style>
     <div class="container detail">
         <div class="col-sm-8">
@@ -29,10 +35,7 @@
             {% for aspectList in subSections %}
                 {% for aspect in aspectList %}
                     <li class="aspect timeline-entry" data-symbol="{{ section[:1]|capitalize }}">
-                        <div class="aspect-inner">
-                            {% include "include/aspect.html.twig" with {aspect: aspect} only %}
-                        </div>
-                        {% include "include/marker.html.twig" with {aspect: aspect} only %}
+                        {% include "include/aspect.html.twig" with {aspect: aspect} only %}
                     </li>
                 {% endfor %}
             {% endfor %}
@@ -44,9 +47,7 @@
                 <ul class="aspect-list timeline">
                     {% for relation in person.relationsOutgoing %}
                         <li class="aspect timeline-entry" data-symbol="I">
-                            <div class="aspect-inner">
-                                {% include "include/aspect.html.twig" with {aspect: relation.aspect, currentPo: person.id} only %}
-                            </div>{% include "include/marker.html.twig" with {aspect: relation.aspect} only %}
+                            {% include "include/aspect.html.twig" with {aspect: relation.aspect, currentPo: person.id} only %}
                         </li>
                     {% endfor %}
                 </ul>
@@ -57,10 +58,7 @@
                 <ul class="aspect-list timeline">
                     {% for relation in person.relationsIncoming %}
                         <li class="aspect timeline-entry" data-symbol="O">
-                            <div class="aspect-inner">
                             {% include "include/aspect.html.twig" with {aspect: relation.aspect, currentPo: person.id} only %}
-                            </div>
-                            {% include "include/marker.html.twig" with {aspect: relation.aspect} only %}
                         </li>
                     {% endfor %}
                 </ul>
@@ -116,11 +114,11 @@
         </div>
     </div>
 
-    <div id="map" style="height:350px;"></div>
+    <div class="map-wrap" style="position: relative;">
 
-    <div class="tooltip top" role="tooltip" id="map-tooltip">
-        {#<div class="tooltip-arrow"></div>#}
-        <div class="tooltip-inner"></div>
+        <div class="fade" style="height: 30px; line-height: 30px; position: absolute; top: 0; left: 0; color: #fff; text-align: center; background-color: rgba(0,0,0,0.5); width:100%;" id="map-tooltip"></div>
+        <div id="map" style="height:350px;"></div>
+
     </div>
 
     <div class="container detail">
@@ -140,8 +138,8 @@
 
 {% block javascripts %}
     <script type="text/javascript">
-        var map;
-        $('body').on('map:ready', function initMap() {
+        var map, markerObjects = [];
+        $('body').on('map:ready', function() {
             map = new google.maps.Map(document.getElementById('map'), {
                 center: {lat: -34.397, lng: 150.644},
                 zoom: 10,
@@ -159,48 +157,51 @@
                         pos = new google.maps.LatLng(
                                 parseFloat($this.data('lat')),
                                 parseFloat($this.data('lng'))
-                        )
-                        ;
-                map.setCenter(pos);
-                map.setZoom(10);
+                        );
+                map.panTo(pos);
+                $.each(markerObjects, function (i, marker) {
+                    var mlat = marker.position.lat();
+                    var mlng = marker.position.lng();
+
+                    if (mlat == pos.lat() && mlng == pos.lng()) {
+                        new google.maps.event.trigger( marker, 'click' );
+                        return false;
+                    }
+                });
                 window.scrollTo('#map', 50);
             });
 
             var info = new google.maps.InfoWindow({
                 content: ''
             });
-//            var $tooltip = $('#map-tooltip'), $tooltipInner = $tooltip.find('.tooltip-inner');
+            var $tooltip = $('#map-tooltip');
 
+            var markers = {{ places|json_encode|raw }};
 
-            $('.marker').each(function() {
-                var $this = $(this),
-                    pos = new google.maps.LatLng(
-                            parseFloat($this.data('lat')),
-                            parseFloat($this.data('lng'))
-                    )
-                ;
-
-                var aspect = $this.closest('.aspect').find('.aspect-inner').html();
-                console.log('type:', $this.closest('.aspect').data('symbol'));
+            $.each(markers, function(i, place) {
+                pos = new google.maps.LatLng(place.lat, place.lng);
                 var marker = new google.maps.Marker({
                     position: pos,
                     map: map,
-                    label: $this.closest('.aspect').data('symbol'),
-                    title: $this.data('title')
+                    label: place.label,
+                    title: place.name
                 });
+                markerObjects.push(marker);
 
-//                google.maps.event.addListener(marker, 'mouseover', function(e) {
+                marker.addListener('mouseover', function(e) {
+                    $tooltip.html(place.name).addClass('in');
+                });
+                marker.addListener('mouseout', function(e) {
+                    $tooltip.html('').removeClass('in');
+                });
 //                    console.log(marker);
 //                    //$(marker).tooltip({placement: 'right'});
 //                    $tooltipInner.html($this.data('title'));
-//                    $tooltip.show();
 //                    $tooltip.offset({top: e.pixel.y, left: e.pixel.x });
 //                });
 
-                marker.aspect = aspect;
-
                 marker.addListener('click', function() {
-                    info.setContent(aspect);
+                    info.setContent("<strong>" + place.name + "</strong><br>" + place.aspects.join("<br>"));
                     info.open(map, marker);
                 });
 
