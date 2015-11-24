@@ -11,7 +11,7 @@
     <!-- Tab panes -->
     <div class="tab-content" style="border-left: 1px solid #ddd; border-right: 1px solid #ddd; border-bottom: 1px solid #ddd;">
         <div role="tabpanel" class="tab-pane fade in active" id="who">
-            <p class="text-center">Type parts of a name to search within names and alternate spellings.</p>
+            <p class="text-center">Type any part of the name of a person to search within names and alternate spellings.</p>
             <form action="{{ path('search') }}" method="get" class="form-inline text-center" style="margin-bottom: 20px;">
                 <div class="form-group text-left autocomplete">
                     <input type="text" class="js-autocomplete form-control" />
@@ -24,7 +24,7 @@
             </p>
         </div>
         <div role="tabpanel" class="tab-pane fade" id="what">
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Blanditiis dicta dolores eius ipsa odio.</p>
+            <p>Pick one or more subjects for which to search.</p>
             <div class="js-tree treeview" data-tree="{{ subjectGroupTree|json_encode }}"></div>
             <div id="what-box" class="well well-small hidden" style="margin-top: 20px;">
                 <form action="{{ path('search') }}" method="get">
@@ -42,7 +42,7 @@
             {#<div id="where-map" style="width: 100%;height: 250px;"></div>#}
             {#</div>#}
             {#<div class="col-sm-8">#}
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Consequuntur dolore illo iusto ut. Accusamus cum cupiditate deleniti ea facere facilis hic illum impedit in, maiores optio quaerat rem, sit voluptas.</p>
+            <p>Type a place name and hit enter to select it. You can then pick a radius within which to search.</p>
 
             <form action="{{ path('search') }}" method="get" class="form-inline text-center" style="margin-bottom: 20px;">
                 <div class="form-group text-left autocomplete">
@@ -72,7 +72,7 @@
             {#</div>#}
         </div>
         <div role="tabpanel" class="tab-pane fade" id="when">
-            <p>Adjust the slider to search within a timeframe or enter a date.</p>
+            <p>Adjust the slider to search within a timeframe. You can also directly enter a year into the date field.</p>
 
             <form action="{{ path('search') }}" method="get">
                 <div class="row form-group">
