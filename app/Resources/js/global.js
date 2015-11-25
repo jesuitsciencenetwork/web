@@ -167,7 +167,15 @@ $(function () {
         $('.js-tree').each(function() {
             var $this = $(this);
 
-            var updateSelection = function() {
+            var updateSelection = function(e, n) {
+                if (n.nodes) {
+                    $.each(n.nodes, function(i, node) {
+                        $this.treeview(n.state.checked ? 'selectNode' : 'unselectNode', [node.nodeId, {silent: false}]);
+                    });
+                    return;
+                }
+
+                $this.treeview(n.state.checked ? 'selectNode' : 'unselectNode', [n.nodeId, {silent: true}]);
                 var selection = $this.treeview('getChecked');
 
                 if (selection.length) {

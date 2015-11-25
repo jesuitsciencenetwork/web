@@ -172,7 +172,7 @@ class SearchService
             return array(
                 'text' => $group->getTitle(),
                 'selectable' => false,
-                'disableCheckbox' => true,
+                'disableCheckbox' => false,
                 'nodes' => $group->getSubjects()->map(function (Subject $s) {
                     return array(
                         'text' => $s->getTitle(),
@@ -187,13 +187,13 @@ class SearchService
             array(
                 'text' =>  '<em>Contemporary grouping</em>',
                 'selectable' => false,
-                'disableCheckbox' => true,
+                'disableCheckbox' => false,
                 'nodes' => array_map($callback, $contemporary)
             ),
             array(
                 'text' =>  '<em>Modern grouping</em>',
                 'selectable' => false,
-                'disableCheckbox' => true,
+                'disableCheckbox' => false,
                 'nodes' => array_map($callback, $modern)
             ),
         );
