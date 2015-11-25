@@ -22,6 +22,27 @@ class GraphController extends Controller
      */
     public function relationsAction()
     {
+        $colors = array(
+            '' => '#bdc3c7',
+            'agentOf' => '#2c3e50',
+            'brotherOf' => '#95a5a6',
+            'colleagueOf' => '#f1c40f',
+            'competitorOf' => '#e67e22',
+            'fatherOf' => '#1abc9c',
+            'inferiorOf' => '#d35400',
+            'inspiredBy' => '#e74c3c',
+            'predecessorOf' => '#2ecc71',
+            'privateTeacherOf' => '#c0392b',
+            'professorOf' => '#3498db',
+            'pupilOf' => '#9b59b6',
+            'reviewerOf' => '#34495e',
+            'schoolTeacherOf' => '#8e44ad',
+            'sonOf' => '#16a085',
+            'studentOf' => '#2980b9',
+            'successorOf' => '#27ae60',
+            'tutorOf' => '#7f8c8d',
+        );
+
         /** @var Collection|Person[] $persons */
         $persons = $this->getDoctrine()->getManager()
             ->createQuery(
@@ -47,9 +68,10 @@ class GraphController extends Controller
             $edges[] = array(
                 'from' => (string)$row['source_id'],
                 'to' => (string)$row['target_id'],
-//                'label' => $row['value'],
+                'title' => $row['value'],
                 'arrows' => 'to',
-                'group' => $row['value']
+                'color' => $colors[$row['value']],
+                'width' => 2,
             );
         }
         return $this->render('graph/relations.html.twig', array(

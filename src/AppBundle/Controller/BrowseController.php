@@ -104,13 +104,16 @@ class BrowseController extends Controller
 
         foreach ($places as $place) {
             //$person = $person[0]; // 0 = entity, 1 = coalesce(...)
-            $letter = strtoupper(substr(Helper::removeAccents($place->getPlaceName()), 0, 1));
+            $letter = strtoupper(substr(Helper::removeAccents(
+                "'s-Hertogenbosch" === $place->getPlaceName() ? 'Hertogenbosch' : $place->getPlaceName()
+            ), 0, 1));
             if (!array_key_exists($letter, $letters)) {
                 $letters[$letter] = array();
             }
 
             $letters[$letter][] = $place;
         }
+        ksort($letters);
 
         return $this->render(':default:places.html.twig', array(
             'placeCount' => count($places),
