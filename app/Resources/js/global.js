@@ -171,22 +171,13 @@ $(function () {
                 var selection = $this.treeview('getChecked');
 
                 if (selection.length) {
+                    $('#what-button').removeClass('disabled').prop('disabled', false);
                     $('#what-selection').val($.map(selection, function(n) {
                         return n.id;
                     }).join(","));
-                    selection = $.map(selection, function(n) {
-                        return '<em>' + n.text + '</em>';
-                    });
-                    if (selection.length > 1) {
-                        selection[selection.length - 1] = 'and ' + selection[selection.length - 1];
-                    }
-                    $('#what-subjects').html(selection.join(selection.length == 2 ? " " : ", "));
-                    $('#what-subjects-plural').toggleClass('hidden', selection.length == 1);
-                    $('#what-box').removeClass('hidden').find('button').removeClass('disabled').prop('disabled', false);
                 } else {
-                    $('#what-box').addClass('hidden').find('button').addClass('disabled').prop('disabled', true);
+                    $('#what-button').addClass('disabled').prop('disabled', true);
                     $('#what-selection').val('');
-                    $('#what-subjects').html('');
                 }
             };
 

@@ -25,16 +25,15 @@
         </div>
         <div role="tabpanel" class="tab-pane fade" id="what">
             <p>Pick one or more subjects for which to search.</p>
+            <div style="max-height: 300px; overflow-y: scroll;">
             <div class="js-tree treeview" data-tree="{{ subjectGroupTree|json_encode }}"></div>
-            <div id="what-box" class="well well-small hidden" style="margin-top: 20px;">
-                <form action="{{ path('search') }}" method="get">
-                    <p>Find aspects linked with subject<span id="what-subjects-plural">s</span> <span id="what-subjects"></span></p>
-                    <p class="text-right" style="margin-bottom: 0;">
-                        <button type="submit" id="what-button" disabled="disabled" class="btn btn-primary disabled">Search</button>
-                    </p>
-                    <input type="hidden" id="what-selection" name="subjects" value="" />
-                </form>
             </div>
+            <form action="{{ path('search') }}" method="get">
+                <p class="text-right" style="margin-bottom: 0;">
+                    <button type="submit" id="what-button" disabled="disabled" class="btn btn-primary disabled">Search</button>
+                </p>
+                <input type="hidden" id="what-selection" name="subjects" value="" />
+            </form>
         </div>
         <div role="tabpanel" class="tab-pane fade" id="where">
             {#<div class="row">#}
