@@ -15,6 +15,9 @@ security:
                     preview:
                         password: salvator
                         roles: "ROLE_USER"
+                    guest:
+                        password: cappuccino
+                        roles: "ROLE_USER"
 
     firewalls:
         # disables authentication for assets and the profiler, adapt it according to your needs
