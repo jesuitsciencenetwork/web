@@ -259,13 +259,11 @@ $(function () {
                     return false;
                 })
                 .on("typeahead:select", function (e, item) {
-                    console.log(arguments);
                     if (item.url) {
                         // region item
                         window.location.href = item.url;
                     } else {
                         // google item
-
                         geocoder.geocode({'placeId': item.place_id}, function(results, status) {
                             if (status === google.maps.GeocoderStatus.OK) {
                                 if (results[0]) {
@@ -278,6 +276,7 @@ $(function () {
                                     $('#where-button').prop('disabled', false).removeClass('disabled');
                                     $('#where-box').removeClass('hidden');
                                     $('#where-search').val('');
+                                    $('#where-radius').focus();
                                 } else {
                                     window.alert('No results found');
                                 }
