@@ -38,7 +38,7 @@
                     <li><a href="#">Statistics</a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
-                    <li{% if 'search' == route %} class="active"{% endif %}><a href="{{ path('search') }}">{{ icon('search') }}</a></li>
+                    <li{% if 'search' == route %} class="active"{% endif %}><a href="{{ path('search') }}"><i class="fa fa-search"></i></a></li>
                 </ul>
                 <form class="navbar-form navbar-right" role="search" action="{{ path('search') }}" method="POST">
                     <div class="form-group">

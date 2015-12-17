@@ -1,9 +1,9 @@
 # Learn more about services, parameters and containers at
 # http://symfony.com/doc/current/book/service_container.html
 parameters:
-    viaf_cache_dir: "%kernel.root_dir%/cache/viaf/"
-    idi_cache_dir: "%kernel.root_dir%/cache/idi/"
-    geo_cache_dir: "%kernel.root_dir%/cache/geo/"
+    viaf_cache_dir: "%kernel.cache_dir%/../../viaf/"
+    idi_cache_dir: "%kernel.cache_dir%/../../idi/"
+    geo_cache_dir: "%kernel.cache_dir%/../../geo/"
 
 services:
   jsn.provider.rdf.remote:
@@ -14,8 +14,8 @@ services:
     class: AppBundle\Viaf\RdfProvider\CachingProvider
     public: false
     arguments:
-      - @jsn.provider.rdf.remote
-      - %viaf_cache_dir%
+      - "@jsn.provider.rdf.remote"
+      - "%viaf_cache_dir%"
 
   jsn.provider.idi.remote:
     class: AppBundle\Pdr\IdiProvider\RemoteProvider
@@ -25,8 +25,8 @@ services:
     class: AppBundle\Pdr\IdiProvider\CachingProvider
     public: false
     arguments:
-      - @jsn.provider.idi.remote
-      - %idi_cache_dir%
+      - "@jsn.provider.idi.remote"
+      - "%idi_cache_dir%"
 
   jsn.rdf_provider:
     alias: jsn.provider.rdf.caching
@@ -37,15 +37,15 @@ services:
   jsn.command.fetch_viaf_names:
     class: AppBundle\Command\FetchViafNamesCommand
     arguments:
-      - @jsn.rdf_provider
+      - "@jsn.rdf_provider"
     tags:
       - { name: console.command }
 
   jsn.geocoder:
     class: AppBundle\Geocoder
     arguments:
-      - %geo_cache_dir%
-      - @logger
+      - "%geo_cache_dir%"
+      - "@logger"
 
   jsn.provider.pdr.ids:
     class: AppBundle\Pdr\IdProvider
@@ -53,11 +53,11 @@ services:
   jsn.command.import_data:
     class: AppBundle\Command\ImportDataCommand
     arguments:
-      - @doctrine.orm.entity_manager
-      - @jsn.connector.pdr
-      - @jsn.connector.viaf
-      - @jsn.provider.pdr.ids
-      - @jsn.geocoder
+      - "@doctrine.orm.entity_manager"
+      - "@jsn.connector.pdr"
+      - "@jsn.connector.viaf"
+      - "@jsn.provider.pdr.ids"
+      - "@jsn.geocoder"
       - "%kernel.root_dir%/Resources/yaml/subject_groups.yml"
     tags:
       - { name: console.command }
@@ -65,34 +65,34 @@ services:
   jsn.connector.viaf:
     class: AppBundle\Viaf\ViafConnector
     arguments:
-      - @jsn.rdf_provider
+      - "@jsn.rdf_provider"
 
   jsn.connector.pdr:
     class: AppBundle\Pdr\PdrConnector
     arguments:
-      - @jsn.idi_provider
+      - "@jsn.idi_provider"
 
   jsn.twig.extension.app:
     class: AppBundle\Twig\AppExtension
     arguments:
-      - @jsn.twig.helper.rendering
-      - @jsn.stats_provider
+      - "@jsn.twig.helper.rendering"
+      - "@jsn.stats_provider"
     tags:
       - { name: twig.extension }
 
   jsn.twig.helper.rendering:
     class: AppBundle\Twig\Helper\RenderingHelper
     arguments:
-      - @router
+      - "@router"
 
   jsn.stats_provider:
     class: AppBundle\StatsProvider
     arguments:
-      - @doctrine.orm.default_entity_manager
+      - "@doctrine.orm.default_entity_manager"
 
   jsn.search:
     class: AppBundle\SearchService
     arguments:
-      - @templating
-      - @doctrine.orm.default_entity_manager
-      - @knp_paginator
+      - "@templating"
+      - "@doctrine.orm.default_entity_manager"
+      - "@knp_paginator"

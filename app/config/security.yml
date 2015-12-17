@@ -30,7 +30,7 @@ security:
             security: false
 
         main:
-            anonymous: false
+            anonymous: ~
             # activate different ways to authenticate
 
             http_basic: ~

@@ -8,7 +8,7 @@
     {% endif %}
 </span>
 
-<a class="citation {{ macro.color(aspect.source) }} fg js-popover jumphighlight" href="#source-{{ aspect.source.id }}" data-toggle="popover" data-placement="top" data-html="true" data-trigger="hover" title="Source for this aspect" data-content="{% filter escape %}<small>{% include "include/sourcetext.html.twig" with {source:aspect.source} only %}</small>{% endfilter %}">{{ icon('book') }} {{ aspect.source.id }}</a>
+<a class="citation {{ macro.color(aspect.source) }} fg js-popover jumphighlight" href="#source-{{ aspect.source.id }}" data-toggle="popover" data-placement="top" data-html="true" data-trigger="hover" title="Source for this aspect" data-content="{% filter escape %}<small>{% include "include/sourcetext.html.twig" with {source:aspect.source} only %}</small>{% endfilter %}"><i class="fa fa-book"></i> {{ aspect.source.id }}</a>
 
 {% if "entryInTheOrder" == aspect.type %}
     Entered the Society of Jesus {{ macro.places(aspect) }}
