@@ -13,8 +13,10 @@
 !var/sessions/.gitkeep
 !var/SymfonyRequirements.php
 /phpunit.xml
-/bin/
 /vendor/
+/bin/*
+!/bin/console
+!/bin/symfony_requirements
 /html/bundles/
 logs
 .idea
