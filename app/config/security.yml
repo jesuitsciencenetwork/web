@@ -15,8 +15,8 @@ security:
                     preview:
                         password: salvator
                         roles: "ROLE_USER"
-                    guest:
-                        password: cappuccino
+                    emlo:
+                        password: rocketsalad
                         roles: "ROLE_USER"
 
     firewalls:
@@ -30,10 +30,11 @@ security:
             security: false
 
         main:
-            anonymous: ~
+            anonymous: false
             # activate different ways to authenticate
 
-            http_basic: ~
+            http_basic:
+              realm: "JSN"
             # http://symfony.com/doc/current/book/security.html#a-configuring-how-your-users-will-authenticate
 
             # form_login: ~
