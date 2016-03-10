@@ -644,6 +644,9 @@ ul.timeline {
   ul {
     margin-bottom: 15px;
   }
+  ul + ul {
+    margin-top: -15px;
+  }
   ul + div {
     margin-top: -10px;
   }
@@ -889,5 +892,59 @@ a.geo {
         display: block;
       }
     }
+  }
+}
+
+
+.modal.refinement .modal-body {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.list-indented {
+  margin-left: 30px;
+}
+
+
+.fancy-checkbox {
+  display: none;
+}
+.fancy-checkbox + label {
+  width: 20px;
+  height: 20px;
+  background-color: #eee;
+  border: 1px solid #ddd;
+  margin: 0;
+  margin-right: 3px;
+  line-height: 20px;
+  font-family: "Montserrat", sans-serif;
+  font-weight: bold;
+  color: #444;
+  font-size: 11.5px;
+  text-align: center;
+}
+.fancy-checkbox:checked + label {
+  background-color: #a13;
+  color: #fff;
+}
+
+
+.restriction {
+  padding-right: 20px;
+  position: relative;
+
+  .remove {
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+}
+
+
+table.table.table-unbordered {
+  > thead > tr > td,
+  > tbody > tr > td,
+  > tfoot > tr > td {
+    border-top: 0 none;
   }
 }

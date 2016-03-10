@@ -3,28 +3,28 @@
 namespace AppBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class OccupationType extends AbstractType {
-
-    private $em;
 
     public function getName()
     {
         return 'occupation';
     }
 
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
-        parent::setDefaultOptions($resolver);
+        parent::configureOptions($resolver);
 
-        $resolver->setDefaults(array(
+        $resolver->setDefaults(
+            [
             'multiple' => true,
-            'attr' => array(
+            'attr' => [
                 'class' => 'selectpicker',
                 'data-live-search' => 'true'
-            )
-        ));
+            ]
+            ]
+        );
     }
 
     public function getParent()

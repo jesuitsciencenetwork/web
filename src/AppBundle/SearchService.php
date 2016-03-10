@@ -2,6 +2,7 @@
 
 namespace AppBundle;
 
+use AppBundle\DTO\Bounds;
 use AppBundle\DTO\Radius;
 use AppBundle\Entity\Subject;
 use AppBundle\Entity\SubjectGroup;
@@ -11,6 +12,7 @@ use AppBundle\Query as QueryDTO;
 use Doctrine\ORM\QueryBuilder;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
+use Symfony\Component\HttpFoundation\Request;
 
 class SearchService
 {
@@ -38,111 +40,42 @@ class SearchService
 
     public function render(QueryDTO $query, $page = 1)
     {
-        $qb = $this->em
-            ->createQueryBuilder()
-            ->select('a, p')
-            ->from('AppBundle:Aspect', 'a')
-            ->innerJoin('a.person', 'p')
-            ->leftJoin('a.places', 'pl')
-            ->leftJoin('a.subjects', 's')
-            ->leftJoin('a.source', 'src')
-        ;
-
-        if ($query->getCountry()) {
-            $qb->andWhere('pl.country = :country');
-            $qb->setParameter('country', $query->getCountry());
-        }
-
-        if ($query->getContinent()) {
-            $qb->andWhere('pl.continent = :continent');
-            $qb->setParameter('continent', $query->getContinent());
-        }
-
-        if ($query->getRadius()) {
-            $ids = $this->placesNear($query->getRadius());
-            $qb->andWhere('pl.id IN(:radius)');
-            $qb->setParameter('radius', $ids);
-        }
-
-        if ($query->getFrom()) {
-            $qb->andWhere('COALESCE(a.dateExact, a.dateFrom) >= :from');
-            $qb->setParameter('from', $query->getFrom());
-        }
-
-        if ($query->getTo()) {
-            $qb->andWhere('COALESCE(a.dateExact, a.dateTo) <= :to');
-            $qb->setParameter('to', $query->getTo());
-        }
-
-        if ($query->getSubjects()) {
-            $sids = array_keys($query->getSubjects());
-            $pqb = $this->em->getRepository('AppBundle:Person')->createQueryBuilder('p')
-                ->select('p.id');
-            foreach ($sids as $id) {
-                $pqb->innerJoin('p.subjects', 'si'.$id, Query\Expr\Join::WITH, "si$id.id=$id");
-            }
-            $pids = $pqb->getQuery()->getResult(Query::HYDRATE_ARRAY);
-            $pids = array_map(function ($e) { return $e['id']; }, $pids);
-            $qb->andWhere('p.id IN(:pids)');
-            $qb->innerJoin('a.subjects', 'si', Query\Expr\Join::WITH, "si.id IN (:sids)");
-            $qb->setParameter('sids', $sids);
-            $qb->setParameter('pids', $pids);
-        }
-
-        if ($query->getOccupation()) {
-            $qb->andWhere('a.occupation = :occupation');
-            $qb->setParameter('occupation', $query->getOccupation());
-        }
-
-        $filter = $this->getFilters(clone $qb);
-
-        $pagination = $this->paginator->paginate($qb->getQuery(), $page, 20);
-
-        return $this->templating->renderResponse('search/results.html.twig', array(
-            'pagination' => $pagination,
-            'query' => $query,
-            'filter' => $filter
-        ));
     }
 
-    private function getFilters(QueryBuilder $qb)
+    public function getFilters(QueryBuilder $qb)
     {
-        $filters = array();
+        $filters = [];
 
-        $countries = $qb->select('distinct pl.country')->getQuery()->getResult(Query::HYDRATE_ARRAY);
-        $filters['countries'] = array_map(function($e) {
-            return $e['country'];
-        }, $countries);
-
-        $continents = $qb->select('distinct pl.continent')->getQuery()->getResult(Query::HYDRATE_ARRAY);
-        $filters['continents'] = array_map(function($e) {
-            return $e['continent'];
-        }, $continents);
-
-        $filters['subjects'] = $qb
-            ->select('distinct s.id, s.title')->getQuery()->getResult(Query::HYDRATE_ARRAY);
-
-        $sourceIds = $qb->select('distinct src.id')->getQuery()->getResult(Query::HYDRATE_ARRAY);
-        $sourceIds = array_map(function($e) {
-            return $e['id'];
-        }, $sourceIds);
-        $filters['sources'] = $this->em->createQueryBuilder()->select('s')->from('AppBundle:Source', 's')->where('s.id IN(:ids)')->orderBy('s.id', 'asc')->setParameter('ids', $sourceIds)->getQuery()->getResult();
-
+        $this->addCountriesFromQuery($filters, $qb);
+        $this->addContinentsFromQuery($filters, $qb);
+        //$this->addSourcesFromQuery($filters, $qb);
+        $this->addSubjectsFromQuery($filters, $qb);
+        $this->addPlacesFromQuery($filters, $qb);
+        $this->addOccupationsFromQuery($filters, $qb);
 
         return $filters;
     }
 
-    private function placesNear(Radius $radius)
+    /**
+     * @return QueryBuilder
+     */
+    public function createQueryBuilder()
+    {
+        return $this->em->createQueryBuilder();
+    }
+
+    public function placesNear(Radius $radius)
     {
         $rows = $this->em->getConnection()->executeQuery(
             'SELECT id, (6371 * acos(cos(radians(:lat)) * cos(radians(latitude)) * cos(radians(longitude) - radians(:lng)) + sin(radians(:lat)) * sin(radians(latitude)))) AS distance FROM place HAVING distance <= :radius ORDER BY distance ASC',
-        array(
+        [
             'lat' => $radius->getCenter()->getLatitude(),
             'lng' => $radius->getCenter()->getLongitude(),
             'radius' => $radius->getRadius()
-        ));
+        ]
+        );
 
-        $ids = array();
+        $ids = [];
 
         foreach ($rows as $row) {
             $ids[] = $row['id'];
@@ -151,51 +84,255 @@ class SearchService
         return $ids;
     }
 
-    public function getSubjectGroupTree()
+    public function getSubjectGroupTree($whitelist = null)
     {
-        $q = $this
+        /** @var QueryBuilder $qb */
+        $qb = $this
             ->em
             ->getRepository('AppBundle:SubjectGroup')
             ->createQueryBuilder('g')
             ->select('g, s')
-            ->leftJoin('g.subjects', 's')
+            ->innerJoin('g.subjects', 's')
             ->where('g.scheme = :scheme')
             ->addOrderBy('g.title', 'ASC')
             ->addOrderBy('s.title', 'ASC')
-            ->getQuery()
         ;
 
-        $contemporary = $q->execute(array('scheme' => 'harris'));
-        $modern = $q->execute(array('scheme' => 'modern'));
+        if (null !== $whitelist) {
+            $qb->andWhere($qb->expr()->in('s.id', $whitelist));
+        }
+
+        $q = $qb->getQuery();
+
+        $contemporary = $q->execute(['scheme' => 'harris']);
+        $modern = $q->execute(['scheme' => 'modern']);
 
         $callback = function (SubjectGroup $group) {
-            return array(
+            return [
                 'text' => $group->getTitle(),
                 'selectable' => false,
                 'disableCheckbox' => false,
                 'nodes' => $group->getSubjects()->map(function (Subject $s) {
-                    return array(
+                    return [
                         'text' => $s->getTitle(),
                         'id' => $s->getId()
-                    );
+                    ];
                 })->toArray(),
-                'state' => array('expanded' => $group->getSubjects()->count() <= 3)
-            );
+                'state' => ['expanded' => $group->getSubjects()->count() <= 3]
+            ];
         };
 
-        return array(
-            array(
+        return [
+            [
                 'text' =>  '<em>Contemporary grouping</em>',
                 'selectable' => false,
                 'disableCheckbox' => false,
                 'nodes' => array_map($callback, $contemporary)
-            ),
-            array(
+            ],
+            [
                 'text' =>  '<em>Modern grouping</em>',
                 'selectable' => false,
                 'disableCheckbox' => false,
                 'nodes' => array_map($callback, $modern)
-            ),
+            ],
+        ];
+    }
+
+    public function getQueryFromRequest(Request $request)
+    {
+        $q = $request->query;
+        $query = new \AppBundle\Query();
+
+        $query->setTypes($q->get('type', \AppBundle\Query::types()));
+
+        if ($q->has('radius')) {
+            $query->setRadius(Radius::fromQuery($q));
+        }
+
+        if ($q->has('bounds')) {
+            $query->setBounds(Bounds::fromUrlValue($q->get('bounds')));
+        }
+
+        if ($q->has('continent')) {
+            $query->setContinent($q->get('continent'));
+        }
+
+        if ($q->has('country')) {
+            $query->setCountry($q->get('country'));
+        }
+
+        if ($q->has('place')) {
+            $place = $this
+                ->em
+                ->getRepository('AppBundle:Place')
+                ->findOneBy(
+                    [
+                    'slug' => $q->get('place')
+                    ]
+                )
+            ;
+
+            $query->setPlace($place);
+        }
+
+        if ($q->has('subjects')) {
+            // what query
+            $ids = explode(',', $q->get('subjects'));
+            $ids = array_map(function($e) {return (int)$e;}, $ids);
+            $ids = array_unique($ids);
+
+            $subjResult = $this->em->getRepository('AppBundle:Subject')
+                ->createQueryBuilder('s')
+                ->select('s.id, s.title')
+                ->orderBy('s.title', 'ASC')
+                ->where('s.id IN(:ids)')
+                ->setParameter('ids', $ids)
+                ->getQuery()
+                ->getResult(\Doctrine\ORM\Query::HYDRATE_ARRAY)
+            ;
+
+            $subjects = [];
+            foreach ($subjResult as $subject) {
+                $subjects[$subject['id']] = $subject['title'];
+            }
+            $query->setSubjects($subjects);
+        }
+
+        if ($q->has('from') && $q->has('to')) {
+            // when query
+            $query->setFrom($q->get('from'));
+            $query->setTo($q->get('to'));
+        }
+
+        if ($q->has('occupation')) {
+            $query->setOccupation($q->get('occupation'));
+        }
+
+        // @TODO track if any condition has been applied
+//        if ($q->count() > 0) {
+//            throw new \Exception('Could not understand query');
+//        }
+
+        return $query;
+    }
+
+    public function getPersonsForSubjects($ids)
+    {
+        $pqb = $this->em->getRepository('AppBundle:Person')->createQueryBuilder('p')
+            ->select('p.id');
+        foreach ($ids as $id) {
+            $pqb->innerJoin('p.subjects', 'si'.$id, Query\Expr\Join::WITH, "si$id.id=$id");
+        }
+        $pids = $pqb->getQuery()->getResult(Query::HYDRATE_ARRAY);
+        $pids = array_map(function ($e) { return $e['id']; }, $pids);
+        return $pids;
+    }
+
+    public function create()
+    {
+        return new Search($this);
+    }
+
+    private function addCountriesFromQuery(&$filters, QueryBuilder $qb)
+    {
+        $qb = clone $qb;
+        $countries = $qb->select('pl.country, count(pl.country) as cnt')->andWhere('pl.country is not null')->orderBy('cnt', 'desc')->groupBy('pl.country')->getQuery()->getResult(Query::HYDRATE_ARRAY);
+        $countries = array_combine(
+            array_map(function($e) {
+                return $e['country'];
+            }, $countries),
+            array_map(function($e) {
+                return Helper::formatCountry($e['country']);
+            }, $countries)
+        );
+
+        $filters['countries_short'] = array_slice($countries, 0, 7, true);
+
+        asort($countries);
+        $filters['countries'] = $countries;
+
+    }
+
+    private function addContinentsFromQuery(&$filters, QueryBuilder $qb)
+    {
+        $qb = clone $qb;
+        $continents = $qb->select('distinct pl.continent')->andWhere('pl.continent is not null')->getQuery()->getResult(Query::HYDRATE_ARRAY);
+        $continents = array_combine(
+            array_map(function($e) {
+                return $e['continent'];
+            }, $continents),
+            array_map(function($e) {
+                return Helper::formatContinent($e['continent']);
+            }, $continents)
+        );
+
+        asort($continents);
+        $filters['continents'] = $continents;
+    }
+
+    private function addSourcesFromQuery(&$filters, QueryBuilder $qb)
+    {
+        $qb = clone $qb;
+        $sourceIds = $qb
+            ->select('distinct src.id, count(src.id) as srcCount')
+            ->groupBy('src.id')
+            ->orderBy('srcCount', 'desc')
+            ->getQuery()->getResult(Query::HYDRATE_ARRAY);
+        $sourceIds = array_map(function($e) {
+            return $e['id'];
+        }, $sourceIds);
+        $filters['sources'] = $this->em->createQueryBuilder()->select('s')->from('AppBundle:Source', 's')->where('s.id IN(:ids)')->orderBy('FIELD(s.id, :ids)')->setParameter('ids', $sourceIds)->getQuery()->getResult();
+
+    }
+
+    private function addSubjectsFromQuery(&$filters, QueryBuilder $qb)
+    {
+        $qb = clone $qb;
+        $subjects = $qb
+            ->select('s.id, s.title, count(s.id) as cnt')
+            ->orderBy('cnt', 'desc')
+            ->groupBy('s.id')
+            ->getQuery()
+            ->getResult(Query::HYDRATE_ARRAY);
+
+        $filters['subjects_short'] = array_slice($subjects, 0, 7, true);
+
+        $filters['subjects_count'] = count($subjects);
+        if ($filters['subjects_count'] > 7) {
+            $filters['subjects'] = $this->getSubjectGroupTree(array_map(function ($s) {
+                return $s['id'];
+            }, $subjects));
+        }
+
+    }
+
+    private function addPlacesFromQuery(&$filters, QueryBuilder $qb)
+    {
+        $qb = clone $qb;
+
+        $filters['places'] = $qb
+            ->select('distinct pl.placeName, pl.country, pl.continent, pl.id')
+            ->orderBy('pl.continent, pl.country, pl.placeName')
+            ->getQuery()
+            ->getResult(Query::HYDRATE_ARRAY);
+    }
+
+    private function addOccupationsFromQuery(&$filters, QueryBuilder $qb)
+    {
+        $qb = clone $qb;
+
+        $occupations = $qb
+            ->select('a.occupation, a.occupationSlug, count(a.occupationSlug) as cnt')
+            ->orderBy('cnt', 'desc')
+            ->andWhere('a.occupationSlug > \'\'')
+            ->groupBy('a.occupationSlug')
+            ->getQuery()
+            ->getResult(Query::HYDRATE_ARRAY)
+        ;
+
+        $filters['occupations'] = array_combine(
+            array_map(function($o) { return $o['occupationSlug']; }, $occupations),
+            array_map(function($o) { return $o['occupation']; }, $occupations)
         );
     }
 }

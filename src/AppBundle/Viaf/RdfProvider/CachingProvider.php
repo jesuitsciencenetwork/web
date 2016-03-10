@@ -19,9 +19,8 @@ class CachingProvider implements RdfProviderInterface
     public function getRdf($viaf)
     {
         $originalProvider = $this->originalProvider;
-        return $this->cache->getOrCreate($viaf . '.xml', array(), function ($filename) use ($originalProvider, $viaf) {
+        return $this->cache->getOrCreate($viaf . '.xml', [], function ($filename) use ($originalProvider, $viaf) {
             file_put_contents($filename, $originalProvider->getRdf($viaf));
         });
     }
-
 }

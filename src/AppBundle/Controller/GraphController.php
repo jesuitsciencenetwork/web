@@ -22,7 +22,7 @@ class GraphController extends Controller
      */
     public function relationsAction()
     {
-        $colors = array(
+        $colors = [
             '' => '#bdc3c7',
             'agentOf' => '#2c3e50',
             'brotherOf' => '#95a5a6',
@@ -41,7 +41,7 @@ class GraphController extends Controller
             'studentOf' => '#2980b9',
             'successorOf' => '#27ae60',
             'tutorOf' => '#7f8c8d',
-        );
+        ];
 
         /** @var Collection|Person[] $persons */
         $persons = $this->getDoctrine()->getManager()
@@ -49,34 +49,35 @@ class GraphController extends Controller
                 'SELECT p, (select count(r.id) from AppBundle:Relation r where r.source = p.id or r.target = p.id) as nodeValue FROM AppBundle:Person p INNER JOIN p.aspects a'
             )
             ->execute();
-        $nodes = array();
+        $nodes = [];
         foreach ($persons as $row) {
             $person = $row[0];
-            $nodes[] = array(
+            $nodes[] = [
                 'id' => (string)$person->getId(),
                 'group' => (int)$person->isJesuit(),
                 'label' => $person->getDisplayName(),
                 'title' => $person->getDisplayName(),
                 'value' => (int)$row['nodeValue']
-            );
+            ];
         }
 
         $conn = $this->getDoctrine()->getConnection();
         $stmt = $conn->query('SELECT * FROM relations');
-        $edges = array();
+        $edges = [];
         while ($row = $stmt->fetch()) {
-            $edges[] = array(
+            $edges[] = [
                 'from' => (string)$row['source_id'],
                 'to' => (string)$row['target_id'],
                 'title' => $row['value'],
                 'arrows' => 'to',
                 'color' => $colors[$row['value']],
                 'width' => 2,
-            );
+            ];
         }
-        return $this->render('graph/relations.html.twig', array(
+        return $this->render('graph/relations.html.twig', [
             'nodes' => $nodes,
             'edges' => $edges
-        ));
+        ]
+        );
     }
 }

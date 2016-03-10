@@ -1,6 +1,7 @@
 window.scrollTo = function scrollTo(fragment, offset) {
+    var $fragment = $(fragment);
     var offset = offset || 0;
-    var scrollPos = $(fragment).offset().top - offset;
+    var scrollPos = $fragment.length > 0 ? $fragment.offset().top - offset : 0;
     $('body,html').animate({
         scrollTop: scrollPos
     }, 250);
@@ -24,6 +25,8 @@ $(function () {
     });
 
     $('.js-popover').popover();
+
+    $('[data-toggle="tooltip"]').tooltip();
 
     $(window).on('hashchange', function(event) {
         event.preventDefault();
@@ -137,8 +140,7 @@ $(function () {
     });
 
 
-
-    if ($('.searchbox').length) {
+    if ($('.when-slider').length) {
         var slider = $('.when-slider').slider({
             tooltip: 'hide',
 
@@ -163,7 +165,9 @@ $(function () {
             }
             slider.setValue([from, to])
         });
+    }
 
+    if ($('.searchbox').length) {
         $('.js-tree').each(function() {
             var $this = $(this);
 

@@ -2,6 +2,8 @@
 
 namespace AppBundle\DTO;
 
+use Symfony\Component\HttpFoundation\ParameterBag;
+
 class Radius
 {
     /** @var Location */
@@ -19,6 +21,13 @@ class Radius
     {
         $this->center = $center;
         $this->radius = $radius;
+    }
+
+    public static function fromQuery(ParameterBag $q)
+    {
+        $loc = new Location($q->get('lat'), $q->get('lng'), 'XX');
+        $loc->setDescription($q->get('placeName'));
+        return new Radius($loc, $q->get('radius'));
     }
 
     /**

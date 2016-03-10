@@ -9,7 +9,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGenerator;
 
 class JsonController extends Controller
@@ -22,12 +21,13 @@ class JsonController extends Controller
         $q = $request->get('q');
 
         if (!$q) {
-            return new JsonResponse(array());
+            return new JsonResponse([]);
         }
 
-        $data = array();
+        $data = [];
 
-        $personQuery = $this->getDoctrine()->getConnection()->executeQuery('SELECT p.id, p.display_name as pn, a.display_name as an FROM person p LEFT JOIN alternate_name a ON a.person_id=p.id WHERE p.display_name LIKE :query OR a.display_name LIKE :query', array('query' => "%$q%"));
+        $personQuery = $this->getDoctrine()->getConnection()->executeQuery('SELECT p.id, p.display_name as pn, a.display_name as an FROM person p LEFT JOIN alternate_name a ON a.person_id=p.id WHERE p.display_name LIKE :query OR a.display_name LIKE :query', ['query' => "%$q%"]
+        );
 
 //        getManager()->createQuery(
 //            'SELECT p.id, p.displayName, n.id, n.displayName FROM AppBundle:Person p LEFT JOIN p.alternateNames n WHERE p.displayName LIKE :query OR n.displayName LIKE :query'
@@ -36,13 +36,13 @@ class JsonController extends Controller
 //            ->setHydrationMode(Query::HYDRATE_SIMPLEOBJECT)
 //            ->execute();
 
-        $persons = array();
+        $persons = [];
         while ($row = $personQuery->fetch()) {
             if (!array_key_exists($row['id'], $persons)) {
-                $persons[$row['id']] = array(
+                $persons[$row['id']] = [
                     'displayName' => $row['pn'],
-                    'alternateNames' => array()
-                );
+                    'alternateNames' => []
+                ];
             }
             if ($row['an']) {
                 $persons[$row['id']]['alternateNames'][] = $row['an'];
@@ -50,11 +50,11 @@ class JsonController extends Controller
         }
 
         foreach ($persons as $id => $person) {
-            $personData = array(
+            $personData = [
                 'url' => $this->generateUrl('detail', ['id' => $id], UrlGenerator::ABSOLUTE_URL),
                 'value' => $person['displayName'],
 
-            );
+            ];
             if (false === strpos(strtolower($person['displayName']), strtolower($q))) {
                 foreach ($person['alternateNames'] as $name) {
                     if (false !== strpos(strtolower($name), strtolower($q))) {
@@ -76,7 +76,7 @@ class JsonController extends Controller
     public function autocompletePlacesAction(Request $request)
     {
         $q = $request->get('q');
-        $data = array();
+        $data = [];
 
         $criteria = new Criteria();
         $criteria->where($criteria->expr()->contains('placeName', $q));
@@ -90,10 +90,10 @@ class JsonController extends Controller
         ;
 
         foreach ($places as $place) {
-            $data[] = array(
+            $data[] = [
                 'url' => $this->generateUrl('search', ['place'=>$place['placeName']], UrlGenerator::ABSOLUTE_URL),
                 'value' => $place['placeName'],
-            );
+            ];
         }
 
         return new JsonResponse($data);
@@ -104,17 +104,17 @@ class JsonController extends Controller
      */
     public function subjectsJsonAction()
     {
-        $data = array();
+        $data = [];
 
         $subjects = $this->getDoctrine()->getManager()->createQuery(
             'SELECT s FROM AppBundle:Subject s ORDER BY s.title ASC'
         )->execute();
 
         foreach ($subjects as $subject) {
-            $data[] = array(
+            $data[] = [
                 'url' => $this->generateUrl('search', ['subjects' => $subject->getId()], UrlGenerator::ABSOLUTE_URL),
                 'value' => $subject->getTitle()
-            );
+            ];
         }
         return new JsonResponse($data);
     }
@@ -124,7 +124,7 @@ class JsonController extends Controller
      */
     public function occupationsAction()
     {
-        $data = array();
+        $data = [];
 
         $occupations = $this->getDoctrine()->getManager()->createQuery(
             'SELECT a.occupationSlug, a.occupation FROM AppBundle:Aspect a WHERE a.occupation IS NOT NULL GROUP BY a.occupation ORDER BY a.occupation ASC'
@@ -133,10 +133,10 @@ class JsonController extends Controller
             ->getResult();
 
         foreach ($occupations as $occupation) {
-            $data[] = array(
+            $data[] = [
                 'url' => $this->generateUrl('search', ['occupation' => $occupation['occupationSlug']], UrlGenerator::ABSOLUTE_URL),
                 'value' => ucfirst($occupation['occupation'])
-            );
+            ];
         }
         return new JsonResponse($data);
     }
@@ -146,7 +146,7 @@ class JsonController extends Controller
      */
     public function regionsAction()
     {
-        $data = array();
+        $data = [];
 
         $continents = $this->getDoctrine()->getManager()->createQuery(
             'SELECT p.continent FROM AppBundle:Place p WHERE p.continent IS NOT NULL GROUP BY p.continent ORDER BY p.continent ASC'
@@ -162,19 +162,19 @@ class JsonController extends Controller
 
 
         foreach ($continents as $continent) {
-            $data[] = array(
+            $data[] = [
                 'url' => $this->generateUrl('search', ['continent' => $continent['continent']], UrlGenerator::ABSOLUTE_URL),
                 'value' => Helper::formatContinent($continent['continent']),
                 'text' => 'Continent'
-            );
+            ];
         }
 
         foreach ($countries as $country) {
-            $data[] = array(
+            $data[] = [
                 'url' => $this->generateUrl('search', ['country' => $country['country']], UrlGenerator::ABSOLUTE_URL),
                 'value' => Helper::formatCountry($country['country']),
                 'text' => 'Country'
-            );
+            ];
         }
 
         return new JsonResponse($data);

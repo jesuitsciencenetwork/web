@@ -526,5 +526,12 @@ class Person
         $this->lastMod = $lastMod;
     }
 
-
+    public function getShortName()
+    {
+        return substr(
+            $this->listName,
+            0,
+            strpos($this->listName, ',')
+        );
+    }
 }

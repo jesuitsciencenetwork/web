@@ -10,7 +10,7 @@ class Location
     private $continent;
     private $description;
 
-    private static $continentMap = array(
+    private static $continentMap = [
         'AD' => 'EU',
         'AE' => 'AS',
         'AF' => 'AS',
@@ -261,7 +261,7 @@ class Location
         'ZA' => 'AF',
         'ZM' => 'AF',
         'ZW' => 'AF',
-    );
+    ];
 
     public function __construct($lat, $lng, $country, $continent = null)
     {

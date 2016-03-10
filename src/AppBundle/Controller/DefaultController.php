@@ -4,15 +4,12 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Aspect;
 use AppBundle\Entity\Person;
-use AppBundle\Entity\Subject;
-use AppBundle\Entity\SubjectGroup;
 use AppBundle\Helper;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query;
 use JMS\Serializer\SerializationContext;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -36,16 +33,17 @@ class DefaultController extends Controller
         )->getResult(Query::HYDRATE_ARRAY);
 
         $search = $this->get('jsn.search');
-        return $this->render('static/index.html.twig', array(
+        return $this->render('static/index.html.twig', [
             'subjectGroupTree' => $search->getSubjectGroupTree(),
             'stats' => $stats[0]
-        ));
+        ]
+        );
     }
 
     /**
      * @Route("/p/{id}/", requirements={"id" = "\d+"}, name="detail")
      */
-    public function detailAction($id, Request $request)
+    public function detailAction($id)
     {
         $person = $this
             ->getDoctrine()
@@ -69,7 +67,7 @@ class DefaultController extends Controller
 
         $relations = $this->getDoctrine()->getConnection()->executeQuery(
             'SELECT IF(:id = r.source_id, t.id, s.id) as id, IF(:id = r.source_id, t.display_name, s.display_name) as name FROM relations r LEFT JOIN person t ON r.target_id = t.id LEFT JOIN person s ON r.source_id = s.id WHERE r.source_id = :id OR r.target_id = :id GROUP BY id ORDER BY IF(:id = r.source_id, t.list_name, s.list_name) ASC',
-            array('id' => $person->getId())
+            ['id' => $person->getId()]
         )->fetchAll();
 
         $aspectsResult = $this
@@ -89,25 +87,26 @@ class DefaultController extends Controller
         ;
 
         $twig = $this->get('twig');
-        $places = array();
-        $aspects = array();
+        $places = [];
+        $aspects = [];
         foreach ($aspectsResult as $aspectRow) {
             /** @var Aspect $aspect */
             $aspect = $aspectRow[0];
 
             foreach ($aspect->getPlaces() as $place) {
                 if (!array_key_exists($place->getId(), $places)) {
-                    $places[$place->getId()] = array(
+                    $places[$place->getId()] = [
                         'lat' => $place->getLatitude(),
                         'lng' => $place->getLongitude(),
                         'name' => $place->getPlaceName() . ', ' . Helper::formatCountry($place->getCountry()),
-                        'types' => array(),
-                        'aspects' => array()
-                    );
+                        'types' => [],
+                        'aspects' => []
+                    ];
                 }
-                $places[$place->getId()]['aspects'][] = $twig->render('include/aspect.html.twig', array(
+                $places[$place->getId()]['aspects'][] = $twig->render('include/aspect.html.twig', [
                     'aspect' => $aspect
-                ));
+                ]
+                );
                 $places[$place->getId()]['types'][] = $aspect->getMarkerLabel();
             }
 
@@ -118,7 +117,8 @@ class DefaultController extends Controller
             }
 
             $type = ucfirst($aspect->getType());
-            if (in_array($type, array('BeginningOfLife', 'EntryInTheOrder', 'ResignationFromTheOrder', 'ExpulsionFromTheOrder', 'EndOfLife'))) {
+            if (in_array($type, ['BeginningOfLife', 'EntryInTheOrder', 'ResignationFromTheOrder', 'ExpulsionFromTheOrder', 'EndOfLife']
+            )) {
                 $type = 'Biographical data';
             } elseif ('Miscellaneous' === $type) {
                 if ($aspectRow['relationCount']) {
@@ -127,7 +127,7 @@ class DefaultController extends Controller
             }
 
             if (!array_key_exists($type, $aspects)) {
-                $aspects[$type] = array('Dated' => array(), 'Undated' => array());
+                $aspects[$type] = ['Dated' => [], 'Undated' => []];
             }
 
             $aspects[$type][$key][] = $aspect;
@@ -144,12 +144,13 @@ class DefaultController extends Controller
             unset($place['types']);
         }
 
-        return $this->render('default/detail.html.twig', array(
+        return $this->render('default/detail.html.twig', [
             'person' => $person,
             'relations' => $relations,
             'aspects' => $aspects,
             'places' => $places
-        ));
+        ]
+        );
     }
 
     /**
@@ -180,7 +181,9 @@ class DefaultController extends Controller
         }
 
         $jms = $this->get('jms_serializer');
-        $response = new Response($jms->serialize($person, $format, SerializationContext::create()->setGroups(array('Default', 'Person'))));
+        $response = new Response($jms->serialize($person, $format, SerializationContext::create()->setGroups(
+            ['Default', 'Person']
+        )));
 
         switch ($format) {
             case 'yml':
@@ -215,7 +218,8 @@ class DefaultController extends Controller
             ->getSingleResult()
         ;
 
-        return $this->redirect($this->generateUrl('detail', array('id' => $person->getId())));
+        return $this->redirect($this->generateUrl('detail', ['id' => $person->getId()]
+        ));
     }
 
 
@@ -227,21 +231,18 @@ class DefaultController extends Controller
         $person = $this
             ->getDoctrine()
             ->getRepository('AppBundle:Person')
-            ->findOneBy(array('viafId' => $id));
+            ->findOneBy(['viafId' => $id]);
 
         if (!$person) {
-            $this
-                ->get('braincrafted_bootstrap.flash')
-                ->alert(sprintf(
-                    'The VIAF ID "%s" could not be found. Please try searching our database instead.',
-                    $id
-                ))
-            ;
+            $this->addFlash('alert', sprintf(
+                'The VIAF ID "%s" could not be found. Please try searching our database instead.',
+                $id
+            ));
             return $this->redirect($this->generateUrl('search'));
         }
 
         return $this->redirect(
-            $this->generateUrl('detail', array('id' => $person->getId()))
+            $this->generateUrl('detail', ['id' => $person->getId()])
         );
     }
 }

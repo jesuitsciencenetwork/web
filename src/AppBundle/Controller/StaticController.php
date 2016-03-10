@@ -20,7 +20,7 @@ class StaticController extends Controller
      */
     public function aboutAction()
     {
-        return $this->render('static/about.html.twig', array());
+        return $this->render('static/about.html.twig', []);
     }
 
     /**
@@ -28,7 +28,6 @@ class StaticController extends Controller
      */
     public function workshopAction()
     {
-        return $this->render('static/workshop.html.twig', array());
+        return $this->render('static/workshop.html.twig', []);
     }
-
 }

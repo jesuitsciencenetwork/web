@@ -59,7 +59,7 @@ class ImportDataCommand extends Command
         $masterProgress->setMessage('Initializing...');
         $masterProgress->display();
 
-        $tablesToTruncate = array(
+        $tablesToTruncate = [
             'alternate_name',
             'aspect',
             'aspect_place',
@@ -74,14 +74,14 @@ class ImportDataCommand extends Command
             'subject',
             'subject_group',
             'subject_group_subject',
-        );
+        ];
 
         $connection = $this->em->getConnection();
         $connection->setAutoCommit(true);
         $dbPlatform = $connection->getDatabasePlatform();
         $connection->query('SET FOREIGN_KEY_CHECKS=0');
         foreach ($tablesToTruncate as $tableName) {
-            $q = $dbPlatform->getTruncateTableSql($tableName);
+            $q = $dbPlatform->getTruncateTableSQL($tableName);
             $connection->executeUpdate($q);
         }
         $connection->query('SET FOREIGN_KEY_CHECKS=1');
@@ -131,17 +131,17 @@ class ImportDataCommand extends Command
             'INSERT INTO subject_group_subject (subject_id, subject_group_id) VALUES (:subjectId, :groupId) ON DUPLICATE KEY UPDATE subject_id=subject_id'
         );
 
-        $subjectsToImport = array();
-        $subjectMap = array();
+        $subjectsToImport = [];
+        $subjectMap = [];
 
-        $placesToImport = array();
-        $placeMap = array();
+        $placesToImport = [];
+        $placeMap = [];
 
-        $personsToImport = array();
+        $personsToImport = [];
 
-        $sourcesToImport = array();
+        $sourcesToImport = [];
 
-        $personRefsToImport = array();
+        $personRefsToImport = [];
 
         $masterProgress->advance();
         $masterProgress->clear();
@@ -183,10 +183,12 @@ class ImportDataCommand extends Command
             if (array_key_exists($slug, $subjectMap)) {
                 continue;
             }
-            $subjectStatement->execute(array(
+            $subjectStatement->execute(
+                [
                 ':title' => ucfirst($subjectTitle),
                 ':slug' => $slug
-            ));
+                ]
+            );
             $subjectId = $connection->lastInsertId();
             $subjectMap[$slug] = $subjectId;
         }
@@ -197,11 +199,11 @@ class ImportDataCommand extends Command
         $masterProgress->display();
 
         foreach ($this->subjectGroupDefinitions as $subjectGroup) {
-            $groupStatement->execute(array(
+            $groupStatement->execute([
                 ':title' => $subjectGroup['name'],
                 ':scheme' => $subjectGroup['scheme'],
                 ':slug' => Helper::slugify($subjectGroup['name'])
-            ));
+            ]);
             $groupId = $connection->lastInsertId();
 
             foreach ($subjectGroup['subjects'] as $subject) {
@@ -211,10 +213,12 @@ class ImportDataCommand extends Command
                 }
                 $subjectId = $subjectMap[$subjectSlug];
 
-                $subjectGroupRefStatement->execute(array(
+                $subjectGroupRefStatement->execute(
+                    [
                     ':groupId' => $groupId,
                     ':subjectId' => $subjectId
-                ));
+                    ]
+                );
             }
         }
 
@@ -224,7 +228,8 @@ class ImportDataCommand extends Command
         $masterProgress->display();
 
         foreach ($sourcesToImport as $sourceId => $sourceData) {
-            $sourceStatement->execute(array(
+            $sourceStatement->execute(
+                [
                 ':id' => Helper::pdr2num($sourceId),
                 ':genre' => $sourceData['genre'],
                 ':title' => $sourceData['title'],
@@ -238,7 +243,8 @@ class ImportDataCommand extends Command
                 ':note' => $sourceData['note'],
                 ':editors' => json_encode($sourceData['editors']),
                 ':payload' => $sourceData['payload'],
-            ));
+                ]
+            );
         }
 
         $masterProgress->advance();
@@ -253,17 +259,19 @@ class ImportDataCommand extends Command
 
             $pos = $this->geocoder->geocode($placeName);
 
-            $placeStatement->execute(array(
+            $placeStatement->execute(
+                [
                 ':placeName' => $placeName,
                 ':slug' => Helper::slugify($placeName),
                 ':country' => $pos->getCountry(),
                 ':continent' => $pos->getContinent(),
                 ':latitude' => $pos->getLatitude(),
                 ':longitude' => $pos->getLongitude(),
-            ));
+                ]
+            );
 
             $placeId = $connection->lastInsertId();
-            $placeMap[$placeName] = array($placeId, $pos);
+            $placeMap[$placeName] = [$placeId, $pos];
         }
 
         $masterProgress->advance();
@@ -281,7 +289,8 @@ class ImportDataCommand extends Command
 
         foreach ($personsToImport as $personData) {
             $po = Helper::pdr2num($personData['pdrId']);
-            $personStatement->execute(array(
+            $personStatement->execute(
+                [
                 ':id' => $po,
                 ':displayName' => $personData['displayName'],
                 ':listName' => $personData['listName'],
@@ -290,18 +299,19 @@ class ImportDataCommand extends Command
                 ':dateOfBirth' => $personData['beginningOfLife'] ?: null,
                 ':dateOfDeath' => $personData['endOfLife'] ?: null,
                 ':isJesuit' => $personData['nonjesuit'] ? false : true
-            ));
+                ]
+            );
 
             foreach ($personData['alternateNames'] as $alternateName) {
                 $nameStatement->execute(
-                    array(
+                    [
                         ':personId' => $po,
                         ':displayName' => $alternateName
-                    )
+                    ]
                 );
             }
 
-            $subjectsAdded = array();
+            $subjectsAdded = [];
             foreach ($personData['subjects'] as $subject) {
                 $slug = Helper::slugify($subject);
                 if (array_key_exists($slug, $subjectsAdded)) {
@@ -309,28 +319,32 @@ class ImportDataCommand extends Command
                 }
                 $subjectId = $subjectMap[$slug];
 
-                $personSubjectStatement->execute(array(
+                $personSubjectStatement->execute(
+                    [
                     ':personId' => $po,
                     ':subjectId' => $subjectId
-                ));
+                    ]
+                );
                 $subjectsAdded[$slug] = true;
             }
 
-            $placesAdded = array();
+            $placesAdded = [];
             foreach ($personData['places'] as $placeName) {
                 if (array_key_exists($placeName, $placesAdded)) {
                     continue;
                 }
                 $placeId = $placeMap[$placeName][0];
 
-                $personPlaceStatement->execute(array(
+                $personPlaceStatement->execute(
+                    [
                     ':personId' => $po,
                     ':placeId' => $placeId
-                ));
+                    ]
+                );
                 $placesAdded[$placeName] = true;
             }
 
-            $personSources = array();
+            $personSources = [];
             foreach ($personData['aspects'] as $aspectData) {
                 $ao = Helper::pdr2num($aspectData['aoId']);
                 $sourceId = Helper::pdr2num($aspectData['source']);
@@ -348,7 +362,8 @@ class ImportDataCommand extends Command
                     }
                 }, $aspectData['description']);
 
-                $aspectStatement->execute(array(
+                $aspectStatement->execute(
+                    [
                     ':id' => $ao,
                     ':personId' => $po,
                     ':type' => $aspectData['type'],
@@ -361,33 +376,40 @@ class ImportDataCommand extends Command
                     ':occupationSlug' => Helper::slugify($aspectData['occupation']),
                     ':rawXml' => $aspectData['raw'],
                     ':description' => $aspectData['description'],
-                ));
+                    ]
+                );
 
                 foreach ($aspectData['subjects'] as $subject) {
                     $slug = Helper::slugify($subject);
                     $subjectId = $subjectMap[$slug];
 
-                    $aspectSubjectStatement->execute(array(
+                    $aspectSubjectStatement->execute(
+                        [
                         ':aspectId' => $ao,
                         ':subjectId' => $subjectId
-                    ));
+                        ]
+                    );
                 }
 
                 foreach (array_unique($aspectData['places']) as $placeName) {
                     $placeId = $placeMap[$placeName][0];
 
-                    $aspectPlaceStatement->execute(array(
+                    $aspectPlaceStatement->execute(
+                        [
                         ':aspectId' => $ao,
                         ':placeId' => $placeId
-                    ));
+                        ]
+                    );
                 }
             }
 
             foreach ($personSources as $sourceId) {
-                $personSourceStatement->execute(array(
+                $personSourceStatement->execute(
+                    [
                     ':personId' => $po,
                     ':sourceId' => $sourceId
-                ));
+                    ]
+                );
             }
 
             $progress->advance();

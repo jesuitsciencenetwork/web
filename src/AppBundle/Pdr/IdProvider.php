@@ -14,10 +14,11 @@ class IdProvider
         $url = 'https://pdrprod.bbaw.de/axis2/services/Utilities/getOccupiedIDRanges?Type=pdrPo&Instance=1&Min=1&Max=99999999&Project=42';
 
         $ch = curl_init($url);
-        curl_setopt_array($ch, array(
+        curl_setopt_array($ch, [
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_HEADER => false
-        ));
+        ]
+        );
         $response = curl_exec($ch);
 
         if (!$response) {
@@ -33,7 +34,7 @@ class IdProvider
 
         $xml->registerXPathNamespace('allies', 'http://allies.pdr.bbaw.org');
 
-        $ids = array();
+        $ids = [];
         foreach ($xml->xpath('//allies:Range') as $range) {
             $info = $range->children('http://allies.pdr.bbaw.org');
             $ids = array_merge($ids, range((int)((string)$info->Min), (int)((string)$info->Max)));

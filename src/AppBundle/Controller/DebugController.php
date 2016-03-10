@@ -2,10 +2,10 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\Person;
 use AppBundle\Entity\Place;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Class DebugController
@@ -19,36 +19,40 @@ class DebugController extends Controller
      */
     public function sourcesAction()
     {
-        $sources = $this->getDoctrine()->getManager()->createQuery('SELECT s FROM AppBundle:Source s WHERE s.genre <> ?0 and s.genre <> ?1 order by s.id asc')->execute(array('VIAF', 'GND'));
-        return $this->render('default/sources.html.twig', array(
+        $sources = $this->getDoctrine()->getManager()->createQuery('SELECT s FROM AppBundle:Source s WHERE s.genre <> ?0 and s.genre <> ?1 order by s.id asc')->execute(
+            ['VIAF', 'GND']
+        );
+        return $this->render('default/sources.html.twig', [
             'sources' => $sources
-        ));
+        ]
+        );
     }
 
     /**
      * @Route("/places/", name="debug_places")
      */
-    public function placesAction(Request $request)
+    public function placesAction()
     {
         /** @var Place[] $placeResult */
         $placeResult = $this->getDoctrine()->getManager()
             ->createQuery('SELECT pl, pe FROM AppBundle:Place pl LEFT JOIN pl.associatedPersons pe ORDER BY pl.placeName')
             ->execute();
 
-        $places = array();
+        $places = [];
         foreach ($placeResult as $place) {
-            $places[] = array(
+            $places[] = [
                 'name' => $place->getPlaceName(),
                 'lat' => $place->getLatitude(),
                 'lng' => $place->getLongitude(),
-                'persons' => "<strong>" . $place->getPlaceName() . "</strong><br>" . implode("<br/>", $place->getAssociatedPersons()->map(function(Person $p) {
-                        return $p->getListName();
-                    })->toArray())
-            );
+                'persons' => "<strong>" . $place->getPlaceName() . "</strong><br>" . implode("<br/>", $place->getAssociatedPersons()->map(function (Person $p) {
+                    return $p->getListName();
+                })->toArray())
+            ];
         }
 
-        return $this->render('map/debug.html.twig', array(
+        return $this->render('map/debug.html.twig', [
             'places' => $places
-        ));
+        ]
+        );
     }
 }

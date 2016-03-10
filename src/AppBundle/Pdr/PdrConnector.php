@@ -26,7 +26,7 @@ class PdrConnector
             throw new \RuntimeException('Could not parse XML for Entry '. $pdrId);
         }
 
-        $data = array(
+        $data = [
             'pdrId' => $pdrId,
             'firstName' => null,
             'lastName' => null,
@@ -35,14 +35,14 @@ class PdrConnector
             'viaf' => null,
             'beginningOfLife' => null,
             'endOfLife' => null,
-            'sources' => array(),
-            'aspects' => array(),
-            'subjects' => array(),
-            'places' => array(),
-            'personRefs' => array(),
+            'sources' => [],
+            'aspects' => [],
+            'subjects' => [],
+            'places' => [],
+            'personRefs' => [],
             'nonjesuit' => false,
-            'alternateNames' => array()
-        );
+            'alternateNames' => []
+        ];
 
 //        $root = $xml->result[0];
 //        $person = $root->person[0];
@@ -76,10 +76,10 @@ class PdrConnector
         }
 
         foreach ($xml->xpath('//ao:aspect') as $aspect) {
-            $aspectData = array(
+            $aspectData = [
                 'aoId' => (string)$aspect['id'],
                 'type' => null,
-            );
+            ];
 
             $semantics = (string)$aspect->semanticDim->semanticStm;
 
@@ -132,14 +132,14 @@ class PdrConnector
                     continue;
                 }
 
-                $data['personRefs'][] = array(
+                $data['personRefs'][] = [
                     $subject,
                     $object,
                     $class,
                     $context,
                     $value,
                     Helper::pdr2num($aspectData['aoId'])
-                );
+                ];
             }
 
             // validationStm
@@ -207,7 +207,7 @@ class PdrConnector
     protected function processMods($mods, $poId)
     {
         $captured = (string)$mods->originInfo->dateCaptured;
-        $data = array(
+        $data = [
             'payload' => $poId,
             'title' => (string)$mods->titleInfo->title,
             'dateIssued' => (string)$mods->originInfo->dateIssued,
@@ -217,10 +217,10 @@ class PdrConnector
             'genre' => (string)$mods->genre,
             'url' => (string)$mods->location->url,
             'publisher' => (string)$mods->originInfo->publisher,
-            'authors' => array(),
-            'editors' => array(),
+            'authors' => [],
+            'editors' => [],
             'seriesTitle' => $mods->relatedItem ? (string)$mods->relatedItem->titleInfo->title : null,
-        );
+        ];
 
         if ('VIAF' === $data['genre'] && false !== strpos($data['url'], '/gnd/')) {
             $data['genre'] = 'GND';
@@ -244,11 +244,11 @@ class PdrConnector
             }
             switch ($role) {
                 case 'edt':
-                    $data['editors'][] = array($given, $family);
+                    $data['editors'][] = [$given, $family];
                     break;
                 case 'aut':
                 case 'prg': // Wikipedia entries tagged this way
-                    $data['authors'][] = array($given, $family);
+                    $data['authors'][] = [$given, $family];
                     break;
                 default:
                     throw new \Exception("Unknown role \"$role\" for source ".(string)$mods['ID']);
@@ -264,7 +264,7 @@ class PdrConnector
 
     protected function getSortedNameFromAlternateNameNotification($xml)
     {
-        $titles = $first = $middle = $last = array();
+        $titles = $first = $middle = $last = [];
         $nameLink = null;
 
         foreach ($xml->persName as $namePart) {
@@ -294,7 +294,7 @@ class PdrConnector
         $firstNames = array_merge($titles, $first, $middle);
         return html_entity_decode(
             str_replace(
-                array('&#152;','&#156;', "\n", "\r"),
+                ['&#152;','&#156;', "\n", "\r"],
                 '',
                 trim(implode(" ", $firstNames)) . ($nameLink ? (substr($nameLink, -1, 1) == "'" ? ' ' . $nameLink : ' ' . $nameLink . ' ') : ' ') . trim(implode(" ", $last))
             ),
@@ -305,7 +305,7 @@ class PdrConnector
 
     protected function getNamesFromNormNameNotification($xml)
     {
-        $titles = $first = $middle = $last = array();
+        $titles = $first = $middle = $last = [];
         $nonJesuit = false;
         $nameLink = null;
 
@@ -341,13 +341,13 @@ class PdrConnector
             array_push($$part, $value);
         }
         $firstNames = array_merge($first, $middle);
-        return array(
+        return [
             trim(implode(" ", $titles)),
             trim(implode(" ", $firstNames)),
             $nameLink ? trim($nameLink) : $nameLink,
             trim(implode(" ", $last)),
             $nonJesuit
-        );
+        ];
     }
 
     public function getIdRange()
@@ -357,17 +357,17 @@ class PdrConnector
 
     private function processNotification(\SimpleXMLElement $xml, $currentPoId)
     {
-        $output = array(
+        $output = [
             'dateFrom' => null,
             'dateTo' => null,
             'dateExact' => null,
-            'places' => array(),
+            'places' => [],
             'occupation' => null,
-            'subjects' => array(),
-            'comments' => array(),
-            'raw' => $xml->asXml()
-        );
-        $textParts = array();
+            'subjects' => [],
+            'comments' => [],
+            'raw' => $xml->asXML()
+        ];
+        $textParts = [];
         $dom = dom_import_simplexml($xml);
         foreach ($dom->childNodes as $childNode) {
             if ($childNode->nodeType == XML_TEXT_NODE) {
@@ -401,7 +401,7 @@ class PdrConnector
             } elseif ($tag == 'name' && $type == 'occupation') {
                 $output['occupation'] = $childNode->nodeValue;
                 $slug = Helper::slugify($childNode->nodeValue);
-                $textParts[] = '{O:' . $childNode->nodeValue . '|' . $childNode->nodeValue . '}';
+                $textParts[] = '{O:' . $slug . '|' . $childNode->nodeValue . '}';
             } elseif ($tag == 'name' && $type == 'Comment') {
                 $output['comments'][] = $childNode->nodeValue;
                 $textParts[] = $childNode->nodeValue;

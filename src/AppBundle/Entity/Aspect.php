@@ -503,7 +503,8 @@ class Aspect
     public function getMarkerLabel()
     {
         $type = $this->getType();
-        if (in_array($type, array('beginningOfLife', 'entryInTheOrder', 'resignationFromTheOrder', 'expulsionFromTheOrder', 'endOfLife'))) {
+        if (in_array($type, ['beginningOfLife', 'entryInTheOrder', 'resignationFromTheOrder', 'expulsionFromTheOrder', 'endOfLife']
+        )) {
             return 'B';
         }
         if ('miscellaneous' == $type && $this->relations->count()) {
@@ -511,5 +512,18 @@ class Aspect
         }
 
         return strtoupper(substr($type, 0, 1));
+    }
+
+    public function isBiographical()
+    {
+        static $biographical = [
+            "entryInTheOrder" => 1,
+            "beginningOfLife" => 1,
+            "endOfLife" => 1,
+            "resignationFromTheOrder" => 1,
+            "expulsionFromTheOrder" => 1
+        ];
+
+        return array_key_exists($this->type, $biographical);
     }
 }

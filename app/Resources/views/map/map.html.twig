@@ -1,0 +1,372 @@
+{% extends "layout.html.twig" %}
+
+{% set renderFooter = false %}
+
+{% block content %}
+<div id="map"></div>
+    <div id="detail" style="display:none;"></div>
+    <div id="map-filters">
+        <div class="f1">
+            <table class="time-slider">
+                <tr>
+                    <td class="input text-right">
+                        <input type="text" name="from" id="when-from" value="1490" class="form-control"/>
+                    </td>
+                    <td>
+                        <input
+                                type="text"
+                                class="when-slider"
+                                value=""
+                                data-slider-min="1490"
+                                data-slider-max="1890"
+                                data-slider-step="1"
+                                data-slider-value="[1490,1890]"
+                        />
+                    </td>
+                    <td class="input">
+                        <input type="text" name="to" id="when-to" value="1890" class="form-control"/>
+                    </td>
+                </tr>
+            </table>
+            <div class="u">
+                <input type="checkbox" class="fancy-checkbox" checked="checked" id="js-undated"/><label for="js-undated" data-toggle="tooltip" data-placement="bottom" title="Show undated aspects">U</label>
+            </div>
+        </div>
+        <div class="f2">
+            {#<button class="btn" id="js-toggle-heatmap">Toggle Heatmap</button>#}
+            <input type="checkbox" class="fancy-checkbox" value="1" name="type" checked="checked" id="js-type-bio"/><label for="js-type-bio" data-toggle="tooltip" data-placement="bottom" title="Biographical">B</label>
+            <input type="checkbox" class="fancy-checkbox" value="2" name="type" checked="checked" id="js-type-edu"/><label for="js-type-edu" data-toggle="tooltip" data-placement="bottom" title="Education">E</label>
+            <input type="checkbox" class="fancy-checkbox" value="4" name="type" checked="checked" id="js-type-crr"/><label for="js-type-crr" data-toggle="tooltip" data-placement="bottom" title="Career">C</label>
+            <input type="checkbox" class="fancy-checkbox" value="8" name="type" checked="checked" id="js-type-oth"/><label class="last" for="js-type-oth" data-toggle="tooltip" data-placement="bottom" title="Other">O</label>
+        </div>
+        <div class="f3">
+            <button type="button" id="js-map-boundary" data-href="{{ path('search') }}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Use&nbsp;visible&nbsp;map&nbsp;section as&nbsp;boundary&nbsp;for&nbsp;search"><i class="fa fa-search"></i></button>
+        </div>
+    </div>
+{% endblock %}
+
+{% block stylesheets %}
+    <style type="text/css">
+        body, html {
+            height: 100%;;
+        }
+        #map {
+            height: auto;
+            position: absolute;
+            top: 50px;
+            bottom: 0;
+            left: 0;
+            right: 0;
+
+        }
+        #map.pane-open {
+            right: 370px;
+        }
+        #detail {
+            position: absolute;
+            top: 110px;
+            right: 0;
+            width: 370px;
+            bottom: 0;
+            background: #fff;
+            border-left: 1px solid #d8d8d8;
+        }
+        #detail .title {
+            position: fixed;
+            padding: 10px;
+            height: 60px;
+            width: 370px;
+            margin-top: -60px;
+            margin-left: -1px;
+            background-color: #f0f0f0;
+            border-bottom: 1px solid #d8d8d8;
+            border-left: 1px solid #d8d8d8;
+        }
+        #detail .title h3 {
+            margin: 0;
+            margin-top: 3px;
+        }
+        #detail .title h5 {
+            margin: 0;
+            margin-top: 3px;
+        }
+
+        #detail .list {
+            padding: 10px;
+            padding-top: 5px;
+            max-height: 100%;
+            overflow-y: auto;
+            box-sizing: border-box;
+        }
+
+        #detail .loading {
+            padding-top: 100px;
+            text-align: center;
+            line-height: 100%;
+        }
+        #map-filters {
+            position: absolute;
+            top: 65px;
+            left: 15px;
+            height: 35px;
+        }
+        #map-filters div.f2, #map-filters div.u {
+            padding: 8px;
+        }
+        #map-filters div.u {
+            float: left;
+        }
+        #map-filters div.f3 {
+            position: relative;
+            width: 35px;
+        }
+        #map-filters div.f3 button {
+            margin: 0;
+            width: 35px;
+            height: 35px;
+            outline: 0;
+        }
+        #map-filters > div {
+            float: left;
+            margin-right: 10px;
+            font-size: 75%;
+            height: 35px;
+            /*border: 1px solid #d8d8d8;*/
+            background: #fff;
+            box-shadow: rgba(0, 0, 0, 0.3) 1px 1px 1px;
+        }
+        #map-filters .f2 label.last {
+            margin-right: 0;
+        }
+
+        #map-filters .time-slider {
+            float: left;width: 450px;
+        }
+        #map-filters .time-slider td {
+            padding: 0 10px;;
+        }
+        #map-filters .time-slider td.input {
+            width: 50px;
+            padding: 0;
+        }
+
+        #map-filters .time-slider td.input input {
+            width: 50px;padding: 0; margin:0;border: 0 none; box-shadow: none;
+        }
+
+        #map-filters label.control-label {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 11px;
+            text-transform: uppercase;
+            font-weight: normal;
+        }
+        .close-pane {
+            background-color: transparent;
+            border: 0 none;
+            outline: 0;
+        }
+
+        .spinner {
+            width: 30px;
+            height: 30px;
+            background-color: #a13;
+
+            margin: 100px auto 20px;
+            -webkit-animation: sk-rotateplane 1.2s infinite ease-in-out;
+            animation: sk-rotateplane 1.2s infinite ease-in-out;
+        }
+
+        @-webkit-keyframes sk-rotateplane {
+            0% { -webkit-transform: perspective(120px) }
+            50% { -webkit-transform: perspective(120px) rotateY(180deg) }
+            100% { -webkit-transform: perspective(120px) rotateY(180deg)  rotateX(180deg) }
+        }
+
+        @keyframes sk-rotateplane {
+            0% {
+                transform: perspective(120px) rotateX(0deg) rotateY(0deg);
+                -webkit-transform: perspective(120px) rotateX(0deg) rotateY(0deg)
+            } 50% {
+                  transform: perspective(120px) rotateX(-180.1deg) rotateY(0deg);
+                  -webkit-transform: perspective(120px) rotateX(-180.1deg) rotateY(0deg)
+              } 100% {
+                    transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg);
+                    -webkit-transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg);
+                }
+        }
+
+        .gm-style-iw {
+            top: 0 !important;
+            left: 0 !important;
+            border-radius: 2px 2px 0 0;
+            font-weight: bold;
+            font-family: "Montserrat", sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-align:center;
+        }
+        .gm-style-iw + div {
+            display: none;
+        }
+        .gm-style-iw .iw-wrapper {
+            text-align: center;
+            line-height: 40px;
+        }
+    </style>
+{% endblock %}
+
+{% set enableMap = true %}
+
+{% block javascripts %}
+    <script type="text/javascript">
+        var map, iw, currentMarker, heatmap, heatmapData, mc, markers = [], $detail = $('#detail');
+
+        $('body').one('map:ready', function() {
+            map = new google.maps.Map(document.getElementById('map'), {
+                center: {lat: 49.8772213189114, lng: 16.243990987499956},
+                zoom: 5,
+                minZoom: 3,
+                maxZoom: 10,
+                mapTypeControl: false,
+                streetViewControl: false
+            });
+
+            iw = new google.maps.InfoWindow({
+                content: ''
+            });
+
+            heatmap = new google.maps.visualization.HeatmapLayer({
+                radius: 75
+            });
+
+            mc = new MarkerClusterer(map, [], {
+                maxZoom: 7
+            });
+
+            refreshMarkers();
+        }).on('click', '.close-pane', function() {
+            $('#map').removeClass('pane-open');
+            google.maps.event.trigger(map, 'resize');
+            $detail.animate({
+                opacity: 'hide',
+                width: 0
+            }, 150);
+            currentMarker.setLabel(null);
+            currentMarker = null;
+            iw.close();
+        });
+
+        $('#js-toggle-heatmap').click(function() {
+            heatmap.setMap(heatmap.getMap() ? null : map);
+        });
+
+        $('#js-map-boundary').click(function() {
+            var params = collectParams();
+            params.bounds = map.getBounds().toUrlValue();
+            window.location.href = $(this).data('href') + '?' + $.param(params);
+        });
+
+        function getContent(str) {
+            return '<div class="iw-wrapper">' + str + '</div>';
+        }
+
+        function clearMarkers() {
+            mc.clearMarkers();
+//            $.each(markers, function() {
+//                this.setMap(null);
+//            });
+            markers = [];
+            heatmapData = [];
+        }
+        function debounce(func, wait, immediate) {
+            var timeout;
+            return function() {
+                var context = this, args = arguments;
+                var later = function() {
+                    timeout = null;
+                    if (!immediate) func.apply(context, args);
+                };
+                var callNow = immediate && !timeout;
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+                if (callNow) func.apply(context, args);
+            };
+        };
+
+        function showDetail(placeName, url, pos, marker) {
+            if (currentMarker) {
+                currentMarker.setLabel(null);
+            }
+            currentMarker = marker;
+            currentMarker.setLabel('X');
+
+            $('#map').addClass('pane-open');
+            $detail
+                .css({width: '370px'})
+                .data('current-url', url)
+                .show()
+            ;
+            loadDetail(url);
+            google.maps.event.trigger(map, 'resize');
+            map.panTo(pos);
+            iw.setContent(getContent(placeName));
+            iw.open(map, marker);
+        }
+
+        function loadDetail(url) {
+            url = url + '?' + $.param(collectParams());
+            $detail.html('<div class="loading"><div class="spinner"></div><h6>Loading...</h6></div>')
+                    .load(url);
+        }
+
+        function collectParams() {
+            var types = 0;
+            $('input[name="type"]').each(function() {
+                var $this = $(this);
+                if (!$this.prop('checked')) {
+                    return;
+                }
+                types = types | parseInt($(this).val(), 10);
+            });
+
+            return {
+                from: $('#when-from').val(),
+                to: $('#when-to').val(),
+                includeUndated: $('#js-undated').prop('checked')?1:0,
+                types: types
+            };
+        }
+
+        function refreshMarkers() {
+            $.getJSON('{{ path('map_markers') }}', collectParams(), function(loadedMarkers) {
+                clearMarkers();
+
+                $.each(loadedMarkers, function() {
+                    var pos = new google.maps.LatLng(this.lat, this.lng);
+                    var marker = new google.maps.Marker({
+                        position: pos
+                    });
+
+                    var url = this.url;
+                    var title = this.title;
+                    marker.addListener('click', function() {
+                        showDetail(title, url, pos, marker);
+                    });
+
+                    markers.push(marker);
+                    heatmapData.push({location: pos, weight: this.weight});
+                });
+
+                mc.addMarkers(markers);
+
+                heatmap.setData(heatmapData);
+            });
+            if ($detail.is(':visible')) {
+                loadDetail($detail.data('current-url'));
+            }
+        }
+
+        $('#map-filters input').change(debounce(refreshMarkers, 750));
+
+    </script>
+{% endblock %}

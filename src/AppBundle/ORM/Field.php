@@ -24,8 +24,11 @@ use Doctrine\ORM\Query\SqlWalker;
 
 class Field extends FunctionNode
 {
+    /** @var FunctionNode */
     private $field = null;
-    private $values = array();
+
+    /** @var FunctionNode[] */
+    private $values = [];
 
     public function parse(Parser $parser)
     {

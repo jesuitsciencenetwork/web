@@ -3,20 +3,36 @@
 namespace AppBundle;
 
 
+use AppBundle\DTO\Bounds;
 use AppBundle\DTO\Radius;
+use AppBundle\Entity\Place;
 
 class Query
 {
+    const TYPE_BIOGRAPHICAL = 1;
+    const TYPE_EDUCATION = 2;
+    const TYPE_CAREER = 4;
+    const TYPE_OTHER = 8;
+
+    private $types = 0;
+
     private $continent;
     private $country;
 
     /** @var Radius */
     private $radius;
 
+    /** @var Bounds */
+    private $bounds;
+
+
     private $from;
     private $to;
 
     private $subjects;
+
+    /** @var Place */
+    private $place;
 
     private $occupation;
 
@@ -132,6 +148,65 @@ class Query
         $this->occupation = $occupation;
     }
 
+    /**
+     * @return Bounds
+     */
+    public function getBounds()
+    {
+        return $this->bounds;
+    }
 
+    /**
+     * @param Bounds $bounds
+     */
+    public function setBounds(Bounds $bounds)
+    {
+        $this->bounds = $bounds;
+    }
 
+    /**
+     * @return Place
+     */
+    public function getPlace()
+    {
+        return $this->place;
+    }
+
+    /**
+     * @param Place $place
+     */
+    public function setPlace($place)
+    {
+        $this->place = $place;
+    }
+
+    public function getBiographical()
+    {
+        return (bool)($this->types & self::TYPE_BIOGRAPHICAL);
+    }
+
+    public function getCareer()
+    {
+        return (bool)($this->types & self::TYPE_CAREER);
+    }
+
+    public function getEducation()
+    {
+        return (bool)($this->types & self::TYPE_EDUCATION);
+    }
+
+    public function getOther()
+    {
+        return (bool)($this->types & self::TYPE_OTHER);
+    }
+
+    public function setTypes($types)
+    {
+        $this->types = $types;
+    }
+
+    public static function types()
+    {
+        return self::TYPE_BIOGRAPHICAL | self::TYPE_CAREER | self::TYPE_EDUCATION | self::TYPE_OTHER;
+    }
 }

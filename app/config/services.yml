@@ -34,13 +34,6 @@ services:
   jsn.idi_provider:
     alias: jsn.provider.idi.caching
 
-  jsn.command.fetch_viaf_names:
-    class: AppBundle\Command\FetchViafNamesCommand
-    arguments:
-      - "@jsn.rdf_provider"
-    tags:
-      - { name: console.command }
-
   jsn.geocoder:
     class: AppBundle\Geocoder
     arguments:

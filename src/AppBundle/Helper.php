@@ -6,7 +6,7 @@ use Symfony\Component\Intl\Intl;
 
 class Helper
 {
-    private static $continents = array(
+    private static $continents = [
         'AF' => 'Africa',
         'AN' => 'Antarctica',
         'AS' => 'Asia',
@@ -14,7 +14,7 @@ class Helper
         'NA' => 'North America',
         'OC' => 'Oceania',
         'SA' => 'South America'
-    );
+    ];
 
     public static function formatCountry($value)
     {
@@ -53,7 +53,7 @@ class Helper
         if ( !preg_match('/[\x80-\xff]/', $string) )
             return $string;
 
-        $chars = array(
+        $chars = [
             // Decompositions for Latin-1 Supplement
             chr(195).chr(128) => 'A', chr(195).chr(129) => 'A',
             chr(195).chr(130) => 'A', chr(195).chr(131) => 'A',
@@ -148,7 +148,7 @@ class Helper
             chr(197).chr(186) => 'z', chr(197).chr(187) => 'Z',
             chr(197).chr(188) => 'z', chr(197).chr(189) => 'Z',
             chr(197).chr(190) => 'z', chr(197).chr(191) => 's'
-        );
+        ];
 
         $string = strtr($string, $chars);
 

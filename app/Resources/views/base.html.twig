@@ -39,7 +39,7 @@
         <script src="{{ asset('js/scripts.js') }}"></script>
         {% block javascripts %}{% endblock %}
         {% if enableMap is defined and enableMap %}
-        <script src="https://maps.googleapis.com/maps/api/js?language=en&amp;key=AIzaSyBAj3xGeT4xh_SJyqeiPJqMKHY0UnQV2Eg&amp;callback=initMap&amp;libraries=places" async defer></script>
+        <script src="https://maps.googleapis.com/maps/api/js?language=en&amp;key=AIzaSyBAj3xGeT4xh_SJyqeiPJqMKHY0UnQV2Eg&amp;callback=initMap&amp;libraries=places,visualization" async defer></script>
         {% endif %}
     </body>
 </html>

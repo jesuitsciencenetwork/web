@@ -67,22 +67,25 @@ assetic:
                 - "%kernel.root_dir%/../vendor/twbs/bootstrap/js/tooltip.js"
                 - "%kernel.root_dir%/../vendor/twbs/bootstrap/js/tab.js"
                 - "%kernel.root_dir%/../vendor/twbs/bootstrap/js/popover.js"
+                - "%kernel.root_dir%/../vendor/twbs/bootstrap/js/transition.js"
+                - "%kernel.root_dir%/../vendor/twbs/bootstrap/js/collapse.js"
                 - "%kernel.root_dir%/../vendor/twbs/bootstrap/js/scrollspy.js"
                 - "%kernel.root_dir%/../vendor/twbs/bootstrap/js/affix.js"
-                - "%kernel.root_dir%/../vendor/cross-solution/bootstrap3-dialog/dist/js/bootstrap-dialog.js"
+                - "%kernel.root_dir%/Resources/vendor/bootstrap3-dialog-1.34.9/dist/js/bootstrap-dialog.js"
                 - "%kernel.root_dir%/Resources/vendor/vis/dist/vis.min.js"
                 - "%kernel.root_dir%/Resources/js/typeahead.bundle.js"
                 - "%kernel.root_dir%/Resources/vendor/bootstrap-treeview-1.2.0/src/js/bootstrap-treeview.js"
                 - "%kernel.root_dir%/../vendor/seiyria/bootstrap-slider/js/bootstrap-slider.js"
                 - "%kernel.root_dir%/Resources/vendor/bootstrap-select/dist/js/bootstrap-select.js"
                 - "%kernel.root_dir%/Resources/vendor/bootstrap-select/dist/js/i18n/defaults-en_US.js"
+                - "%kernel.root_dir%/Resources/js/markerclusterer.js"
                 - "%kernel.root_dir%/Resources/js/global.js"
             output: js/scripts.js
         styles:
             inputs:
                 - "%kernel.root_dir%/Resources/css/fonts.css"
                 - "%kernel.root_dir%/../vendor/fortawesome/font-awesome/less/font-awesome.less"
-                - "%kernel.root_dir%/../vendor/cross-solution/bootstrap3-dialog/dist/css/bootstrap-dialog.css"
+                - "%kernel.root_dir%/Resources/vendor/bootstrap3-dialog-1.34.9/dist/css/bootstrap-dialog.css"
                 - "%kernel.root_dir%/Resources/vendor/vis/dist/vis.min.css"
                 - "%kernel.root_dir%/Resources/vendor/bootstrap-treeview-1.2.0/src/css/bootstrap-treeview.css"
                 - "%kernel.root_dir%/Resources/less/bootstrap.less"
@@ -133,3 +136,8 @@ swiftmailer:
 #    icon_prefix: fa
 #    fontawesome_dir: %kernel.root_dir%/../vendor/fortawesome/font-awesome
 #    icon_tag: i
+
+knp_paginator:
+    page_range: 7
+    template:
+        pagination: "pagination.html.twig"

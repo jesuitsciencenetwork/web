@@ -2,20 +2,13 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\DTO\Location;
-use AppBundle\DTO\Radius;
-use AppBundle\Entity\Aspect;
 use AppBundle\Entity\Person;
-use AppBundle\Entity\Subject;
+use AppBundle\Entity\Place;
 use AppBundle\Entity\SubjectGroup;
 use AppBundle\Helper;
-use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query;
-use JMS\Serializer\SerializationContext;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class BrowseController extends Controller
@@ -25,11 +18,16 @@ class BrowseController extends Controller
      */
     public function sourcesAction()
     {
-        $sources = $this->getDoctrine()->getManager()->createQuery('SELECT s FROM AppBundle:Source s WHERE s.genre <> ?0 and s.genre <> ?1 order by s.id asc')->execute(array('VIAF', 'GND'));
+        $sources = $this
+            ->getDoctrine()
+            ->getManager()
+            ->createQuery('SELECT s FROM AppBundle:Source s WHERE s.genre <> ?0 and s.genre <> ?1 order by s.id asc')
+            ->execute(['VIAF', 'GND']);
 
-        return $this->render('default/sources.html.twig', array(
+        return $this->render('default/sources.html.twig', [
             'sources' => $sources
-        ));
+        ]
+        );
     }
 
     /**
@@ -53,12 +51,13 @@ class BrowseController extends Controller
             ->execute()
         ;
 
-        return $this->render('default/list.html.twig', array(
+        return $this->render('default/list.html.twig', [
             'jesuitview' => true,
             'personCount' => count($jesuits),
             'otherCount' => $nonJesuitCount,
             'letters' => $this->makeLetterList($jesuits),
-        ));
+        ]
+        );
     }
 
     /**
@@ -82,12 +81,13 @@ class BrowseController extends Controller
             ->execute()
         ;
 
-        return $this->render('default/list.html.twig', array(
+        return $this->render('default/list.html.twig', [
             'jesuitview' => false,
             'personCount' => count($nonJesuits),
             'otherCount' => $jesuitCount,
             'letters' => $this->makeLetterList($nonJesuits),
-        ));
+        ]
+        );
     }
 
     /**
@@ -95,12 +95,13 @@ class BrowseController extends Controller
      */
     public function listPlacesAction()
     {
+        /** @var Place[] $places */
         $places = $this->getDoctrine()->getManager()
             ->createQuery('SELECT p FROM AppBundle:Place p ORDER BY p.placeName asc')
             ->execute()
         ;
 
-        $letters = array();
+        $letters = [];
 
         foreach ($places as $place) {
             //$person = $person[0]; // 0 = entity, 1 = coalesce(...)
@@ -108,18 +109,19 @@ class BrowseController extends Controller
                 "'s-Hertogenbosch" === $place->getPlaceName() ? 'Hertogenbosch' : $place->getPlaceName()
             ), 0, 1));
             if (!array_key_exists($letter, $letters)) {
-                $letters[$letter] = array();
+                $letters[$letter] = [];
             }
 
             $letters[$letter][] = $place;
         }
         ksort($letters);
 
-        return $this->render(':default:places.html.twig', array(
+        return $this->render(':default:places.html.twig', [
             'placeCount' => count($places),
             'letters' => $letters,
             'grouping' => false
-        ));
+        ]
+        );
     }
 
     /**
@@ -132,21 +134,22 @@ class BrowseController extends Controller
             ->getResult(Query::HYDRATE_ARRAY)
         ;
 
-        $letters = array();
+        $letters = [];
 
         foreach ($occupations as $occupation) {
             $letter = strtoupper(substr($occupation['occupation'], 0, 1));
             if (!array_key_exists($letter, $letters)) {
-                $letters[$letter] = array();
+                $letters[$letter] = [];
             }
 
             $letters[$letter][] = $occupation;
         }
 
-        return $this->render(':default:occupations.html.twig', array(
+        return $this->render(':default:occupations.html.twig', [
             'count' => count($occupations),
             'letters' => $letters,
-        ));
+        ]
+        );
     }
 
     /**
@@ -156,33 +159,35 @@ class BrowseController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
+        /** @var Place[] $places */
         $places = $em
             ->createQuery("SELECT p FROM AppBundle:Place p ORDER BY p.continent asc, p.country asc, p.placeName asc")
             ->execute()
         ;
 
-        $continents = array();
+        $continents = [];
 
         foreach ($places as $place) {
             $continent = $place->getContinent();
             $country = $place->getCountry();
 
             if (!array_key_exists($continent, $continents)) {
-                $continents[$continent] = array();
+                $continents[$continent] = [];
             }
 
             if (!array_key_exists($country, $continents[$continent])) {
-                $continents[$continent][$country] = array();
+                $continents[$continent][$country] = [];
             }
 
             $continents[$continent][$country][] = $place;
         }
 
-        return $this->render(':default:places.html.twig', array(
+        return $this->render(':default:places.html.twig', [
             'placeCount' => count($places),
             'continents' => $continents,
             'grouping' => true
-        ));
+        ]
+        );
     }
 
     /**
@@ -191,13 +196,13 @@ class BrowseController extends Controller
      */
     private function makeLetterList($persons)
     {
-        $letters = array();
+        $letters = [];
 
         foreach ($persons as $person) {
 //            $person = $person[0]; // 0 = entity, 1 = coalesce(...)
             $letter = strtoupper(Helper::removeAccents(mb_substr($person->getListName(), 0, 1)));
             if (!array_key_exists($letter, $letters)) {
-                $letters[$letter] = array();
+                $letters[$letter] = [];
             }
 
             $letters[$letter][] = $person;
@@ -221,27 +226,28 @@ class BrowseController extends Controller
             ->execute()
         ;
 
-        $letters = array();
+        $letters = [];
 
         foreach ($subjects as $subject) {
             $letter = substr($subject[0]->getTitle(), 0, 1);
 
             if (!array_key_exists($letter, $letters)) {
-                $letters[$letter] = array();
+                $letters[$letter] = [];
             }
 
-            $letters[$letter][] = array(
+            $letters[$letter][] = [
                 'subject' => $subject[0],
                 'personCount' => $subject['personCount'],
                 'aspectCount' => $subject['aspectCount']
-            );
+            ];
         }
 
-        return $this->render('default/subjects.html.twig', array(
+        return $this->render('default/subjects.html.twig', [
             'showLetterList' => true,
             'fullCount' => count($subjects),
             'letters' => $letters
-        ));
+        ]
+        );
     }
 
     /**
@@ -249,11 +255,12 @@ class BrowseController extends Controller
      */
     public function subjectsGroupedAction($scheme)
     {
-        if (!in_array($scheme, array('modern', 'harris'))) {
+        if (!in_array($scheme, ['modern', 'harris'])) {
             throw new NotFoundHttpException('Unknown scheme');
         }
 
         $em = $this->getDoctrine()->getManager();
+        /** @var SubjectGroup[] $subjectGroups */
         $subjectGroups = $em
             ->createQuery(
                 'SELECT g, s FROM AppBundle:SubjectGroup g INNER JOIN g.subjects s WHERE g.scheme=:scheme ORDER BY g.title asc, s.title ASC'
@@ -269,29 +276,29 @@ class BrowseController extends Controller
             ->getResult(Query::HYDRATE_ARRAY)
         ;
 
-        $letters = array();
+        $letters = [];
 
-        $uniqueSubjects = array();
+        $uniqueSubjects = [];
         foreach ($subjectGroups as $group) {
-            $letters[$group->getTitle()] = array();
+            $letters[$group->getTitle()] = [];
             $groupSubjects = $group->getSubjects();
             foreach ($groupSubjects as $subject) {
                 $uniqueSubjects[$subject->getId()] = true;
-                $letters[$group->getTitle()][] = array(
+                $letters[$group->getTitle()][] = [
                     'subject' => $subject,
                     'personCount' => $counts[$subject->getId()]['personCount'],
                     'aspectCount' => $counts[$subject->getId()]['aspectCount']
-                );
+                ];
             }
         }
 
-        return $this->render('default/subjects.html.twig', array(
+        return $this->render('default/subjects.html.twig', [
             'showLetterList' => false,
             'groupCount' => count($subjectGroups),
             'fullCount' => count($uniqueSubjects),
             'letters' => $letters,
             'scheme' => $scheme
-        ));
+        ]
+        );
     }
-
 }

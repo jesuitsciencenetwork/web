@@ -1,5 +1,5 @@
 {
-    "name": "lars/jsn",
+    "name": "jsn/jsn-web",
     "license": "proprietary",
     "type": "project",
     "autoload": {
@@ -35,7 +35,6 @@
         "symfony/assetic-bundle": "~2.7",
         "components/jquery": "~2.1",
         "twbs/bootstrap": "~3.3",
-        "cross-solution/bootstrap3-dialog": "dev-master",
         "knplabs/knp-paginator-bundle": "~2.5",
         "oyejorge/less.php": "~1.7",
         "fortawesome/font-awesome": "~4.4",

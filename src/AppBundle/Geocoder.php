@@ -11,21 +11,21 @@ class Geocoder
     private $cache;
     private $logger;
 
-    private $replacementMap = array(
+    private $replacementMap = [
         'Dobrzyń Land' => 'Dobrzyń nad Wisłą',
-    );
+    ];
 
-    private $manualLookup = array(
-        'Samogitia' => array(55.75, 22.75, 'PL'),
-        'Kashubia' => array(54.25, 18.00, 'PL'),
-        'Red Ruthenia' => array(49.59, 24.41, 'PL'),
-    );
+    private $manualLookup = [
+        'Samogitia' => [55.75, 22.75, 'PL'],
+        'Kashubia' => [54.25, 18.00, 'PL'],
+        'Red Ruthenia' => [49.59, 24.41, 'PL'],
+    ];
 
-    private static $continentCodes = array(
+    private static $continentCodes = [
         'Europe' => 'EU',
         'Asia' => 'AS',
         'North America' => 'NA',
-    );
+    ];
 
     public function __construct($cacheDir, LoggerInterface $logger)
     {
@@ -37,7 +37,7 @@ class Geocoder
      * @param $placeName
      * @return Location
      * @throws \Exception
-     * @throws \Gregwar\Cache\InvalidArgumentException
+     * @throws \InvalidArgumentException
      */
     public function geocode($placeName)
     {
@@ -52,7 +52,7 @@ class Geocoder
 
         $json = $this->cache->getOrCreate(
             md5($placeName) . '.json',
-            array(),
+            [],
             function ($filename) use ($placeName) {
                 $json = $this->fetch($placeName);
                 file_put_contents($filename, $json);
@@ -99,11 +99,11 @@ class Geocoder
     {
         $url = 'https://maps.googleapis.com/maps/api/geocode/json';
 
-        $options = array(
+        $options = [
             'language' => 'en',
             'key' => Constants::MAPS_API_KEY,
             'address' => $placeName
-        );
+        ];
 
         $url = $url . '?' . http_build_query($options);
 

@@ -1,0 +1,61 @@
+{% import "macros.html.twig" as macro %}
+
+<div class="title">
+
+<p class="pull-right">
+<button type="button" class="close-pane"><i class="fa fa-times"></i></button>
+</p>
+<h3>{{ place.placeName }}</h3>
+<h5><small class="text-muted">{{ place.country|format_country }}</small></h5>
+</div>
+
+<div class="list">
+{% for section, subSections in aspects %}
+    <h4>{{ section }}</h4>
+    <table class="table table-unbordered table-condensed">
+        <tbody>
+        {% for aspectList in subSections %}
+            {% for aspect in aspectList %}
+                <tr>
+                    <td class="text-right" style="width: 100px;">
+                        {% if aspect.dateExact %}
+                            {{ aspect.dateExact }}
+                        {% elseif aspect.dateFrom or aspect.dateTo %}
+                            {{ aspect.dateFrom }} – {{ aspect.dateTo }}
+                        {% else %}
+                            —
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% set p = '<a href="' ~ path('detail', {id: aspect.person.id}) ~ '">' ~ aspect.person.listName ~ '</a>'|raw %}
+                        {% set ps = '<a href="' ~ path('detail', {id: aspect.person.id}) ~ '">' ~ aspect.person.shortName ~ '</a>'|raw %}
+                        {% if "entryInTheOrder" == aspect.type %}
+                            {{ p|raw }} &diams;
+                        {% elseif "beginningOfLife" == aspect.type %}
+                            {{ p|raw }} *
+                        {% elseif "endOfLife" == aspect.type %}
+                            {{ p|raw }} &dagger;
+                        {% elseif "resignationFromTheOrder" == aspect.type %}
+                            {{ p|raw }} &times;
+                        {% elseif "expulsionFromTheOrder" == aspect.type %}
+                            {{ p|raw }} <i class="fa fa-flash"></i>
+                        {% elseif "education" == aspect.type %}
+                            {{ ps|raw }} studied {{ macro.subjects(aspect) }}
+                        {% elseif "career" == aspect.type %}
+                            {% if not aspect.occupation %}
+                                {{ ps|raw }} occ. w/ {{ macro.subjects(aspect) }}
+                            {% else %}
+                                {{ ps|raw }} {% if aspect.occupation|lower == 'various offices' %}had{% else %}was{% endif %} <a href="{{ path('search', {occupation:aspect.occupation}) }}">{{ aspect.occupation|lcfirst }}</a>{% if aspect.subjects|length %} of {{ macro.subjects(aspect) }}{% endif %}
+                            {% endif %}
+                        {% else %}
+                            {{ aspect.description|replace_links|smart_quotes }}
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endfor %}
+
+        </tbody>
+    </table>
+{% endfor %}
+</div>

@@ -17,7 +17,7 @@ class AppExtension extends \Twig_Extension
     /** @var StatsProvider */
     private $statsProvider;
 
-    private static $forceUppercase = array(
+    private static $forceUppercase = [
         'Arabic',
         'Aristotelian logic',
         'Catalan',
@@ -36,41 +36,48 @@ class AppExtension extends \Twig_Extension
         'Russian',
         'Spanish',
         'Turkish',
-    );
+    ];
 
     public function __construct(RenderingHelper $helper, StatsProvider $provider)
     {
         $this->helper = $helper;
-        $this->fixer = new Fixer(array('Ellipsis', 'Dash', 'EnglishQuotes', 'CurlyQuote'));
+        $this->fixer = new Fixer(
+            ['Ellipsis', 'Dash', 'EnglishQuotes', 'CurlyQuote']
+        );
         $this->statsProvider = $provider;
     }
     public function getFilters()
     {
-        return array(
-            new \Twig_SimpleFilter('smart_quotes', array($this, 'smartQuotes'), array(
-                'is_safe' => array('html')
-            )),
-            new \Twig_SimpleFilter('replace_links', array($this->helper, 'renderDescription'), array(
-                'is_safe' => array('html')
-            )),
-            new \Twig_SimpleFilter('format_country', array('AppBundle\Helper', 'formatCountry')),
-            new \Twig_SimpleFilter('slugify', array('Helper', 'slugify')),
-            new \Twig_SimpleFilter('format_continent', array('AppBundle\Helper', 'formatContinent')),
-        );
+        return [
+            new \Twig_SimpleFilter('smart_quotes', [$this, 'smartQuotes'], [
+                'is_safe' => ['html']
+            ]
+            ),
+            new \Twig_SimpleFilter('replace_links', [$this->helper, 'renderDescription'], [
+                'is_safe' => ['html']
+            ]
+            ),
+            new \Twig_SimpleFilter('format_country', ['AppBundle\Helper', 'formatCountry']
+            ),
+            new \Twig_SimpleFilter('slugify', ['Helper', 'slugify']),
+            new \Twig_SimpleFilter('format_continent', ['AppBundle\Helper', 'formatContinent']
+            ),
+            new \Twig_SimpleFilter('lcfirst', 'lcfirst'),
+        ];
     }
 
     public function getTests()
     {
-        return array(
-            new \Twig_SimpleTest('lowercaseable', array($this, 'lowercaseable')),
-        );
+        return [
+            new \Twig_SimpleTest('lowercaseable', [$this, 'lowercaseable']),
+        ];
     }
 
     public function getFunctions()
     {
-        return array(
-            new \Twig_SimpleFunction('stats', array($this->statsProvider, 'get'))
-        );
+        return [
+            new \Twig_SimpleFunction('stats', [$this->statsProvider, 'get'])
+        ];
     }
     public function smartQuotes($value)
     {

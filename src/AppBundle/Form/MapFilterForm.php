@@ -3,6 +3,7 @@
 namespace AppBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 
 class MapFilterForm extends AbstractType
@@ -12,33 +13,36 @@ class MapFilterForm extends AbstractType
         parent::buildForm($builder, $options);
 
         $builder
-            ->add('from', 'choice', array(
+            ->add('from', ChoiceType::class, [
                 'choices' => array_combine(range(1500, 1700, 10),range(1500, 1700, 10))
-            ))
-            ->add('to', 'choice', array(
+            ]
+            )
+            ->add('to', ChoiceType::class, [
                 'choices' => array_combine(range(1500, 1700, 10),range(1500, 1700, 10))
-            ))
-            ->add('area', 'choice', array(
+            ]
+            )
+            ->add('area', ChoiceType::class, [
                 'label' => 'Include persons related with',
-                'expanded' => true,
                 'multiple' => true,
-                'choices' => array(
-                    'Mathematics',
-                    'Geometry',
-                    'Astronomy'
-                )
-            ))
-            ->add('type', 'choice', array(
+                'choices' => [
+                    'Mathematics' => 'Mathematics',
+                    'Geometry' => 'Geometry',
+                    'Astronomy' => 'Astronomy'
+                ]
+            ]
+            )
+            ->add('type', ChoiceType::class, [
                 'label' => 'Show only',
                 'expanded' => true,
                 'multiple' => true,
-                'choices' => array(
-                    'Places of Birth',
-                    'Places of Education',
-                    'Places of Teaching',
-                    'Other'
-                )
-            ))
+                'choices' => [
+                    'Biographical' => 'biographical',
+                    'Education' => 'education',
+                    'teaching' => 'Teaching',
+                    'other' => 'Other'
+                ]
+            ]
+            )
         ;
     }
 

@@ -47,7 +47,7 @@
                     <h4 class="jumptarget" id="{{ letter }}">{{ letter }} <small class="text-muted">{{ places|length }}</small></h4>
                     <ul class="list-unstyled">
                         {% for place in places %}
-                            <li><a href="{{ path('search', {place:place.placeName,radius:0,lat:place.latitude,lng:place.longitude}) }}">{{ place.placeName }}</a></li>
+                            <li><a href="{{ path('search', {placeName:place.placeName,radius:0,lat:place.latitude,lng:place.longitude}) }}">{{ place.placeName }}</a></li>
                         {% endfor %}
                     </ul>
                 {% endfor %}
@@ -58,7 +58,7 @@
                     <h4>{{ country|format_country|default('Regions') }} <small class="text-muted">{{ places|length }}</small></h4>
                     <ul class="list-unstyled">
                         {% for place in places %}
-                            <li><a href="{{ path('search', {lat: place.latitude, lng:place.longitude,radius:0,place:place.placeName}) }}">{{ place.placeName }}</a></li>
+                            <li><a href="{{ path('search', {lat: place.latitude, lng:place.longitude,radius:0,placeName:place.placeName}) }}">{{ place.placeName }}</a></li>
                         {% endfor %}
                     </ul>
                 {% endfor %}

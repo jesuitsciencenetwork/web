@@ -20,7 +20,7 @@ class CachingProvider implements IdiProviderInterface
     {
         // todo: check against lm idi if refresh necessary
         $originalProvider = $this->originalProvider;
-        return $this->cache->getOrCreate($pdrId . '.xml', array(), function ($filename) use ($originalProvider, $pdrId) {
+        return $this->cache->getOrCreate($pdrId . '.xml', [], function ($filename) use ($originalProvider, $pdrId) {
             file_put_contents($filename, $originalProvider->getXml($pdrId));
         });
     }

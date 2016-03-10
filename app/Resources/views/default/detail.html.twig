@@ -71,16 +71,27 @@
             <div class="panel panel-default alternate-names">
                 <div class="panel-body">
                 <ul class="list-unstyled">
-                    {% set hiddenItems = false %}
-                    {% for name in person.alternateNames %}
-                    <li {% if loop.index > 5 %}{% if hiddenItems == false %}{% set hiddenItems = (loop.revindex+0) %}{% endif %} class="hidden"{% endif %}>{{ name.displayName }}</li>
+                    {% for name in person.alternateNames|slice(0,5) %}
+                    <li>{{ name.displayName }}</li>
                     {% endfor %}
                 </ul>
-                    {% if hiddenItems != false %}
-                    <div class="text-center" style="border-top: 1px solid #eee">
-                        <button type="button" class="btn btn-link js-show-hiddennames">Show {{ hiddenItems }} more names</button>
-                    </div>
-                    {% endif %}
+                {% if person.alternateNames|length > 5 %}
+                <ul class="list-unstyled collapse" id="alternateNamesCollapse">
+                    {% for name in person.alternateNames|slice(5) %}
+                    <li>{{ name.displayName }}</li>
+                    {% endfor %}
+                </ul>
+                <div class="text-center" style="border-top: 1px solid #eee">
+                    {% set hiddenItems = (person.alternateNames|length) - 5 %}
+                    <button
+                            type="button" class="btn btn-link" id="alternateNamesToggle"
+                            data-toggle="collapse" data-target="#alternateNamesCollapse"
+                            data-collapsed-title="Show {{ hiddenItems }} more names"
+                            data-expanded-title="Collapse list"
+                            style="outline: 0;"
+                    >Show {{ hiddenItems }} more names</button>
+                </div>
+                {% endif %}
                 </div>
             </div>
                 {% if person.viafId %}
@@ -188,18 +199,6 @@
                 });
                 markerObjects.push(marker);
 
-                marker.addListener('mouseover', function(e) {
-                    $tooltip.html(place.name).addClass('in');
-                });
-                marker.addListener('mouseout', function(e) {
-                    $tooltip.html('').removeClass('in');
-                });
-//                    console.log(marker);
-//                    //$(marker).tooltip({placement: 'right'});
-//                    $tooltipInner.html($this.data('title'));
-//                    $tooltip.offset({top: e.pixel.y, left: e.pixel.x });
-//                });
-
                 marker.addListener('click', function() {
                     info.setContent("<strong>" + place.name + "</strong><br>" + place.aspects.join("<br>"));
                     info.open(map, marker);
@@ -209,5 +208,20 @@
             });
             map.fitBounds(bounds);
         });
+
+        $(function() {
+            var $toggle = $('#alternateNamesToggle');
+            $('#alternateNamesCollapse')
+                .on('show.bs.collapse', function() {
+                    console.log('show');
+                    $toggle.text($toggle.data('expanded-title'));
+                })
+                .on('hide.bs.collapse', function() {
+                    console.log('hide');
+                    $toggle.text($toggle.data('collapsed-title'));
+                })
+            ;
+        });
+
     </script>
 {% endblock %}

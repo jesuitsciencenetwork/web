@@ -5,102 +5,9 @@
 {% set enableMap = true %}
 
 {% block content %}
-
     <div class="container">
-
         <div class="row">
-
-            <div class="col-md-3 text-right">
-                <h3>Refine</h3>
-
-                {#{{ dump(filter) }}#}
-
-                {% if filter.subjects %}
-                <h6>Subjects</h6>
-                <ul class="list-unstyled">
-                    {% for subj in filter.subjects %}
-                    <li><a href="#">{{ subj.title }}</a></li>
-                    {% endfor %}
-                </ul>
-                {% endif %}
-
-                {% if filter.continents %}
-                <h6>Continents</h6>
-                <ul class="list-unstyled">
-                    {% for c in filter.continents %}
-                    <li><a href="">{{ c|format_continent }}</a></li>
-                    {% endfor %}
-                </ul>
-                {% endif %}
-
-                {% if filter.countries %}
-                <h6>Countries</h6>
-                <ul class="list-unstyled">
-                    {% for c in filter.countries %}
-                    <li><a href="">{{ c|format_country }}</a></li>
-                    {% endfor %}
-                </ul>
-                {% endif %}
-
-                {% if filter.sources %}
-                <h6>Source</h6>
-                <ul class="list-unstyled">
-                    {% for s in filter.sources %}
-                    <li><a href="">
-                            {#{% include "include/sourcetext.html.twig" with {source: s} only %}#}
-                            {{ macro.namelist(s.authors, true, "; ") }} {{ s.dateIssued }}
-                        </a></li>
-                    {% endfor %}
-                </ul>
-                {% endif %}
-            </div>
-
-            <div class="col-md-9 search-results" style="border-left: 1px solid #ddd;">
-
-                <a href="{{ path('search') }}" style="margin-top: 15px;" class="pull-right btn btn-xs btn-default" title="Discard search and start over">New search</a>
-                <h3>{{ pagination.getTotalItemCount }} Results</h3>
-
-                <dl class="query dl-horizontal">
-                    {% if query.continent %}
-                        <dt>Continent</dt>
-                        <dd>{{ query.continent|format_continent }}</dd>
-                    {% endif %}
-
-                    {% if query.country %}
-                        <dt>Country</dt>
-                        <dd>{{ query.country|format_country }}</dd>
-                    {% endif %}
-
-                    {% if query.radius %}
-                        {% if query.radius.radius %}
-                        <dt>Radius</dt>
-                        <dd>{{ query.radius.radius }} km around {{ query.radius.center.description }}</dd>
-                        {% else %}
-                        <dt>Place</dt>
-                        <dd>{{ query.radius.center.description }}</dd>
-                        {% endif %}
-                    {% endif %}
-
-                    {% if query.occupation %}
-                        <dt>Occupation</dt>
-                        <dd>{{ query.occupation }}</dd>
-                    {% endif %}
-
-                    {% if query.from %}
-                        <dt>Year</dt>
-                        <dd>between <em>{{ query.from }}</em> and <em>{{ query.to }}</em></dd>
-                    {% endif %}
-
-                    {% if query.subjects %}
-                        <dt>Subjects</dt>
-                        <dd>
-                            {% for subject in query.subjects %}
-                                {{ subject }}{% if not loop.last %}, {% endif %}
-                            {% endfor %}
-                        </dd>
-                    {% endif %}
-                </dl>
-
+            <div class="col-sm-9 col-sm-push-3 search-results" style="border-left: 1px solid #ddd;">
                 {#<div class="text-right" style="margin-top: 20px;">#}
                     {#<button type="button" class="btn-sm btn-default btn" style="font-family: Montserrat; font-weight: bold; letter-spacing: 0.5px; text-transform:uppercase;">Show map <i class="fa fa-expand"></i></button>#}
                 {#</div>#}
@@ -109,7 +16,13 @@
                     {#<button type="button" class="pull-right btn-xs btn-default btn" style="position:absolute; top: 5px; right: 5px;border: 0 none; background-color: transparent;"><i class="fa fa-compress"></i></button>#}
                 {#</div>#}
 
-                {#<p> results</p>#}
+                <a href="{{ path('search') }}" style="margin-top: 15px;" class="pull-right btn btn-xs btn-default" title="Discard search and start over">New search</a>
+
+                <h3>{{ pagination.getTotalItemCount }} Results</h3>
+
+                <div class="text-center">
+                    {{ knp_pagination_render(pagination) }}
+                </div>
 
                 <table class="table table-striped">
                     <thead>
@@ -150,7 +63,7 @@
                                     {% if not aspect.occupation %}
                                         Occupied himself with {{ macro.subjects(aspect, true, false) }}{{ macro.places(aspect, false) }}
                                     {% else %}
-                                        {{ aspect.occupation }}{% if aspect.subjects %} of {{ macro.subjects(aspect, true, false) }}{% endif %}{{ macro.places(aspect, false) }}
+                                        {{ aspect.occupation }}{% if aspect.subjects|length %} of {{ macro.subjects(aspect, true, false) }}{% endif %}{{ macro.places(aspect, false) }}
                                     {% endif %}
                                 {% else %}
                                     {{ aspect.description|replace_links(currentPo is defined ? [currentPo] : [], false)|smart_quotes }}
@@ -168,8 +81,253 @@
 
             </div>
 
+            <div class="col-sm-3 col-sm-pull-9 text-right">
+                <h3>Refine</h3>
+
+                <h6>Date</h6>
+                <form class="form-inline">
+                    <div class="form-group"><div style="position: relative;right: -5px;">{% spaceless %}
+                            <input type="text" style="width: 55px;" value="{{ query.from|default(1490) }}" class="text-center input-sm form-control"/>
+                            &nbsp;–&nbsp;
+                            <input type="text" style="width: 55px;" value="{{ query.to|default(1890) }}" class="text-center input-sm form-control"/>
+                    {% endspaceless %}</div></div>
+                    <br>
+                    <button type="button" style="outline: 0;padding-right: 0; margin-right: 0;" class="btn btn-link">Apply</button>
+                </form>
+
+                <h6>Type</h6>
+                <ul class="list-unstyled">
+                    <form>
+                    <label>Biographical <input type="checkbox" checked="checked" /></label><br>
+                    <label>Education <input type="checkbox" checked="checked" /></label><br>
+                    <label>Career <input type="checkbox" checked="checked" /></label><br>
+                    <label>Other <input type="checkbox" checked="checked" /></label>
+                    </form>
+                </ul>
+
+                <h6>Subject</h6>
+                <ul class="list-unstyled">
+                    {% for subject in query.subjects %}
+                    <li class="restriction">
+                        {{ subject }}
+                        {{ macro.remove_restriction() }}
+                    </li>
+                    {% endfor %}
+
+                    {% if filter.subjects_short %}
+                        {% for subj in filter.subjects_short %}
+                            <li><a href="#">{{ subj.title }}</a></li>
+                        {% endfor %}
+                        {% if filter.subjects_count is defined and filter.subjects_count > 7 %}
+                        <li><a href="#" data-toggle="modal" data-target="#modal-subjects">
+                                <em>{{ filter.subjects_count - 7 }} more...</em>
+                            </a></li>
+                        {% endif %}
+                    {% endif %}
+                </ul>
+
+                {% if query.occupation or filter.occupations|length > 1 %}
+                <h6>Occupation</h6>
+                <ul class="list-unstyled">
+                    {% if query.occupation %}
+                    <li class="restriction">
+                        {{ query.occupation }}
+                        {{ macro.remove_restriction() }}
+                    </li>
+                    {% elseif filter.occupations|length > 1 %}
+                        {% for slug, label in filter.occupations|slice(0,7) %}
+                            <li><a href="#occupation-{{ slug }}">{{ label }}</a></li>
+                        {% endfor %}
+                        {% if filter.occupations|length > 7 %}
+                            <li><a href="#" data-toggle="modal" data-target="#modal-occupations">
+                                    <em>{{ filter.occupations|length - 7 }} more...</em>
+                                </a></li>
+                        {% endif %}
+                    {% endif %}
+                </ul>
+                {% endif %}
+
+
+                {% if query.continent or filter.continents|length > 1 %}
+                <h6>Continent</h6>
+                <ul class="list-unstyled">
+                    {% if query.continent %}
+                        <li class="restriction">
+                            <em>{{ query.continent|format_continent }}</em>
+                            {{ macro.remove_restriction() }}
+                        </li>
+                    {% elseif filter.continents|length > 1 %}
+                        {% for c, label in filter.continents %}
+                            <li><a href="#cont-{{ c }}">{{ label }}</a></li>
+                        {% endfor %}
+                    {% endif %}
+                </ul>
+                {% endif %}
+
+                {% if query.country or filter.countries|length > 1 %}
+                    <h6>Country</h6>
+                    <ul class="list-unstyled">
+                        {% if query.country %}
+                            <li class="restriction">
+                                <em>{{ query.country|format_country }}</em>
+                                {{ macro.remove_restriction() }}
+                            </li>
+                        {% elseif filter.countries|length > 1 %}
+                            {% for c, label in filter.countries_short %}
+                                <li><a href="#country-{{ c }}">{{ label }}</a></li>
+                            {% endfor %}
+                            {% if filter.countries|length > 7 %}
+                                <li><a href="#" data-toggle="modal" data-target="#modal-countries">
+                                        <em>{{ filter.countries|length - 7 }} more...</em>
+                                    </a></li>
+                            {% endif %}
+                        {% endif %}
+                    </ul>
+                {% endif %}
+
+                {% if query.radius or query.bounds or filter.places %}
+                    <h6>Place</h6>
+
+                    <ul class="list-unstyled">
+
+                        {% if query.radius %}
+                        <li class="restriction">
+                            within {{ query.radius.radius }}&nbsp;km of <br>{{ query.radius.center.description }}
+                            {{ macro.remove_restriction() }}
+                        </li>
+                        {% endif %}
+                        {% if query.bounds %}
+                            <li class="restriction">
+                                within specified<br><abbr class="js-popover" title="Coordinates" data-toggle="popover" data-placement="right" data-html="true" data-trigger="click" data-content="Southwest corner<br>...<br>Northeast corner<br>...">map area</abbr>
+                                {{ macro.remove_restriction() }}
+                            </li>
+                        {% endif %}
+
+                        {% if query.place %}
+                            <li class="restriction">
+                                {{ query.place.placeName }}, {{ query.place.country|format_country }}
+                                {{ macro.remove_restriction() }}
+                            </li>
+                        {% else %}
+                            {% for p in filter.places|slice(0,7) %}
+                                <li><a href="">{{ p.placeName }}</a></li>
+                            {% endfor %}
+                            {% if filter.places|length > 7 %}
+                                <li><a href="#" data-toggle="modal" data-target="#modal-places">
+                                        <em>{{ filter.places|length - 7 }} more...</em>
+                                    </a></li>
+                            {% endif %}
+                        {% endif %}
+                    </ul>
+                {% endif %}
+
+                {% if filter.sources is defined and filter.sources|length > 1 %}
+                    <h6>Source</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="#" data-toggle="modal" data-target="#modal-sources">
+                            <em>view list ({{ filter.sources|length }})</em>
+                        </a></li>
+                    </ul>
+                {% endif %}
+            </div>
+
         </div>
 
     </div>
+
+
+    {% if filter.sources is defined and filter.sources|length > 1 %}
+    {% embed "modal.html.twig" with {id: "modal-sources", class: "refinement", title: "Refine by Source"} %}
+        {% block body %}
+        <ul class="list-unstyled ">
+            {% for s in filter.sources %}
+                <li><a href="">{% include "include/shortsource.html.twig" with {source: s} only %}</a></li>
+            {% endfor %}
+        </ul>
+        {% endblock %}
+    {% endembed %}
+    {% endif %}
+
+    {% if filter.places|length > 7 %}
+        {% embed "modal.html.twig" with {id: "modal-places", class: "refinement", title: "Refine by Place"} %}
+            {% block body %}
+                {% set cur = false %}
+                    {% for p in filter.places %}
+                        {% if cur is not same as(p.country) %}
+                            {% if cur is not same as(false) %}</ul>{% endif %}
+                            <h6>{{ p.country|format_country }}</h6>
+                            <ul class="list-unstyled list-indented">
+                            {% set cur = p.country %}
+                        {% endif %}
+                        <li><a href="#">
+                                {{ p.placeName }}
+                            </a></li>
+                    {% endfor %}
+                </ul>
+            {% endblock %}
+        {% endembed %}
+    {% endif %}
+
+    {% if filter.countries|length > 7 %}
+        {% embed "modal.html.twig" with {id: "modal-countries", class: "refinement", title: "Refine by Country"} %}
+            {% block body %}
+                <ul class="list-unstyled">
+                {% for c, label in filter.countries %}
+                    <li><a href="#country-{{ c }}">{{ label }}</a></li>
+                {% endfor %}
+                </ul>
+            {% endblock %}
+        {% endembed %}
+    {% endif %}
+
+    {% if filter.occupations|length > 7 %}
+        {% embed "modal.html.twig" with {id: "modal-occupations", class: "refinement", title: "Refine by Occupation"} %}
+            {% block body %}
+                <ul class="list-unstyled">
+                    {% for slug, label in filter.occupations %}
+                        <li><a href="#occupation-{{ slug }}">{{ label }}</a></li>
+                    {% endfor %}
+                </ul>
+            {% endblock %}
+        {% endembed %}
+    {% endif %}
+
+    {% if filter.subjects is defined %}
+        {% embed "modal.html.twig" with {id: "modal-subjects", class: "wide refinement", title: "Refine by Subject"} %}
+            {% block body %}
+                <div class="row">
+                    {% for groupingScheme in filter.subjects %}
+                    <div class="col-md-6">
+                        <h6>{{ groupingScheme.text|striptags }}</h6>
+                        <ul class="list-unstyled list-indented">
+                            {% for node in groupingScheme.nodes %}
+                            <li>
+                                {% if node.nodes|length %}
+                                    <em>{{ node.text }}</em>
+                                    <ul class="list-unstyled list-indented">
+                                    {% for childNode in node.nodes %}
+                                        <li><a href="#">{{ childNode.text }}</a></li>
+                                    {% endfor %}
+                                    </ul>
+                                {% else %}
+                                    {{ node.text }}
+                                {% endif %}
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% endblock %}
+        {% endembed %}
+    {% endif %}
+
+
+
+{% endblock %}
+
+{% block javascripts %}
+
+
 
 {% endblock %}
