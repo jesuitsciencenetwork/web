@@ -194,18 +194,16 @@ class PdrConnector
             }
         }
 
+        $shortName = $listName;
+
         if ($data['lastName']) {
             $listName .= $data['lastName'] . ', ';
+            $shortName .= $data['lastName'];
         }
 
-        $shortName = $listName;
         if (!$shortName) {
             // popes and queens
             $shortName = $data['firstName'];
-        } elseif ($data['firstName']) {
-            $shortName .= implode(' ', array_map(function ($part) {
-                return mb_substr($part, 0, 1) . '.';
-            }, explode(' ', $data['firstName'])));
         }
 
         if ($data['title']) {
@@ -384,6 +382,7 @@ class PdrConnector
             'dateExact' => null,
             'places' => [],
             'occupation' => null,
+            'affiliation' => null,
             'subjects' => [],
             'comments' => [],
             'raw' => $xml->asXML()
@@ -430,6 +429,9 @@ class PdrConnector
                 $output['places'][] = $childNode->nodeValue;
                 $textParts[] = '{M:' . $childNode->nodeValue . '|' . $childNode->nodeValue . '}';
             } elseif ($tag == 'name') {
+                $textParts[] = $childNode->nodeValue;
+            } elseif ($tag == 'orgName') {
+                $output['affiliation'] = $childNode->nodeValue;
                 $textParts[] = $childNode->nodeValue;
             } elseif ($tag == 'date') {
                 if ($type == 'event' && $subtype) {

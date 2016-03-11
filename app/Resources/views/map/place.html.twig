@@ -41,7 +41,9 @@
                         {% elseif "education" == aspect.type %}
                             {{ ps|raw }} studied {{ macro.subjects(aspect) }}
                         {% elseif "career" == aspect.type %}
-                            {% if not aspect.occupation %}
+                            {% if aspect.affiliation %}
+                                {{ ps|raw }} aff. w/ <em>{{ aspect.affiliation }}</em>
+                            {% elseif not aspect.occupation %}
                                 {{ ps|raw }} occ. w/ {{ macro.subjects(aspect) }}
                             {% else %}
                                 {{ ps|raw }} {% if aspect.occupation|lower == 'various offices' %}had{% else %}was{% endif %} <a href="{{ path('search', {occupation:aspect.occupation}) }}">{{ aspect.occupation|lcfirst }}</a>{% if aspect.subjects|length %} of {{ macro.subjects(aspect) }}{% endif %}

@@ -58,6 +58,12 @@ class Aspect
      * @var string
      * @ORM\Column(type="string", length=255, nullable=true)
      */
+    private $affiliation;
+
+    /**
+     * @var string
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
     private $occupationSlug;
 
     /**
@@ -525,5 +531,21 @@ class Aspect
         ];
 
         return array_key_exists($this->type, $biographical);
+    }
+
+    /**
+     * @return string
+     */
+    public function getAffiliation()
+    {
+        return $this->affiliation;
+    }
+
+    /**
+     * @param string $affiliation
+     */
+    public function setAffiliation($affiliation)
+    {
+        $this->affiliation = $affiliation;
     }
 }

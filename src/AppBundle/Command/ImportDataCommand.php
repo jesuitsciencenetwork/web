@@ -116,7 +116,7 @@ class ImportDataCommand extends Command
             'INSERT INTO person_source (person_id, source_id) VALUES (:personId, :sourceId) ON DUPLICATE KEY UPDATE person_id=person_id'
         );
         $aspectStatement = $connection->prepare(
-            'INSERT INTO aspect (id, person_id, type, date_exact, date_from, date_to, comment, source_id, occupation, occupation_slug, raw_xml, description) VALUES (:id, :personId, :type, :dateExact, :dateFrom, :dateTo, :comment, :sourceId, :occupation, :occupationSlug, :rawXml, :description) ON DUPLICATE KEY UPDATE id=id'
+            'INSERT INTO aspect (id, person_id, type, date_exact, date_from, date_to, comment, source_id, occupation, occupation_slug, affiliation, raw_xml, description) VALUES (:id, :personId, :type, :dateExact, :dateFrom, :dateTo, :comment, :sourceId, :occupation, :occupationSlug, :affiliation, :rawXml, :description) ON DUPLICATE KEY UPDATE id=id'
         );
         $aspectSubjectStatement = $connection->prepare(
             'INSERT INTO aspect_subject (aspect_id, subject_id) VALUES (:aspectId, :subjectId) ON DUPLICATE KEY UPDATE aspect_id=aspect_id'
@@ -363,8 +363,7 @@ class ImportDataCommand extends Command
                     }
                 }, $aspectData['description']);
 
-                $aspectStatement->execute(
-                    [
+                $aspectStatement->execute([
                     ':id' => $ao,
                     ':personId' => $po,
                     ':type' => $aspectData['type'],
@@ -374,11 +373,11 @@ class ImportDataCommand extends Command
                     ':comment' => implode(", ", $aspectData['comments']),
                     ':sourceId' => $sourceId,
                     ':occupation' => $aspectData['occupation'],
+                    ':affiliation' => $aspectData['affiliation'],
                     ':occupationSlug' => Helper::slugify($aspectData['occupation']),
                     ':rawXml' => $aspectData['raw'],
                     ':description' => $aspectData['description'],
-                    ]
-                );
+                ]);
 
                 foreach ($aspectData['subjects'] as $subject) {
                     $slug = Helper::slugify($subject);
