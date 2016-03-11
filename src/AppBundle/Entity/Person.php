@@ -419,7 +419,7 @@ class Person
     /**
      * Get relationsIncoming
      *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return \Doctrine\Common\Collections\Collection|Relation[]
      */
     public function getRelationsIncoming()
     {

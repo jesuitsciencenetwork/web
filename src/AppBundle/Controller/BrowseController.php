@@ -86,8 +86,7 @@ class BrowseController extends Controller
             'personCount' => count($nonJesuits),
             'otherCount' => $jesuitCount,
             'letters' => $this->makeLetterList($nonJesuits),
-        ]
-        );
+        ]);
     }
 
     /**

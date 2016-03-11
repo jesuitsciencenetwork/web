@@ -45,6 +45,7 @@ class DefaultController extends Controller
      */
     public function detailAction($id)
     {
+        /** @var Person $person */
         $person = $this
             ->getDoctrine()
             ->getRepository('AppBundle:Person')
@@ -66,7 +67,14 @@ class DefaultController extends Controller
         }
 
         $relations = $this->getDoctrine()->getConnection()->executeQuery(
-            'SELECT IF(:id = r.source_id, t.id, s.id) as id, IF(:id = r.source_id, t.display_name, s.display_name) as name FROM relations r LEFT JOIN person t ON r.target_id = t.id LEFT JOIN person s ON r.source_id = s.id WHERE r.source_id = :id OR r.target_id = :id GROUP BY id ORDER BY IF(:id = r.source_id, t.list_name, s.list_name) ASC',
+            'SELECT
+                IF(:id = r.source_id, t.id, s.id) as id,
+                IF(:id = r.source_id, t.display_name, s.display_name) as name
+            FROM relations r
+            LEFT JOIN person t ON r.target_id = t.id
+            LEFT JOIN person s ON r.source_id = s.id
+            WHERE r.source_id = :id OR r.target_id = :id
+            GROUP BY id ORDER BY IF(:id = r.source_id, t.list_name, s.list_name) ASC',
             ['id' => $person->getId()]
         )->fetchAll();
 
@@ -131,6 +139,44 @@ class DefaultController extends Controller
             }
 
             $aspects[$type][$key][] = $aspect;
+        }
+
+        foreach ($person->getRelationsIncoming() as $rel) {
+            foreach ($rel->getAspect()->getPlaces() as $place) {
+                if (!array_key_exists($place->getId(), $places)) {
+                    $places[$place->getId()] = [
+                        'lat' => $place->getLatitude(),
+                        'lng' => $place->getLongitude(),
+                        'name' => $place->getPlaceName() . ', ' . Helper::formatCountry($place->getCountry()),
+                        'types' => [],
+                        'aspects' => []
+                    ];
+                }
+                $places[$place->getId()]['aspects'][] = $twig->render('include/aspect.html.twig', [
+                        'aspect' => $rel->getAspect()
+                    ]
+                );
+                $places[$place->getId()]['types'][] = $aspect->getMarkerLabel();
+            }
+        }
+
+        foreach ($person->getRelationsOutgoing() as $rel) {
+            foreach ($rel->getAspect()->getPlaces() as $place) {
+                if (!array_key_exists($place->getId(), $places)) {
+                    $places[$place->getId()] = [
+                        'lat' => $place->getLatitude(),
+                        'lng' => $place->getLongitude(),
+                        'name' => $place->getPlaceName() . ', ' . Helper::formatCountry($place->getCountry()),
+                        'types' => [],
+                        'aspects' => []
+                    ];
+                }
+                $places[$place->getId()]['aspects'][] = $twig->render('include/aspect.html.twig', [
+                        'aspect' => $rel->getAspect()
+                    ]
+                );
+                $places[$place->getId()]['types'][] = $aspect->getMarkerLabel();
+            }
         }
 
         foreach ($places as &$place) {
