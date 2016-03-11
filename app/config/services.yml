@@ -68,6 +68,7 @@ services:
   jsn.twig.extension.app:
     class: AppBundle\Twig\AppExtension
     arguments:
+      - "@jsn.search"
       - "@jsn.twig.helper.rendering"
       - "@jsn.stats_provider"
     tags:
@@ -86,6 +87,5 @@ services:
   jsn.search:
     class: AppBundle\SearchService
     arguments:
-      - "@templating"
       - "@doctrine.orm.default_entity_manager"
       - "@knp_paginator"

@@ -18,9 +18,6 @@ use Symfony\Component\HttpFoundation\Request;
 
 class SearchService
 {
-    /** @var EngineInterface */
-    private $templating;
-
     /** @var EntityManagerInterface $em */
     private $em;
 
@@ -30,12 +27,10 @@ class SearchService
     /**
      * SearchService constructor
      *
-     * @param EngineInterface $templating
      * @param EntityManagerInterface $em
      */
-    public function __construct(EngineInterface $templating, EntityManagerInterface $em, $paginator)
+    public function __construct(EntityManagerInterface $em, $paginator)
     {
-        $this->templating = $templating;
         $this->em = $em;
         $this->paginator = $paginator;
     }

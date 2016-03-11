@@ -2,6 +2,7 @@
 
 namespace AppBundle\Twig;
 
+use AppBundle\SearchService;
 use AppBundle\StatsProvider;
 use AppBundle\Twig\Helper\RenderingHelper;
 use JoliTypo\Fixer;
@@ -16,6 +17,9 @@ class AppExtension extends \Twig_Extension
 
     /** @var StatsProvider */
     private $statsProvider;
+
+    /** @var SearchService $search */
+    private $search;
 
     private static $forceUppercase = [
         'Arabic',
@@ -38,8 +42,9 @@ class AppExtension extends \Twig_Extension
         'Turkish',
     ];
 
-    public function __construct(RenderingHelper $helper, StatsProvider $provider)
+    public function __construct(SearchService $search, RenderingHelper $helper, StatsProvider $provider)
     {
+        $this->search = $search;
         $this->helper = $helper;
         $this->fixer = new Fixer(
             ['Ellipsis', 'Dash', 'EnglishQuotes', 'CurlyQuote']
@@ -76,7 +81,8 @@ class AppExtension extends \Twig_Extension
     public function getFunctions()
     {
         return [
-            new \Twig_SimpleFunction('stats', [$this->statsProvider, 'get'])
+            new \Twig_SimpleFunction('stats', [$this->statsProvider, 'get']),
+            new \Twig_SimpleFunction('subjectGroupTree', [$this->search, 'getSubjectGroupTree']),
         ];
     }
     public function smartQuotes($value)

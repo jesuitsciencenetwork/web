@@ -24,12 +24,12 @@ class SearchController extends Controller
         try {
             $query = $searchService->getQueryFromRequest($request);
         } catch (QueryException $e) {
-            if ($e instanceof InvalidQueryException) {
-                $this->addFlash('alert', 'Your search query could not be understood.');
-            }
+            $message = ($e instanceof InvalidQueryException)
+                     ? 'Your search query could not be understood.'
+                     : null;
 
             return $this->render('default/search.html.twig', [
-                'subjectGroupTree' => $searchService->getSubjectGroupTree()
+                'message' => $message
             ]);
         }
 

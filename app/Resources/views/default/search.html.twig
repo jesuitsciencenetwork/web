@@ -6,7 +6,11 @@
     <div class="container container-narrow topmargin">
         <h2 style="margin-bottom: 30px;">Search the Database</h2>
 
-        {% include "flash.html.twig" %}
+        {% if message is defined and message %}
+        <div class="alert alert-warning">
+            {{ message|smart_quotes }}
+        </div>
+        {% endif %}
 
         {% include "include/searchbox.html.twig" %}
 

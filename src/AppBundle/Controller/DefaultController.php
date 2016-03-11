@@ -234,11 +234,12 @@ class DefaultController extends Controller
             ->findOneBy(['viafId' => $id]);
 
         if (!$person) {
-            $this->addFlash('alert', sprintf(
-                'The VIAF ID "%s" could not be found. Please try searching our database instead.',
-                $id
-            ));
-            return $this->redirect($this->generateUrl('search'));
+            return $this->render('default/search.html.twig', [
+                'message' => sprintf(
+                    'The VIAF ID "%s" could not be found. Please try searching our database instead.',
+                    $id
+                )
+            ]);
         }
 
         return $this->redirect(

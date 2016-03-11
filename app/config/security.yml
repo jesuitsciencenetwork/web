@@ -31,11 +31,6 @@ security:
 
         main:
             anonymous: false
-            # activate different ways to authenticate
-
+            stateless: true
             http_basic:
               realm: "JSN"
-            # http://symfony.com/doc/current/book/security.html#a-configuring-how-your-users-will-authenticate
-
-            # form_login: ~
-            # http://symfony.com/doc/current/cookbook/security/form_login_setup.html
