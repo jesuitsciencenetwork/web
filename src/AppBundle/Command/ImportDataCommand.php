@@ -104,7 +104,7 @@ class ImportDataCommand extends Command
             'INSERT INTO relations (source_id, target_id, class, context, `value`, aspect_id) VALUES (?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE id=id'
         );
         $personStatement = $connection->prepare(
-            'INSERT INTO person (id, display_name, list_name, is_jesuit, viaf_id, lastmod, date_of_birth, date_of_death) VALUES (:id, :displayName, :listName, :isJesuit, :viafId, :lastmod, :dateOfBirth, :dateOfDeath)'
+            'INSERT INTO person (id, display_name, list_name, short_name, name_for_sorting, group_letter, is_jesuit, viaf_id, lastmod, date_of_birth, date_of_death) VALUES (:id, :displayName, :listName, :shortName, :nameForSorting, :groupLetter, :isJesuit, :viafId, :lastmod, :dateOfBirth, :dateOfDeath)'
         );
         $nameStatement = $connection->prepare(
             'INSERT INTO alternate_name (person_id, display_name) VALUES (:personId, :displayName)'
@@ -289,18 +289,19 @@ class ImportDataCommand extends Command
 
         foreach ($personsToImport as $personData) {
             $po = Helper::pdr2num($personData['pdrId']);
-            $personStatement->execute(
-                [
-                ':id' => $po,
-                ':displayName' => $personData['displayName'],
-                ':listName' => $personData['listName'],
-                ':viafId' => $personData['viaf'] ?: null,
-                ':lastmod' => $personData['lastmod'],
-                ':dateOfBirth' => $personData['beginningOfLife'] ?: null,
-                ':dateOfDeath' => $personData['endOfLife'] ?: null,
-                ':isJesuit' => $personData['nonjesuit'] ? false : true
-                ]
-            );
+            $personStatement->bindValue(':isJesuit', $personData['nonjesuit'] ? false : true, \PDO::PARAM_BOOL);
+            $personStatement->bindValue(':id', $po, \PDO::PARAM_INT);
+            $personStatement->bindValue(':displayName', $personData['displayName']);
+            $personStatement->bindValue(':listName', $personData['listName']);
+            $personStatement->bindValue(':shortName', $personData['shortName']);
+            $personStatement->bindValue(':nameForSorting', $personData['nameForSorting']);
+            $personStatement->bindValue(':groupLetter', $personData['groupLetter']);
+            $personStatement->bindValue(':viafId', $personData['viaf'] ?: null);
+            $personStatement->bindValue(':lastmod', $personData['lastmod']);
+            $personStatement->bindValue(':dateOfBirth', $personData['beginningOfLife'] ?: null);
+            $personStatement->bindValue(':dateOfDeath', $personData['endOfLife'] ?: null);
+
+            $personStatement->execute();
 
             foreach ($personData['alternateNames'] as $alternateName) {
                 $nameStatement->execute(

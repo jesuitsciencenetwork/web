@@ -30,6 +30,7 @@ class PdrConnector
             'pdrId' => $pdrId,
             'firstName' => null,
             'lastName' => null,
+            'shortName' => null,
             'nameLink' => null,
             'title' => null,
             'viaf' => null,
@@ -185,8 +186,26 @@ class PdrConnector
 
         $listName = '';
 
+        if ($data['nameLink']) {
+            if (substr($data['nameLink'], -1, 1) == "'") {
+                $listName .= $data['nameLink'];
+            } else {
+                $listName .= $data['nameLink'] . ' ';
+            }
+        }
+
         if ($data['lastName']) {
             $listName .= $data['lastName'] . ', ';
+        }
+
+        $shortName = $listName;
+        if (!$shortName) {
+            // popes and queens
+            $shortName = $data['firstName'];
+        } elseif ($data['firstName']) {
+            $shortName .= implode(' ', array_map(function ($part) {
+                return mb_substr($part, 0, 1) . '.';
+            }, explode(' ', $data['firstName'])));
         }
 
         if ($data['title']) {
@@ -195,11 +214,13 @@ class PdrConnector
         if ($data['firstName']) {
             $listName .= $data['firstName'] . ' ';
         }
-        if ($data['nameLink']) {
-            $listName .= $data['nameLink'];
-        }
 
         $data['listName'] = trim($listName);
+        $data['shortName'] = $shortName;
+
+        $nameForSorting = trim(strtoupper(Helper::removeAccents($data['lastName'] . ' ' . $data['firstName'])));
+        $data['nameForSorting'] = $nameForSorting;
+        $data['groupLetter'] = substr($nameForSorting, 0, 1);
 
         return $data;
     }

@@ -27,18 +27,17 @@
                         {% endif %}
                     </td>
                     <td>
-                        {% set p = '<a href="' ~ path('detail', {id: aspect.person.id}) ~ '">' ~ aspect.person.listName ~ '</a>'|raw %}
-                        {% set ps = '<a href="' ~ path('detail', {id: aspect.person.id}) ~ '">' ~ aspect.person.shortName ~ '</a>'|raw %}
+                        {% set ps = '<a title="' ~ aspect.person.displayName ~ ' (' ~ aspect.person.dateOfBirth ~ '–' ~ aspect.person.dateOfDeath ~ ')" href="' ~ path('detail', {id: aspect.person.id}) ~ '">' ~ aspect.person.shortName ~ '</a>'|raw %}
                         {% if "entryInTheOrder" == aspect.type %}
-                            {{ p|raw }} &diams;
+                            {{ ps|raw }} &diams;
                         {% elseif "beginningOfLife" == aspect.type %}
-                            {{ p|raw }} *
+                            {{ ps|raw }} *
                         {% elseif "endOfLife" == aspect.type %}
-                            {{ p|raw }} &dagger;
+                            {{ ps|raw }} &dagger;
                         {% elseif "resignationFromTheOrder" == aspect.type %}
-                            {{ p|raw }} &times;
+                            {{ ps|raw }} &times;
                         {% elseif "expulsionFromTheOrder" == aspect.type %}
-                            {{ p|raw }} <i class="fa fa-flash"></i>
+                            {{ ps|raw }} <i class="fa fa-flash"></i>
                         {% elseif "education" == aspect.type %}
                             {{ ps|raw }} studied {{ macro.subjects(aspect) }}
                         {% elseif "career" == aspect.type %}

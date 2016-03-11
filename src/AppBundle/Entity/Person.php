@@ -33,6 +33,24 @@ class Person
     private $listName;
 
     /**
+     * @var string
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $shortName;
+
+    /**
+     * @var string
+     * @ORM\Column(type="string", length=1, nullable=true)
+     */
+    private $groupLetter;
+
+    /**
+     * @var string
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $nameForSorting;
+
+    /**
      * @var boolean
      * @ORM\Column(type="boolean")
      */
@@ -526,12 +544,46 @@ class Person
         $this->lastMod = $lastMod;
     }
 
+    /**
+     * @return string
+     */
     public function getShortName()
     {
-        return substr(
-            $this->listName,
-            0,
-            strpos($this->listName, ',')
-        );
+        return $this->shortName;
+    }
+
+    /**
+     * @param string $shortName
+     */
+    public function setShortName($shortName)
+    {
+        $this->shortName = $shortName;
+    }
+
+//    public function getShortName()
+//    {
+//        return substr(
+//            $this->listName,
+//            0,
+//            strpos($this->listName, ',')
+//        );
+//    }
+
+
+
+    /**
+     * @return string
+     */
+    public function getGroupLetter()
+    {
+        return $this->groupLetter;
+    }
+
+    /**
+     * @param string $groupLetter
+     */
+    public function setGroupLetter($groupLetter)
+    {
+        $this->groupLetter = $groupLetter;
     }
 }

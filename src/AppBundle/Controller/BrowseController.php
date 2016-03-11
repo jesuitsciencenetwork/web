@@ -46,7 +46,7 @@ class BrowseController extends Controller
             ->select('p, s')
             ->leftJoin('p.subjects', 's')
             ->where('p.isJesuit = 1')
-            ->addOrderBy('p.listName', 'ASC')
+            ->addOrderBy('p.nameForSorting', 'ASC')
             ->getQuery()
             ->execute()
         ;
@@ -76,7 +76,7 @@ class BrowseController extends Controller
             ->select('p, s')
             ->leftJoin('p.subjects', 's')
             ->where('p.isJesuit = 0')
-            ->addOrderBy('p.listName', 'ASC')
+            ->addOrderBy('p.nameForSorting', 'ASC')
             ->getQuery()
             ->execute()
         ;
@@ -199,12 +199,10 @@ class BrowseController extends Controller
         $letters = [];
 
         foreach ($persons as $person) {
-//            $person = $person[0]; // 0 = entity, 1 = coalesce(...)
-            $letter = strtoupper(Helper::removeAccents(mb_substr($person->getListName(), 0, 1)));
+            $letter = $person->getGroupLetter();
             if (!array_key_exists($letter, $letters)) {
                 $letters[$letter] = [];
             }
-
             $letters[$letter][] = $person;
         }
 
