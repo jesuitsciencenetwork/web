@@ -85,12 +85,12 @@ class Search
         }
 
         if ($query->getFrom()) {
-            $qb->andWhere('COALESCE(a.dateExact, a.dateFrom) >= :from');
+            $qb->andWhere('COALESCE(a.dateExact, a.dateFrom, a.dateTo) >= :from');
             $qb->setParameter('from', $query->getFrom());
         }
 
         if ($query->getTo()) {
-            $qb->andWhere('COALESCE(a.dateExact, a.dateTo) <= :to');
+            $qb->andWhere('COALESCE(a.dateExact, a.dateTo, a.dateFrom) <= :to');
             $qb->setParameter('to', $query->getTo());
         }
 
