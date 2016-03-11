@@ -72,8 +72,8 @@ class MapController extends Controller
         $eb = $qb->expr();
 
         $range = $eb->andX(
-            $eb->gte('COALESCE(a.dateExact, a.dateFrom, 0)', ':from'),
-            $eb->lte('COALESCE(a.dateExact, a.dateTo, 9999)', ':to')
+            $eb->gte('COALESCE(a.dateExact, a.dateFrom, 9999)', ':from'),
+            $eb->lte('COALESCE(a.dateExact, a.dateTo, 0)', ':to')
         );
 
         if ($request->get('includeUndated')) {
