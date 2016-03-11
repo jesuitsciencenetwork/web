@@ -194,24 +194,6 @@
                     -webkit-transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg);
                 }
         }
-
-        .gm-style-iw {
-            top: 0 !important;
-            left: 0 !important;
-            border-radius: 2px 2px 0 0;
-            font-weight: bold;
-            font-family: "Montserrat", sans-serif;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            text-align:center;
-        }
-        .gm-style-iw + div {
-            display: none;
-        }
-        .gm-style-iw .iw-wrapper {
-            text-align: center;
-            line-height: 40px;
-        }
     </style>
 {% endblock %}
 
@@ -219,7 +201,7 @@
 
 {% block javascripts %}
     <script type="text/javascript">
-        var map, iw, currentMarker, heatmap, heatmapData, mc, markers = [], $detail = $('#detail');
+        var map, currentMarker, heatmap, heatmapData, mc, markers = [], $detail = $('#detail');
 
         $('body').one('map:ready', function() {
             map = new google.maps.Map(document.getElementById('map'), {
@@ -229,10 +211,6 @@
                 maxZoom: 10,
                 mapTypeControl: false,
                 streetViewControl: false
-            });
-
-            iw = new google.maps.InfoWindow({
-                content: ''
             });
 
             heatmap = new google.maps.visualization.HeatmapLayer({
@@ -253,7 +231,6 @@
             }, 150);
             currentMarker.setLabel(null);
             currentMarker = null;
-            iw.close();
         });
 
         $('#js-toggle-heatmap').click(function() {
@@ -265,10 +242,6 @@
             params.bounds = map.getBounds().toUrlValue();
             window.location.href = $(this).data('href') + '?' + $.param(params);
         });
-
-        function getContent(str) {
-            return '<div class="iw-wrapper">' + str + '</div>';
-        }
 
         function clearMarkers() {
             mc.clearMarkers();
@@ -309,8 +282,6 @@
             loadDetail(url);
             google.maps.event.trigger(map, 'resize');
             map.panTo(pos);
-            iw.setContent(getContent(placeName));
-            iw.open(map, marker);
         }
 
         function loadDetail(url) {
