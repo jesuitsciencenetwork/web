@@ -6,6 +6,9 @@ use AppBundle\DTO\Location;
 use Gregwar\Cache\Cache;
 use Psr\Log\LoggerInterface;
 
+/**
+ * Geocodes places via Google Geocoder
+ */
 class Geocoder
 {
     private $cache;
@@ -13,6 +16,7 @@ class Geocoder
 
     private $replacementMap = [
         'Dobrzyń Land' => 'Dobrzyń nad Wisłą',
+        'Saint Petersburg' => 'Saint Petersburg, Russia'
     ];
 
     private $manualLookup = [
