@@ -2,24 +2,19 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Exception\InvalidQueryException;
+use AppBundle\Exception\QueryException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * Class SearchController
+ * @package AppBundle\Controller
+ */
 class SearchController extends Controller
 {
     /**
-     * @Route("/search2/:what/:when/:where/", name="search2")
-     */
-    public function search2Action(Request $request)
-    {
-        //parse what = fulltext search
-        //parse when = ^(\d+)?-(\d+)?$ ohne "-"
-        //parse where = entweder placename oder latlng+radius oder latlng bnds
-
-    }
-
-        /**
      * @Route("/search/", name="search")
      */
     public function searchAction(Request $request)
@@ -28,12 +23,14 @@ class SearchController extends Controller
 
         try {
             $query = $searchService->getQueryFromRequest($request);
-        } catch (\Exception $e) {
-            $this->addFlash('alert', 'Your search query could not be understood.');
+        } catch (QueryException $e) {
+            if ($e instanceof InvalidQueryException) {
+                $this->addFlash('alert', 'Your search query could not be understood.');
+            }
+
             return $this->render('default/search.html.twig', [
                 'subjectGroupTree' => $searchService->getSubjectGroupTree()
-            ]
-            );
+            ]);
         }
 
         $search = $searchService->create();
@@ -51,7 +48,6 @@ class SearchController extends Controller
             'pagination' => $pagination,
             'query' => $query,
             'filter' => $filter
-        ]
-        );
+        ]);
     }
 }

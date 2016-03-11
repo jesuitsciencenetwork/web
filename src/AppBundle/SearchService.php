@@ -6,6 +6,8 @@ use AppBundle\DTO\Bounds;
 use AppBundle\DTO\Radius;
 use AppBundle\Entity\Subject;
 use AppBundle\Entity\SubjectGroup;
+use AppBundle\Exception\EmptyQueryException;
+use AppBundle\Exception\InvalidQueryException;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query;
 use AppBundle\Query as QueryDTO;
@@ -142,43 +144,48 @@ class SearchService
     {
         $q = $request->query;
         $query = new \AppBundle\Query();
+        $emptyQuery = true;
 
         $query->setTypes($q->get('type', \AppBundle\Query::types()));
 
         if ($q->has('radius')) {
+            $emptyQuery = false;
             $query->setRadius(Radius::fromQuery($q));
         }
 
         if ($q->has('bounds')) {
+            $emptyQuery = false;
             $query->setBounds(Bounds::fromUrlValue($q->get('bounds')));
         }
 
         if ($q->has('continent')) {
+            $emptyQuery = false;
             $query->setContinent($q->get('continent'));
         }
 
         if ($q->has('country')) {
+            $emptyQuery = false;
             $query->setCountry($q->get('country'));
         }
 
         if ($q->has('place')) {
+            $emptyQuery = false;
             $place = $this
                 ->em
                 ->getRepository('AppBundle:Place')
-                ->findOneBy(
-                    [
-                    'slug' => $q->get('place')
-                    ]
-                )
+                ->findOneBy(['slug' => $q->get('place')])
             ;
 
             $query->setPlace($place);
         }
 
         if ($q->has('subjects')) {
+            $emptyQuery = false;
             // what query
             $ids = explode(',', $q->get('subjects'));
-            $ids = array_map(function($e) {return (int)$e;}, $ids);
+            $ids = array_map(function ($e) {
+                return (int)$e;
+            }, $ids);
             $ids = array_unique($ids);
 
             $subjResult = $this->em->getRepository('AppBundle:Subject')
@@ -199,19 +206,24 @@ class SearchService
         }
 
         if ($q->has('from') && $q->has('to')) {
+            $emptyQuery = false;
             // when query
             $query->setFrom($q->get('from'));
             $query->setTo($q->get('to'));
         }
 
         if ($q->has('occupation')) {
+            $emptyQuery = false;
             $query->setOccupation($q->get('occupation'));
         }
 
-        // @TODO track if any condition has been applied
-//        if ($q->count() > 0) {
-//            throw new \Exception('Could not understand query');
-//        }
+        if ($emptyQuery) {
+            if ($request->query->count() > 0) {
+                throw new InvalidQueryException();
+            } else {
+                throw new EmptyQueryException();
+            }
+        }
 
         return $query;
     }
