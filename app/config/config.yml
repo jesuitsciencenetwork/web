@@ -117,6 +117,8 @@ doctrine:
                 Field: AppBundle\ORM\Field
             numeric_functions:
                 Rand: AppBundle\ORM\Rand
+        hydrators:
+            LetterList: \AppBundle\ORM\Hydrators\LetterListHydrator
 
 # Swiftmailer Configuration
 swiftmailer:

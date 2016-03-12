@@ -2,6 +2,8 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Helper;
+use AppBundle\LetterListInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\Collection;
 use JMS\Serializer\Annotation\Groups;
@@ -11,7 +13,7 @@ use JMS\Serializer\Annotation\Groups;
  * @ORM\Entity()
  * @ORM\Table(indexes={@ORM\Index(name="place_name", columns={"place_name"}),@ORM\Index(name="slug", columns={"slug"})})
  */
-class Place
+class Place implements LetterListInterface
 {
     /**
      * @ORM\Id()
@@ -305,5 +307,12 @@ class Place
     public function getMarkerLabel()
     {
 
+    }
+
+    public function getLetter()
+    {
+        return strtoupper(substr(Helper::removeAccents(
+            "'s-Hertogenbosch" === $this->placeName ? 'H' : $this->placeName
+        ), 0, 1));
     }
 }

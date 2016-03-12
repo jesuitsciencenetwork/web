@@ -48,16 +48,15 @@ class BrowseController extends Controller
             ->where('p.isJesuit = 1')
             ->addOrderBy('p.nameForSorting', 'ASC')
             ->getQuery()
-            ->execute()
+            ->getResult('LetterList')
         ;
 
         return $this->render('default/list.html.twig', [
             'jesuitview' => true,
             'personCount' => count($jesuits),
             'otherCount' => $nonJesuitCount,
-            'letters' => $this->makeLetterList($jesuits),
-        ]
-        );
+            'letters' => $jesuits,
+        ]);
     }
 
     /**
@@ -78,14 +77,14 @@ class BrowseController extends Controller
             ->where('p.isJesuit = 0')
             ->addOrderBy('p.nameForSorting', 'ASC')
             ->getQuery()
-            ->execute()
+            ->getResult('LetterList')
         ;
 
         return $this->render('default/list.html.twig', [
             'jesuitview' => false,
             'personCount' => count($nonJesuits),
             'otherCount' => $jesuitCount,
-            'letters' => $this->makeLetterList($nonJesuits),
+            'letters' => $nonJesuits,
         ]);
     }
 
@@ -95,28 +94,19 @@ class BrowseController extends Controller
     public function listPlacesAction()
     {
         /** @var Place[] $places */
-        $places = $this->getDoctrine()->getManager()
+        $letters = $this->getDoctrine()->getManager()
             ->createQuery('SELECT p FROM AppBundle:Place p ORDER BY p.placeName asc')
-            ->execute()
+            ->getResult('LetterList')
         ;
 
-        $letters = [];
-
-        foreach ($places as $place) {
-            //$person = $person[0]; // 0 = entity, 1 = coalesce(...)
-            $letter = strtoupper(substr(Helper::removeAccents(
-                "'s-Hertogenbosch" === $place->getPlaceName() ? 'Hertogenbosch' : $place->getPlaceName()
-            ), 0, 1));
-            if (!array_key_exists($letter, $letters)) {
-                $letters[$letter] = [];
-            }
-
-            $letters[$letter][] = $place;
-        }
-        ksort($letters);
+        $count = array_reduce(array_map(function (array $letter) {
+            return count($letter);
+        }, $letters), function ($item, $carry) {
+            return $item + $carry;
+        }, 0);
 
         return $this->render(':default:places.html.twig', [
-            'placeCount' => count($places),
+            'placeCount' => $count,
             'letters' => $letters,
             'grouping' => false
         ]
@@ -187,25 +177,6 @@ class BrowseController extends Controller
             'grouping' => true
         ]
         );
-    }
-
-    /**
-     * @param Person[] $persons
-     * @return array
-     */
-    private function makeLetterList($persons)
-    {
-        $letters = [];
-
-        foreach ($persons as $person) {
-            $letter = $person->getGroupLetter();
-            if (!array_key_exists($letter, $letters)) {
-                $letters[$letter] = [];
-            }
-            $letters[$letter][] = $person;
-        }
-
-        return $letters;
     }
 
     /**

@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use AppBundle\Helper;
+use AppBundle\LetterListInterface;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as JMS;
@@ -11,7 +12,7 @@ use JMS\Serializer\Annotation as JMS;
  * Class Person
  * @ORM\Entity
  */
-class Person
+class Person implements LetterListInterface
 {
     /**
      * @var integer
@@ -586,4 +587,10 @@ class Person
     {
         $this->groupLetter = $groupLetter;
     }
+
+    public function getLetter()
+    {
+        return $this->groupLetter;
+    }
+
 }
