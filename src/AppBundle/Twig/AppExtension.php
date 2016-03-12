@@ -54,19 +54,18 @@ class AppExtension extends \Twig_Extension
     public function getFilters()
     {
         return [
+            new \Twig_SimpleFilter('unset', [$this, 'unsetArray']),
+            new \Twig_SimpleFilter('add_subject', [$this, 'addSubject']),
+            new \Twig_SimpleFilter('remove_subject', [$this, 'removeSubject']),
             new \Twig_SimpleFilter('smart_quotes', [$this, 'smartQuotes'], [
                 'is_safe' => ['html']
-            ]
-            ),
+            ]),
             new \Twig_SimpleFilter('replace_links', [$this->helper, 'renderDescription'], [
                 'is_safe' => ['html']
-            ]
-            ),
-            new \Twig_SimpleFilter('format_country', ['AppBundle\Helper', 'formatCountry']
-            ),
+            ]),
+            new \Twig_SimpleFilter('format_country', ['AppBundle\Helper', 'formatCountry']),
             new \Twig_SimpleFilter('slugify', ['Helper', 'slugify']),
-            new \Twig_SimpleFilter('format_continent', ['AppBundle\Helper', 'formatContinent']
-            ),
+            new \Twig_SimpleFilter('format_continent', ['AppBundle\Helper', 'formatContinent']),
             new \Twig_SimpleFilter('lcfirst', 'lcfirst'),
         ];
     }
@@ -94,6 +93,49 @@ class AppExtension extends \Twig_Extension
         return 'app';
     }
 
+    public function unsetArray($array, $key)
+    {
+        if (!is_array($key)) {
+            $key = [$key];
+        }
+
+        foreach ($key as $k) {
+            unset($array[$k]);
+        }
+
+        return $array;
+    }
+
+    public function addSubject($params, $subject)
+    {
+        if (array_key_exists('subjects', $params)) {
+            $subjects = explode(' ', $params['subjects']);
+        } else {
+            $subjects = array();
+        }
+
+        $subjects[] = $subject;
+        $subjects = array_unique($subjects);
+
+        $params['subjects'] = implode(' ', $subjects);
+
+        return $params;
+    }
+
+    public function removeSubject($params, $subject)
+    {
+        if (!array_key_exists('subjects', $params)) {
+            return $params;
+        }
+
+        $subjects = explode(' ', $params['subjects']);
+        $subjects = array_filter($subjects, function ($i) use ($subject) {
+            return $i != $subject;
+        });
+        $params['subjects'] = implode(' ', $subjects);
+
+        return $params;
+    }
 
     public function lowercaseable($value)
     {

@@ -4,6 +4,8 @@ namespace AppBundle\Controller;
 
 use AppBundle\Exception\InvalidQueryException;
 use AppBundle\Exception\QueryException;
+use AppBundle\Query;
+use AppBundle\SearchService;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -47,6 +49,10 @@ class SearchController extends Controller
         return $this->render('search/results.html.twig', [
             'pagination' => $pagination,
             'query' => $query,
+            'params' => array_intersect_key(
+                $request->query->all(),
+                array_flip(SearchService::getParamsWhitelist())
+            ),
             'filter' => $filter
         ]);
     }

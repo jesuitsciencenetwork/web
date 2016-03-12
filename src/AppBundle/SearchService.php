@@ -177,7 +177,7 @@ class SearchService
         if ($q->has('subjects')) {
             $emptyQuery = false;
             // what query
-            $ids = explode(',', $q->get('subjects'));
+            $ids = explode(' ', $q->get('subjects'));
             $ids = array_map(function ($e) {
                 return (int)$e;
             }, $ids);
@@ -221,6 +221,28 @@ class SearchService
         }
 
         return $query;
+    }
+
+    public static function getParamsWhitelist()
+    {
+        return [
+            'type',
+            'radius',
+            'lat',
+            'lng',
+            'placeName',
+            'bounds',
+            'continent',
+            'country',
+            'place',
+            'subjects',
+            'from',
+            'to',
+            'occupation',
+
+            // 'page' not included to reset results to first page
+            'sort'
+        ];
     }
 
     public function getPersonsForSubjects($ids)
@@ -318,7 +340,7 @@ class SearchService
         $qb = clone $qb;
 
         $filters['places'] = $qb
-            ->select('distinct pl.placeName, pl.country, pl.continent, pl.id')
+            ->select('distinct pl.placeName, pl.slug, pl.country, pl.continent, pl.id')
             ->orderBy('pl.continent, pl.country, pl.placeName')
             ->getQuery()
             ->getResult(Query::HYDRATE_ARRAY);

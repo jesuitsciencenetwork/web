@@ -1,0 +1,85 @@
+{% if filter.sources is defined and filter.sources|length > 1 %}
+    {% embed "modal.html.twig" with {id: "modal-sources", class: "refinement", title: "Refine by Source"} %}
+        {% block body %}
+            <ul class="list-unstyled ">
+                {% for s in filter.sources %}
+                    <li><a href="">{% include "include/shortsource.html.twig" with {source: s} only %}</a></li>
+                {% endfor %}
+            </ul>
+        {% endblock %}
+    {% endembed %}
+{% endif %}
+
+    {% if filter.places|length > 7 %}
+        {% embed "modal.html.twig" with {id: "modal-places", class: "refinement", title: "Refine by Place"} %}
+            {% block body %}
+                {% set cur = false %}
+                {% for p in filter.places %}
+                    {% if cur is not same as(p.country) %}
+                        {% if cur is not same as(false) %}</ul>{% endif %}
+                        <h6>{{ p.country|format_country }}</h6>
+                        <ul class="list-unstyled list-indented">
+                        {% set cur = p.country %}
+                    {% endif %}
+                    <li><a href="{{ path('search', params|merge({place:p.slug})) }}">
+                            {{ p.placeName }}
+                        </a></li>
+                {% endfor %}
+                </ul>
+            {% endblock %}
+        {% endembed %}
+    {% endif %}
+
+    {% if filter.countries|length > 7 %}
+        {% embed "modal.html.twig" with {id: "modal-countries", class: "refinement", title: "Refine by Country"} %}
+            {% block body %}
+                <ul class="list-unstyled">
+                    {% for c, label in filter.countries %}
+                        <li><a href="{{ path('search', params|merge({country: c})) }}">{{ label }}</a></li>
+                    {% endfor %}
+                </ul>
+            {% endblock %}
+        {% endembed %}
+    {% endif %}
+
+    {% if filter.occupations|length > 7 %}
+        {% embed "modal.html.twig" with {id: "modal-occupations", class: "refinement", title: "Refine by Occupation"} %}
+            {% block body %}
+                <ul class="list-unstyled">
+                    {% for slug, label in filter.occupations %}
+                        <li><a href="{{ path('search', params|merge({occupation:slug})) }}">{{ label }}</a></li>
+                    {% endfor %}
+                </ul>
+            {% endblock %}
+        {% endembed %}
+    {% endif %}
+
+    {% if filter.subjects is defined %}
+        {% embed "modal.html.twig" with {id: "modal-subjects", class: "wide refinement", title: "Refine by Subject"} %}
+            {% block body %}
+                <div class="row">
+                    {% for groupingScheme in filter.subjects %}
+                        <div class="col-md-6">
+                            <h6>{{ groupingScheme.text|striptags }}</h6>
+                            <ul class="list-unstyled list-indented">
+                                {% for node in groupingScheme.nodes %}
+                                    <li>
+                                        {% if node.nodes|length %}
+                                            <em>{{ node.text }}</em>
+                                            <ul class="list-unstyled list-indented">
+                                                {% for childNode in node.nodes %}
+                                                    <li><a href="{{ path(search, params|add_subject(childNode.id)) }}">{{ childNode.text }}</a></li>
+                                                {% endfor %}
+                                            </ul>
+                                        {% else %}
+                                            {{ node.text }}
+                                        {% endif %}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endblock %}
+        {% endembed %}
+    {% endif %}

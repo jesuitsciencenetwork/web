@@ -53,6 +53,11 @@ class Search
             ->leftJoin('a.source', 'src')
         ;
 
+        if ($query->getPlace()) {
+            $qb->andWhere('pl.id = :place');
+            $qb->setParameter('place', $query->getPlace()->getId());
+        }
+
         if ($query->getCountry()) {
             $qb->andWhere('pl.country = :country');
             $qb->setParameter('country', $query->getCountry());

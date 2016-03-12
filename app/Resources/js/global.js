@@ -187,7 +187,7 @@ $(function () {
                     $('#what-button').removeClass('disabled').prop('disabled', false);
                     $('#what-selection').val($.map(selection, function(n) {
                         return n.id;
-                    }).join(","));
+                    }).join(" "));
                 } else {
                     $('#what-button').addClass('disabled').prop('disabled', true);
                     $('#what-selection').val('');

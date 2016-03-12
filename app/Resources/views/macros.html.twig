@@ -40,6 +40,6 @@
 {% macro comment(aspect) %}{% if aspect.comment %}<br><em>{{ aspect.comment }}</em>{% endif %}{% endmacro %}
 {% macro subjects(aspect, lower=true, doLinks=true) %}{% for subject in aspect.subjects %}{% if "Infima" == subject.title %}the {% endif %}{% if doLinks %}<a class="subject" href="{{ path('search', {subjects:subject.id}) }}">{% endif %}{% if lower and subject.title is lowercaseable %}{{ subject.title|lower }}{% else %}{{ subject.title }}{% endif %}{% if doLinks %}</a>{% endif %}{% if not loop.last %}, {% endif %}{% endfor %}{% endmacro %}
 
-{% macro remove_restriction() %}
-    <a href="#" class="remove" data-toggle="tooltip" data-placement="right" title="Remove&nbsp;restriction"><i class="fa fa-times"></i></a>
+{% macro remove_restriction(params) %}
+    <a href="{{ path('search', params) }}" class="remove" data-toggle="tooltip" data-placement="right" title="Remove&nbsp;restriction"><i class="fa fa-times"></i></a>
 {% endmacro %}

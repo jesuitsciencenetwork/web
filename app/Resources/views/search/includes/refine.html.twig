@@ -1,0 +1,146 @@
+{% import "macros.html.twig" as macro %}
+
+<h6>Date</h6>
+<form class="form-inline">
+    <div class="form-group"><div style="position: relative;right: -5px;">{% spaceless %}
+                <input type="text" style="width: 55px;" value="{{ query.from|default(1490) }}" class="text-center input-sm form-control"/>
+                &nbsp;–&nbsp;
+                <input type="text" style="width: 55px;" value="{{ query.to|default(1890) }}" class="text-center input-sm form-control"/>
+            {% endspaceless %}</div></div>
+    <br>
+    <button type="button" style="outline: 0;padding-right: 0; margin-right: 0;" class="btn btn-link">Apply</button>
+</form>
+
+<h6>Type</h6>
+<ul class="list-unstyled">
+    <form>
+        <label>Biographical <input type="checkbox" checked="checked" /></label><br>
+        <label>Education <input type="checkbox" checked="checked" /></label><br>
+        <label>Career <input type="checkbox" checked="checked" /></label><br>
+        <label>Other <input type="checkbox" checked="checked" /></label>
+    </form>
+</ul>
+
+<h6>Subject</h6>
+<ul class="list-unstyled">
+    {% for id, subject in query.subjects %}
+        <li class="restriction">
+            {{ subject }}
+            {{ macro.remove_restriction(params|remove_subject(id)) }}
+        </li>
+    {% endfor %}
+
+    {% if filter.subjects_short %}
+        {% for subj in filter.subjects_short %}
+            <li><a href="{{ path('search', params|add_subject(subj.id)) }}">{{ subj.title }}</a></li>
+        {% endfor %}
+        {% if filter.subjects_count is defined and filter.subjects_count > 7 %}
+            <li><a href="#" data-toggle="modal" data-target="#modal-subjects">
+                    <em>{{ filter.subjects_count - 7 }} more...</em>
+                </a></li>
+        {% endif %}
+    {% endif %}
+</ul>
+
+{% if query.occupation or filter.occupations|length > 1 %}
+    <h6>Occupation</h6>
+    <ul class="list-unstyled">
+        {% if query.occupation %}
+            <li class="restriction">
+                {{ query.occupation }}
+                {{ macro.remove_restriction(params|unset('occupation')) }}
+            </li>
+        {% elseif filter.occupations|length > 1 %}
+            {% for slug, label in filter.occupations|slice(0,7) %}
+                <li><a href="{{ path('search', params|merge({occupation: slug})) }}">{{ label }}</a></li>
+            {% endfor %}
+            {% if filter.occupations|length > 7 %}
+                <li><a href="#" data-toggle="modal" data-target="#modal-occupations">
+                        <em>{{ filter.occupations|length - 7 }} more...</em>
+                    </a></li>
+            {% endif %}
+        {% endif %}
+    </ul>
+{% endif %}
+
+{% if query.continent or filter.continents|length > 1 %}
+    <h6>Continent</h6>
+    <ul class="list-unstyled">
+        {% if query.continent %}
+            <li class="restriction">
+                <em>{{ query.continent|format_continent }}</em>
+                {{ macro.remove_restriction(params|unset('continent')) }}
+            </li>
+        {% elseif filter.continents|length > 1 %}
+            {% for c, label in filter.continents %}
+                <li><a href="{{ path('search', params|merge({continent: c})) }}">{{ label }}</a></li>
+            {% endfor %}
+        {% endif %}
+    </ul>
+{% endif %}
+
+{% if query.country or filter.countries|length > 1 %}
+    <h6>Country</h6>
+    <ul class="list-unstyled">
+        {% if query.country %}
+            <li class="restriction">
+                <em>{{ query.country|format_country }}</em>
+                {{ macro.remove_restriction(params|unset('country')) }}
+            </li>
+        {% elseif filter.countries|length > 1 %}
+            {% for c, label in filter.countries_short %}
+                <li><a href="{{ path('search', params|merge({country: c})) }}">{{ label }}</a></li>
+            {% endfor %}
+            {% if filter.countries|length > 7 %}
+                <li><a href="#" data-toggle="modal" data-target="#modal-countries">
+                        <em>{{ filter.countries|length - 7 }} more...</em>
+                    </a></li>
+            {% endif %}
+        {% endif %}
+    </ul>
+{% endif %}
+
+{% if query.radius or query.bounds or filter.places %}
+    <h6>Place</h6>
+
+    <ul class="list-unstyled">
+
+        {% if query.radius %}
+            <li class="restriction">
+                within {{ query.radius.radius }}&nbsp;km of <br>{{ query.radius.center.description }}
+                {{ macro.remove_restriction(params|unset(['radius', 'placeName', 'lat', 'lng'])) }}
+            </li>
+        {% endif %}
+        {% if query.bounds %}
+            <li class="restriction">
+                within specified<br><abbr class="js-popover" title="Coordinates" data-toggle="popover" data-placement="right" data-html="true" data-trigger="click" data-content="Southwest corner<br>...<br>Northeast corner<br>...">map area</abbr>
+                {{ macro.remove_restriction(params|unset('bounds')) }}
+            </li>
+        {% endif %}
+
+        {% if query.place %}
+            <li class="restriction">
+                {{ query.place.placeName }}, {{ query.place.country|format_country }}
+                {{ macro.remove_restriction(params|unset('place')) }}
+            </li>
+        {% else %}
+            {% for p in filter.places|slice(0,7) %}
+                <li><a href="{{ path('search', params|merge({place: p.slug})) }}">{{ p.placeName }}</a></li>
+            {% endfor %}
+            {% if filter.places|length > 7 %}
+                <li><a href="#" data-toggle="modal" data-target="#modal-places">
+                        <em>{{ filter.places|length - 7 }} more...</em>
+                    </a></li>
+            {% endif %}
+        {% endif %}
+    </ul>
+{% endif %}
+
+{% if filter.sources is defined and filter.sources|length > 1 %}
+    <h6>Source</h6>
+    <ul class="list-unstyled">
+        <li><a href="#" data-toggle="modal" data-target="#modal-sources">
+                <em>view list ({{ filter.sources|length }})</em>
+            </a></li>
+    </ul>
+{% endif %}
