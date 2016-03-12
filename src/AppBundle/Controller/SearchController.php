@@ -23,6 +23,10 @@ class SearchController extends Controller
     {
         $searchService = $this->get('jsn.search');
 
+        if (!$request->query->has('types')) {
+            $request->query->set('types', Query::types());
+        }
+
         try {
             $query = $searchService->getQueryFromRequest($request);
         } catch (QueryException $e) {

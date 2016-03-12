@@ -55,8 +55,10 @@ class AppExtension extends \Twig_Extension
     {
         return [
             new \Twig_SimpleFilter('unset', [$this, 'unsetArray']),
-            new \Twig_SimpleFilter('add_subject', [$this, 'addSubject']),
-            new \Twig_SimpleFilter('remove_subject', [$this, 'removeSubject']),
+            new \Twig_SimpleFilter('bit_add', [$this, 'addBit']),
+            new \Twig_SimpleFilter('bit_remove', [$this, 'removeBit']),
+            new \Twig_SimpleFilter('str_add', [$this, 'addString']),
+            new \Twig_SimpleFilter('str_remove', [$this, 'removeString']),
             new \Twig_SimpleFilter('smart_quotes', [$this, 'smartQuotes'], [
                 'is_safe' => ['html']
             ]),
@@ -106,34 +108,46 @@ class AppExtension extends \Twig_Extension
         return $array;
     }
 
-    public function addSubject($params, $subject)
+    public function addString($params, $key, $str)
     {
-        if (array_key_exists('subjects', $params)) {
-            $subjects = explode(' ', $params['subjects']);
+        if (array_key_exists($key, $params)) {
+            $items = explode(' ', $params[$key]);
         } else {
-            $subjects = array();
+            $items = array();
         }
 
-        $subjects[] = $subject;
-        $subjects = array_unique($subjects);
+        $items[] = $str;
+        $items = array_unique($items);
 
-        $params['subjects'] = implode(' ', $subjects);
+        $params[$key] = implode(' ', $items);
 
         return $params;
     }
 
-    public function removeSubject($params, $subject)
+    public function removeString($params, $key, $str)
     {
-        if (!array_key_exists('subjects', $params)) {
+        if (!array_key_exists($key, $params)) {
             return $params;
         }
 
-        $subjects = explode(' ', $params['subjects']);
-        $subjects = array_filter($subjects, function ($i) use ($subject) {
-            return $i != $subject;
+        $items = explode(' ', $params[$key]);
+        $items = array_filter($items, function ($i) use ($str) {
+            return $i != $str;
         });
-        $params['subjects'] = implode(' ', $subjects);
+        $params[$key] = implode(' ', $items);
 
+        return $params;
+    }
+
+    public function addBit($params, $key, $bit)
+    {
+        $params[$key] = $params[$key] | $bit;
+        return $params;
+    }
+
+    public function removeBit($params, $key, $bit)
+    {
+        $params[$key] = $params[$key] & ~$bit;
         return $params;
     }
 

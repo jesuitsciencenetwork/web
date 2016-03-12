@@ -35,6 +35,33 @@ class SearchService
         $this->paginator = $paginator;
     }
 
+    public static function getTypeWhere($field, $types)
+    {
+        $typeExpr = [];
+
+        if ($types & \AppBundle\Query::TYPE_BIOGRAPHICAL) {
+            $typeExpr[] = $field . ' = \'beginningOfLife\'';
+            $typeExpr[] = $field . ' = \'entryInTheOrder\'';
+            $typeExpr[] = $field . ' = \'resignationFromTheOrder\'';
+            $typeExpr[] = $field . ' = \'expulsionFromTheOrder\'';
+            $typeExpr[] = $field . ' = \'endOfLife\'';
+        }
+
+        if ($types & \AppBundle\Query::TYPE_CAREER) {
+            $typeExpr[] = $field . ' = \'career\'';
+        }
+
+        if ($types & \AppBundle\Query::TYPE_EDUCATION) {
+            $typeExpr[] = $field . ' = \'education\'';
+        }
+
+        if ($types & \AppBundle\Query::TYPE_OTHER) {
+            $typeExpr[] = $field . ' = \'miscellaneous\'';
+        }
+
+        return $typeExpr ? implode(" OR ", $typeExpr) : '0=1';
+    }
+
     public function render(QueryDTO $query, $page = 1)
     {
     }
@@ -141,7 +168,7 @@ class SearchService
         $query = new \AppBundle\Query();
         $emptyQuery = true;
 
-        $query->setTypes($q->get('type', \AppBundle\Query::types()));
+        $query->setTypes($q->get('types', \AppBundle\Query::types()));
 
         if ($q->has('radius')) {
             $emptyQuery = false;
@@ -226,7 +253,7 @@ class SearchService
     public static function getParamsWhitelist()
     {
         return [
-            'type',
+            'types',
             'radius',
             'lat',
             'lng',

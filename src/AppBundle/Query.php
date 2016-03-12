@@ -205,6 +205,16 @@ class Query
         $this->types = $types;
     }
 
+    public function getTypeValue()
+    {
+        return $this->types;
+    }
+
+    public function hasTypeRestriction()
+    {
+        return $this->types < self::types();
+    }
+
     public static function types()
     {
         return self::TYPE_BIOGRAPHICAL | self::TYPE_CAREER | self::TYPE_EDUCATION | self::TYPE_OTHER;

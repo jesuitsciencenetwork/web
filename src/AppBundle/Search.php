@@ -53,6 +53,10 @@ class Search
             ->leftJoin('a.source', 'src')
         ;
 
+        if ($query->hasTypeRestriction()) {
+            $qb->andWhere(SearchService::getTypeWhere('a.type', $query->getTypeValue()));
+        }
+
         if ($query->getPlace()) {
             $qb->andWhere('pl.id = :place');
             $qb->setParameter('place', $query->getPlace()->getId());

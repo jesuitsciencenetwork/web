@@ -166,6 +166,16 @@ $(function () {
             }
             slider.setValue([from, to])
         });
+
+        $('.js-apply-daterange').click(function() {
+            var $this = $(this),
+                params = $this.data('params');
+
+            params.from = $('#when-from').val();
+            params.to   = $('#when-to').val();
+
+            window.location.href = $this.data('url') + '?' + $.param(params);
+        });
     }
 
     if ($('.searchbox').length) {

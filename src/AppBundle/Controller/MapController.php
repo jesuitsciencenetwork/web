@@ -6,6 +6,7 @@ use AppBundle\Entity\Aspect;
 use AppBundle\Entity\Place;
 use AppBundle\Form\MapFilterForm;
 use AppBundle\Helper;
+use AppBundle\SearchService;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -36,32 +37,8 @@ class MapController extends Controller
     private function applyTypeFilter(QueryBuilder $qb, Request $request)
     {
         $qb->andWhere('a.type <> \'biographicalData\''); // @TODO this is a data fix really.
-
-        $typeExpr = [];
         $types = $request->get('types', \AppBundle\Query::types());
-
-        if ($types & \AppBundle\Query::TYPE_BIOGRAPHICAL) {
-            $typeExpr[] = 'a.type = \'beginningOfLife\'';
-            $typeExpr[] = 'a.type = \'entryInTheOrder\'';
-            $typeExpr[] = 'a.type = \'resignationFromTheOrder\'';
-            $typeExpr[] = 'a.type = \'expulsionFromTheOrder\'';
-            $typeExpr[] = 'a.type = \'endOfLife\'';
-        }
-
-        if ($types & \AppBundle\Query::TYPE_CAREER) {
-            $typeExpr[] = 'a.type = \'career\'';
-        }
-
-        if ($types & \AppBundle\Query::TYPE_EDUCATION) {
-            $typeExpr[] = 'a.type = \'education\'';
-        }
-
-        if ($types & \AppBundle\Query::TYPE_OTHER) {
-            $typeExpr[] = 'a.type = \'miscellaneous\'';
-        }
-
-        $qb->andWhere($typeExpr ? implode(" OR ", $typeExpr) : '0=1');
-
+        $qb->andWhere(SearchService::getTypeWhere('a.type', $types));
     }
 
     private function applyDateFilter(QueryBuilder $qb, Request $request)
