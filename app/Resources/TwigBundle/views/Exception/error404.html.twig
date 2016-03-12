@@ -1,0 +1,25 @@
+{% extends "base.html.twig" %}
+
+{% block bodyAttributes %}class="plain"{% endblock %}
+
+{% block body %}
+    <div class="container">
+
+        <header>
+            <h6>
+                JSN - The Jesuit Science Network
+            </h6>
+        </header>
+        <div class="jumbotron custom">
+            <h1><span class="red">404</span> <span class="visible-md-inline visible-lg-inline">|</span><br class="visible-xs-inline visible-sm-inline"> Page not found</h1>
+        </div>
+
+        <div class="narrower">
+            The document you are trying to access could not be found.
+            <p></p>
+            <p>
+                {{ include('plain_links.html.twig') }}
+            </p>
+        </div>
+    </div><!-- /.container -->
+{% endblock %}

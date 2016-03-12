@@ -42,60 +42,62 @@ $(function () {
         $(this).closest('div').addClass('hidden').closest('div.panel-body').find('li.hidden').removeClass('hidden');
     });
 
-    var jsnSearch = new Bloodhound({
-        datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
-        queryTokenizer: Bloodhound.tokenizers.whitespace,
-        remote: {
-            url: $body.data('url-autocomplete-persons'),
-            wildcard: '%QUERY'
-        }
-    });
+    if ($('#jsn-search').length > 0) {
+        var jsnSearch = new Bloodhound({
+            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
+            queryTokenizer: Bloodhound.tokenizers.whitespace,
+            remote: {
+                url: $body.data('url-autocomplete-persons'),
+                wildcard: '%QUERY'
+            }
+        });
 
-    var jsnPlaceSearch = new Bloodhound({
-        datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
-        queryTokenizer: Bloodhound.tokenizers.whitespace,
-        remote: {
-            url: $body.data('url-autocomplete-places'),
-            wildcard: '%QUERY'
-        }
-    });
+        var jsnPlaceSearch = new Bloodhound({
+            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
+            queryTokenizer: Bloodhound.tokenizers.whitespace,
+            remote: {
+                url: $body.data('url-autocomplete-places'),
+                wildcard: '%QUERY'
+            }
+        });
 
-    var subjects = new Bloodhound({
-        datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
-        queryTokenizer: Bloodhound.tokenizers.whitespace,
-        prefetch: '/subjects.json'
-    });
+        var subjects = new Bloodhound({
+            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
+            queryTokenizer: Bloodhound.tokenizers.whitespace,
+            prefetch: '/subjects.json'
+        });
 
-    var occupations = new Bloodhound({
-        datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
-        queryTokenizer: Bloodhound.tokenizers.whitespace,
-        prefetch: '/occupations.json'
-    });
+        var occupations = new Bloodhound({
+            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
+            queryTokenizer: Bloodhound.tokenizers.whitespace,
+            prefetch: '/occupations.json'
+        });
 
-    $('#jsn-search').on('focus', function() {
-        $(this).attr('placeholder', 'Person, place, or subject');
-    }).on('blur', function() {
-        $(this).attr('placeholder', 'Quick Search');
-    });
+        $('#jsn-search').on('focus', function() {
+            $(this).attr('placeholder', 'Person, place, or subject');
+        }).on('blur', function() {
+            $(this).attr('placeholder', 'Quick Search');
+        });
+    }
 
     $('.js-autocomplete').each(function() {
         var $this = $(this), quickSearch = $this.hasClass('js-quicksearch'),
-        taArgs = [{
-            hint: false,
-            highlight: true,
-            changeInputValue: false
-        }, {
-            name: 'jsn-search',
-            display: 'value',
-            source: jsnSearch,
-            limit: Infinity,
-            templates: {
-                header: quickSearch ? '<h4 class="tt-header">Persons</h4>' : null,
-                suggestion: function(item) {
-                    return '<div>' + item.value + (item.text ? '<br><small class="text-muted">' + item.text + '</small>' : '') + '</div>';
+            taArgs = [{
+                hint: false,
+                highlight: true,
+                changeInputValue: false
+            }, {
+                name: 'jsn-search',
+                display: 'value',
+                source: jsnSearch,
+                limit: Infinity,
+                templates: {
+                    header: quickSearch ? '<h4 class="tt-header">Persons</h4>' : null,
+                    suggestion: function(item) {
+                        return '<div>' + item.value + (item.text ? '<br><small class="text-muted">' + item.text + '</small>' : '') + '</div>';
+                    }
                 }
-            }
-        }];
+            }];
 
         if (quickSearch) {
             taArgs.push({
@@ -138,7 +140,6 @@ $(function () {
                 window.location.href = sel.url;
             });
     });
-
 
     if ($('.when-slider').length) {
         var slider = $('.when-slider').slider({

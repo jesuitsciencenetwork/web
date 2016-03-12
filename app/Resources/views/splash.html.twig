@@ -1,56 +1,42 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+{% extends "base.html.twig" %}
 
-    <title>JSN</title>
+{% block bodyAttributes %}class="plain splash"{% endblock %}
 
-    <link href="/splash/bootstrap.min.css" rel="stylesheet">
-    <link href="/splash/custom.css" rel="stylesheet">
+{% block body %}
+  <div class="container">
 
-    <link href='https://fonts.googleapis.com/css?family=Montserrat:400,700|Merriweather:300' rel='stylesheet' type='text/css'>
-  </head>
+    <div class="jumbotron custom">
+      <h1><span class="red">JSN</span> <span class="visible-md-inline visible-lg-inline">|</span><br class="visible-xs-inline visible-sm-inline"> Jesuit Science Network</h1>
+    </div>
 
-  <body>
+    <div class="narrower">
+      <h5>What is the Jesuit Science Network (JSN)?</h5>
 
-    <div class="container">
+      <p>
+        The Jesuit Science Network is a biographical database on Jesuit scholars in the early modern sciences,
+        encompassing the period between the foundation of the Society of Jesus in 1540 and the first few decades after
+        the suppression of the order in 1773. After its scheduled launch in summer/fall 2016, it will be a publicly
+        available online tool that will not only allow the display of biographical data of more than 1000 Jesuit
+        scholars in early modern sciences, but also offer complex searches into who was doing what, when, and where.
+      </p>
 
-      <div class="jumbotron custom">
-        <h1><span class="red">JSN</span> <span class="visible-md-inline visible-lg-inline">|</span><br class="visible-xs-inline visible-sm-inline"> Jesuit Science Network</h1>
+      <p>
+        This project is launching soon. In the meantime... Feel free to contact us at info@<span class="hidden">null</span>jesuitscience.net
+      </p>
+    </div>
+
+    <footer>
+      <h6>
+        Contact
+      </h6>
+      <p>
+        <a href="http://www.geschichte.uni-wuppertal.de/personen/wissenschafts-und-technikgeschichte/dagmar-mrozik.html">Dagmar Mrozik</a>, Wuppertal University.
+      </p>
+      <div class="logos">
+        <a href="http://www.uni-wuppertal.de/en/home.html"><img src="/images/logos/buw.png" alt="Bergische Universität Wuppertal"/></a>
+        <a href="http://www.izwt.uni-wuppertal.de/en/homepage.html"><img src="/images/logos/izwt.png" alt="IZWT"/></a>
+        <a href="http://www.dfg.de/en/"><img src="/images/logos/dfg.png" alt="Deutsche Forschungsgemeinschaft"/></a>
       </div>
-
-      <div class="narrower">
-        <h5>What is the Jesuit Science Network (JSN)?</h5>
-
-        <p>
-          The Jesuit Science Network is a biographical database on Jesuit scholars in the early modern sciences,
-          encompassing the period between the foundation of the Society of Jesus in 1540 and the first few decades after
-          the suppression of the order in 1773. After its scheduled launch in summer/fall 2016, it will be a publicly
-          available online tool that will not only allow the display of biographical data of more than 1000 Jesuit
-          scholars in early modern sciences, but also offer complex searches into who was doing what, when, and where.
-        </p>
-
-        <p>
-          This project is launching soon. In the meantime... Feel free to contact us at info@<span class="hidden">null</span>jesuitscience.net
-        </p>
-      </div>
-
-      <footer>
-        <h6>
-          Contact
-        </h6>
-        <p>
-          <a href="http://www.geschichte.uni-wuppertal.de/personen/wissenschafts-und-technikgeschichte/dagmar-mrozik.html">Dagmar Mrozik</a>, Wuppertal University.
-        </p>
-        <div class="logos">
-          <a href="http://www.uni-wuppertal.de/en/home.html"><img src="/images/logos/buw.png" alt="Bergische Universität Wuppertal"/></a>
-          <a href="http://www.izwt.uni-wuppertal.de/en/homepage.html"><img src="/images/logos/izwt.png" alt="IZWT"/></a>
-          <a href="http://www.dfg.de/en/"><img src="/images/logos/dfg.png" alt="Deutsche Forschungsgemeinschaft"/></a>
-        </div>
-      </footer>
-    </div><!-- /.container -->
-  </body>
-</html>
-
+    </footer>
+  </div><!-- /.container -->
+{% endblock %}
