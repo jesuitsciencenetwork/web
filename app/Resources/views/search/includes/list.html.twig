@@ -3,23 +3,34 @@
 <table class="table table-striped">
     <thead>
     <tr>
-        <th>Person</th>
-        <th>Date</th>
+        <th>
+            {{ knp_pagination_sortable(pagination, 'Date', 'date') }}
+            {% if pagination.isSorted('date') %}
+                <i class="fa fa-chevron-{{ pagination.direction == 'asc' ? 'up' : 'down'}}"></i>
+            {% endif %}
+        </th>
+        <th>
+            {{ knp_pagination_sortable(pagination, 'Person', 'name') }}
+            {% if pagination.isSorted('name') %}
+                <i class="fa fa-chevron-{{ pagination.direction == 'asc' ? 'up' : 'down'}}"></i>
+            {% endif %}
+        </th>
         <th>Description</th>
     </tr>
     </thead>
     <tbody>
     {% for aspect in pagination %}
+        {% set aspect = aspect[0] %}
         <tr>
-            <td style="white-space: nowrap;">
-                <a href="{{ path('detail', {id:aspect.person.id}) }}">{{ aspect.person.listName }}</a>
-            </td>
             <td style="white-space: nowrap;">
                 {% if aspect.dateExact %}
                     {{ aspect.dateExact }}
                 {% elseif aspect.dateFrom or aspect.dateTo %}
                     {{ aspect.dateFrom }} – {{ aspect.dateTo }}
                 {% endif %}
+            </td>
+            <td style="white-space: nowrap;">
+                <a href="{{ path('detail', {id:aspect.person.id}) }}">{{ aspect.person.listName }}</a>
             </td>
             <td>
                 {% if "entryInTheOrder" == aspect.type %}

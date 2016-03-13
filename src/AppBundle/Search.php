@@ -45,7 +45,7 @@ class Search
     private function createQueryBuilder(QueryDTO $query)
     {
         $qb = $this->searchService->createQueryBuilder()
-            ->select('a, p')
+            ->select('a, p, p.nameForSorting as name, COALESCE(a.dateExact, a.dateFrom, a.dateTo) as date')
             ->from('AppBundle:Aspect', 'a')
             ->innerJoin('a.person', 'p')
             ->leftJoin('a.places', 'pl')

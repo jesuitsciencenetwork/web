@@ -268,7 +268,8 @@ class SearchService
             'occupation',
 
             // 'page' not included to reset results to first page
-            'sort'
+            'sort',
+            'direction'
         ];
     }
 
