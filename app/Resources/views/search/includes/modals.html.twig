@@ -68,7 +68,7 @@
                                             <em>{{ node.text }}</em>
                                             <ul class="list-unstyled list-indented">
                                                 {% for childNode in node.nodes %}
-                                                    <li><a href="{{ path(search, params|add_subject(childNode.id)) }}">{{ childNode.text }}</a></li>
+                                                    <li><a href="{{ path('search', params|add_subject(childNode.id)) }}">{{ childNode.text }}</a></li>
                                                 {% endfor %}
                                             </ul>
                                         {% else %}
