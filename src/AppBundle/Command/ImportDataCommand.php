@@ -22,8 +22,9 @@ class ImportDataCommand extends Command
     private $em;
     private $geocoder;
     private $subjectGroupDefinitions;
+    private $mathNatMap;
 
-    public function __construct(EntityManager $em, PdrConnector $connector, ViafConnector $viafConnector, IdProvider $idProvider, Geocoder $geocoder, $groupFile)
+    public function __construct(EntityManager $em, PdrConnector $connector, ViafConnector $viafConnector, IdProvider $idProvider, Geocoder $geocoder, $groupFile, $mathNatFile)
     {
         parent::__construct();
         $this->em = $em;
@@ -33,6 +34,7 @@ class ImportDataCommand extends Command
         $this->geocoder = $geocoder;
 
         $this->subjectGroupDefinitions = Yaml::parse(file_get_contents($groupFile));
+        $this->mathNatMap = Yaml::parse(file_get_contents($mathNatFile));
 
         if (!$this->subjectGroupDefinitions) {
             throw new \RuntimeException('Could not read subject group definitions');
@@ -89,7 +91,7 @@ class ImportDataCommand extends Command
         $connection = $connection->getWrappedConnection();
 
         $subjectStatement = $connection->prepare(
-            'INSERT INTO subject (title, slug) VALUES (:title, :slug)'
+            'INSERT INTO subject (title, slug, is_mathnat) VALUES (:title, :slug, :mathnat)'
         );
         $placeStatement = $connection->prepare(
             'INSERT INTO place (place_name, slug, country, continent, latitude, longitude) VALUES (:placeName, :slug, :country, :continent, :latitude, :longitude)'
@@ -183,12 +185,21 @@ class ImportDataCommand extends Command
             if (array_key_exists($slug, $subjectMap)) {
                 continue;
             }
-            $subjectStatement->execute(
-                [
-                ':title' => ucfirst($subjectTitle),
-                ':slug' => $slug
-                ]
-            );
+
+            $title = ucfirst($subjectTitle);
+
+            if (!array_key_exists($title, $this->mathNatMap)) {
+                throw new \Exception(sprintf(
+                    'Subject "%s" not listed in MathNat mapping.',
+                    $title
+                ));
+            }
+
+            $subjectStatement->execute([
+                ':title' => $title,
+                ':slug' => $slug,
+                ':mathnat' => (int)$this->mathNatMap[$title]
+            ]);
             $subjectId = $connection->lastInsertId();
             $subjectMap[$slug] = $subjectId;
         }

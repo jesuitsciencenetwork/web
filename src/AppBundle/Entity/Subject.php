@@ -34,6 +34,12 @@ class Subject
     private $slug;
 
     /**
+     * @var bool
+     * @ORM\Column(type="boolean", name="is_mathnat")
+     */
+    private $isMathOrNatScience;
+
+    /**
      * @var Person[]|Collection
      * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Person", mappedBy="subjects")
      * @Groups({"Subject"})
@@ -220,5 +226,21 @@ class Subject
     public function getSubjectGroups()
     {
         return $this->subjectGroups;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isMathOrNatScience()
+    {
+        return $this->isMathOrNatScience;
+    }
+
+    /**
+     * @param boolean $isMathOrNatScience
+     */
+    public function setIsMathOrNatScience($isMathOrNatScience)
+    {
+        $this->isMathOrNatScience = $isMathOrNatScience;
     }
 }

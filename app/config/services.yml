@@ -52,6 +52,7 @@ services:
       - "@jsn.provider.pdr.ids"
       - "@jsn.geocoder"
       - "%kernel.root_dir%/Resources/yaml/subject_groups.yml"
+      - "%kernel.root_dir%/Resources/yaml/mathnat.yml"
     tags:
       - { name: console.command }
 

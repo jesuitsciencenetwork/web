@@ -1,0 +1,180 @@
+#########################################
+# Mathmatical or natural science  #######
+#########################################
+Acoustics: true
+Aerostatics: true
+Agriculture: true
+Agronomy: true
+Algebra: true
+Applied mathematics: true
+Aquaeducts: true
+Archaeology: true
+Architectural engineering: true
+Architecture: true
+Arithmetic: true
+Astrology: true
+Astronomical facilities: true
+Astronomical instruments: true
+Astronomical observations: true
+Astronomical observatories: true
+Astronomical observatory: true
+Astronomical projects: true
+Astronomy: true
+Aviation: true
+Ballistics: true
+Biology: true
+Botany: true
+Calculus: true
+Calendar: true
+Calendars: true
+Cartography: true
+Chemistry: true
+Chronometry: true
+Civil architecture: true
+Combinatorics: true
+Combustion: true
+Cosmography: true
+Cosmology: true
+Cryptology: true
+Differential and integral calculus: true
+Elasticity: true
+Electricity: true
+Engineering: true
+Euclidean geometry: true
+Exact sciences: true
+Experimental physics: true
+Forestry: true
+Fortifications: true
+Geography: true
+Geology: true
+Geometry: true
+Hieroglyphs: true
+Higher mathematics: true
+Horology: true
+Horticulture: true
+Hydraulic engineering: true
+Hydraulics: true
+Hydrography: true
+Hydrostatics: true
+Land surveying: true
+Livestock farming: true
+Logarithms: true
+Magnetism: true
+Mathematical cabinet: true
+Mathematics: true
+Mechanics: true
+Medical botany: true
+Medicine: true
+Metaphysics: true
+Meteorological observations: true
+Meteorology: true
+Military architecture: true
+Military art: true
+Mineralogy: true
+Mining: true
+Mixed mathematics: true
+Music: true
+Natural and exact sciences: true
+Natural history: true
+Natural philosophy: true
+Natural sciences: true
+Naval construction: true
+Naval maps: true
+Navigation: true
+Numismatics: true
+Optics: true
+Perspective: true
+Pharmaceutics: true
+Pharmacy: true
+Physical cabinet: true
+Physics: true
+Practical mechanics: true
+Proper instrument use: true
+Pure mathematics: true
+Pyrostatics: true
+Sciences: true
+Scientific instruments: true
+Squaring of the circle: true
+Statics: true
+Statistics: true
+Sun dials: true
+Tactics: true
+Technology: true
+Theoretical physics: true
+Thermal conductivity: true
+Topography: true
+Trading: true
+Vehicular dynamics: true
+Viticulture: true
+Watchmaking: true
+World map: true
+Zoology: true
+
+
+#########################################
+# Not mathmatical or natural science  ###
+#########################################
+Arabic: false
+Aristotelian logic: false
+Canon law: false
+Cases of conscience: false
+Casuistry: false
+Catalan: false
+Catechesis: false
+Chinese writing system: false
+Church history: false
+Classical languages: false
+Classical literature: false
+Classics: false
+Controversial theology: false
+Czech: false
+Dialectic theology: false
+Diplomacy: false
+Dogmatic theology: false
+Drawing: false
+Eclectic philosophy: false
+Egyptology: false
+English: false
+Epigraphy: false
+Ethics: false
+Ethnology: false
+Exegesis: false
+French: false
+German: false
+Grammar: false
+Greek: false
+Hebrew: false
+Heraldry: false
+History: false
+Infima: false
+Italian: false
+Languages: false
+Latin: false
+Latin poetry: false
+Law: false
+Linguistics: false
+Literae humaniores: false
+Literature: false
+Liturgy: false
+Logic: false
+Moral philosophy: false
+Moral theology: false
+Oriental languages: false
+Painting: false
+Patristics: false
+Philosophy: false
+Poetics: false
+Poetry: false
+Polemic theology: false
+Portuguese: false
+Positive theology: false
+Probabilism: false
+Rhetoric: false
+Russian: false
+Scholastic theology: false
+Scripture: false
+Sinology: false
+Spanish: false
+Syntax: false
+Theology: false
+Turkish: false
