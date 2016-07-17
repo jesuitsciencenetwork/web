@@ -114,7 +114,7 @@
 
         {% if query.radius %}
             <li class="restriction">
-                within {{ query.radius.radius }}&nbsp;km of <br>{{ query.radius.center.description }}
+                within {{ query.radius.radius }}&nbsp;km of<br>{{ query.radius.center.description }}
                 {{ macro.remove_restriction(params|unset(['radius', 'placeName', 'lat', 'lng'])) }}
             </li>
         {% endif %}
