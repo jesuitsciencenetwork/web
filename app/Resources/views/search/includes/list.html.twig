@@ -5,15 +5,17 @@
     <tr>
         <th>
             {{ knp_pagination_sortable(pagination, 'Date', 'date') }}
-            {% if pagination.isSorted('date') %}
-                <i class="fa fa-chevron-{{ pagination.direction == 'asc' ? 'up' : 'down'}}"></i>
-            {% endif %}
+            <span class="fa-stack">
+              <i class="fa fa-sort-asc fa-stack-1x{% if not (pagination.isSorted('date') and pagination.direction == 'asc') %} text-more-muted{% else %} text-primary{% endif %}"></i>
+              <i class="fa fa-sort-desc fa-stack-1x{% if not (pagination.isSorted('date') and pagination.direction == 'desc') %} text-more-muted{% else %} text-primary{% endif %}"></i>
+            </span>
         </th>
         <th>
             {{ knp_pagination_sortable(pagination, 'Person', 'name') }}
-            {% if pagination.isSorted('name') %}
-                <i class="fa fa-chevron-{{ pagination.direction == 'asc' ? 'up' : 'down'}}"></i>
-            {% endif %}
+            <span class="fa-stack">
+              <i class="fa fa-sort-asc fa-stack-1x{% if not (pagination.isSorted('name') and pagination.direction == 'asc') %} text-more-muted{% else %} text-primary{% endif %}"></i>
+              <i class="fa fa-sort-desc fa-stack-1x{% if not (pagination.isSorted('name') and pagination.direction == 'desc') %} text-more-muted{% else %} text-primary{% endif %}"></i>
+            </span>
         </th>
         <th>Description</th>
     </tr>
