@@ -221,7 +221,8 @@
             });
 
             mc = new MarkerClusterer(map, [], {
-                maxZoom: 7
+                maxZoom: 7,
+                imagePath: '{{ asset('images/m') }}'
             });
 
             refreshMarkers();
