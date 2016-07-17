@@ -293,7 +293,9 @@
                     .load(url);
         }
 
-        function collectParams() {
+        function collectParams(extraMapInfo) {
+            extraMapInfo = extraMapInfo || false;
+
             var types = 0;
             $('input[name="type"]').each(function() {
                 var $this = $(this);
@@ -303,12 +305,24 @@
                 types = types | parseInt($(this).val(), 10);
             });
 
-            return {
+            var params = {
                 from: $('#when-from').val(),
                 to: $('#when-to').val(),
                 includeUndated: $('#js-undated').prop('checked')?1:0,
                 types: types
             };
+
+            if (extraMapInfo) {
+                params.center = map.getCenter().toUrlValue();
+                params.zoom = map.getZoom();
+            }
+
+            return params;
+        }
+
+        function updateUrl()
+        {
+            window.location.hash = $.param(collectParams(true));
         }
 
         function refreshMarkers() {
