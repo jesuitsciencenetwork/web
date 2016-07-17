@@ -14,6 +14,7 @@ class CachingProvider implements IdiProviderInterface
     {
         $this->originalProvider = $originalProvider;
         $this->cache = new Cache($cacheDir);
+        $this->cache->setPrefixSize(0);
     }
 
     public function getXml($pdrId)
