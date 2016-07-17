@@ -23,10 +23,6 @@ class SearchController extends Controller
     {
         $searchService = $this->get('jsn.search');
 
-        if (!$request->query->has('types')) {
-            $request->query->set('types', Query::types());
-        }
-
         try {
             $query = $searchService->getQueryFromRequest($request);
         } catch (QueryException $e) {
@@ -54,7 +50,7 @@ class SearchController extends Controller
             'pagination' => $pagination,
             'query' => $query,
             'params' => array_intersect_key(
-                $request->query->all(),
+                array_merge(array('types' => Query::types()), $request->query->all()),
                 array_flip(SearchService::getParamsWhitelist())
             ),
             'filter' => $filter
