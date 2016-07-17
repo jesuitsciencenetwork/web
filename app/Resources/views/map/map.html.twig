@@ -213,6 +213,9 @@
                 streetViewControl: false
             });
 
+            map.addListener('center_changed', debounce(updateUrl, 250));
+            map.addListener('zoom_changed', debounce(updateUrl, 250));
+
             heatmap = new google.maps.visualization.HeatmapLayer({
                 radius: 75
             });
