@@ -3,35 +3,108 @@
 {% block bodyAttributes %}class="plain splash"{% endblock %}
 
 {% block body %}
-  <div class="container">
+  <div class="container"><div class="row"><div class="col-md-10 col-md-offset-1">
 
     <div class="jumbotron custom">
       <h1><span class="red">JSN</span> <span class="visible-md-inline visible-lg-inline">|</span><br class="visible-xs-inline visible-sm-inline"> Jesuit Science Network</h1>
+        <p>
+            Welcome to the project website of the Jesuit Science Network, the
+            digital prosopography on Jesuit scholars in the early modern sciences.
+            While the actual site is still being developed at the moment, this
+            <em>teaser</em> provides some basic information on the project and its goals.
+        </p>
+
     </div>
 
     <div class="narrower">
       <h5>What is the Jesuit Science Network (JSN)?</h5>
 
       <p>
-        The Jesuit Science Network is a biographical database on Jesuit scholars in the early modern sciences,
-        encompassing the period between the foundation of the Society of Jesus in 1540 and the first few decades after
-        the suppression of the order in 1773. After its scheduled launch in summer/fall 2016, it will be a publicly
-        available online tool that will not only allow the display of biographical data of more than 1000 Jesuit
-        scholars in early modern sciences, but also offer complex searches into who was doing what, when, and where.
+        The JSN is a digital prosopography on Jesuit scholars active in the
+        early modern sciences. Based on the biographical information found in
+        Carlos Sommervogel's bio-bibliographical series Bibliothèque de la
+        Compagnie de Jésus and expanded by various other sources, the JSN
+        encompasses the period between the foundation of the Society of Jesus in
+        1540 and the first few decades after the suppression of the order in
+        1773. The general aim behind the JSN is to provide a tool to answer the
+        question(s) of the who, what, where, and when concerning Jesuit activity
+        in the early modern sciences. As such, the project is realized in the
+        form of a biographical database along with a corresponding website that
+        allows free access to the collected data.
       </p>
 
+      <h5>Who is responsible for the JSN?</h5>
       <p>
-        This project is launching soon. In the meantime... Feel free to contact us at info@<span class="hidden">null</span>jesuitscience.net
+        The JSN is the dissertation project of <a href="http://www.geschichte.uni-wuppertal.de/personen/wissenschafts-und-technikgeschichte/dagmar-mrozik.html">Dagmar Mrozik</a> at the <a href="http://www.uni-wuppertal.de/en/home.html">University of Wuppertal</a>. For further information and contact, please send an email to dagmar.mrozik@<span class="hidden">null</span>jesuitscience.net.
       </p>
+
+      <h5>What kinds of information are collected in the JSN?</h5>
+
+      <p>
+        The JSN gathers data on the name, basic biography, education, career, and relationships of Jesuit scholars of interest.
+      </p>
+
+      <h5>When will the website launch?</h5>
+
+      <p>
+        As the JSN and its corresponding website are the result of a PhD project, the website can only be launched after its completion for practical and legal reasons.
+      </p>
+
+      <h5>What does the JSN look like?</h5>
+
+      <div class="media">
+        <div class="media-left">
+          <a href="{{ asset('images/splash/front2.png') }}" data-featherlight="image">
+            <img src="{{ asset('images/splash/front2.png') }}" class="media-object img-thumbnail" />
+          </a>
+        </div>
+        <div class="media-body">
+            The start page allows immediate access to the search function built around the four keywords who, what, where, when. It is also possible to browse lists of the people, subjects, places, and occupations contained and the sources used.
+        </div>
+      </div>
+      <div class="media">
+        <div class="media-left">
+          <a href="{{ asset('images/splash/map.png') }}" data-featherlight="image">
+            <img src="{{ asset('images/splash/map.png') }}" class="media-object img-thumbnail" />
+          </a>
+        </div>
+        <div class="media-body">
+            Additionally, all the pieces of information in the JSN that have a geographical aspect can be explored on a map. In the screenshot, only career data is displayed; a click on the marker for Toulouse then opens up a panel on the right with all the associated information.
+        </div>
+      </div>
+      <div class="media">
+        <div class="media-left">
+          <a href="{{ asset('images/splash/personFactSheet1.png') }}" data-featherlight="image">
+            <img src="{{ asset('images/splash/personFactSheet1.png') }}" class="media-object img-thumbnail" />
+          </a>
+        </div>
+        <div class="media-body">
+            The screenshot shows the fact sheet for a person in the JSN, in this case Johann Jüngling. The wide left-hand column shows a tabular CV, the narrow right-hand column contains summarizing boxes with alternative name spellings, the subjects, and other people with a relation to Jüngling.
+        </div>
+      </div>
+      <div class="media">
+        <div class="media-left">
+          <a href="{{ asset('images/splash/personFactSheet2.png') }}" data-featherlight="image">
+            <img src="{{ asset('images/splash/personFactSheet2.png') }}" class="media-object img-thumbnail" />
+          </a>
+        </div>
+        <div class="media-body">
+            The lower end of each and any fact sheet - here still for Johann Jüngling - offers a map displaying all the places connected to the person's life, along with the data sources.
+        </div>
+      </div>
+      <div class="media">
+        <div class="media-left">
+          <a href="{{ asset('images/splash/results.png') }}" data-featherlight="image">
+            <img src="{{ asset('images/splash/results.png') }}" class="media-object img-thumbnail" />
+          </a>
+        </div>
+        <div class="media-body">
+            This is the page resulting form the search for physics. The left-hand column provides further possible filters to refine the results, e.g. by specifying a time range.
+        </div>
+      </div>
     </div>
 
     <footer>
-      <h6>
-        Contact
-      </h6>
-      <p>
-        <a href="http://www.geschichte.uni-wuppertal.de/personen/wissenschafts-und-technikgeschichte/dagmar-mrozik.html">Dagmar Mrozik</a>, Wuppertal University.
-      </p>
       <div class="logos">
         <a href="http://www.dfg.de/en/"><img src="{{ asset('images/logos/dfg.png') }}" alt="Deutsche Forschungsgemeinschaft" height="30" /></a>
         <a href="http://www.bbaw.de/en/"><img src="{{ asset('images/logos/bbaw.png') }}" height="60" alt="Berlin-Brandenburg Academy of Sciences and Humanities"/></a>
@@ -39,5 +112,10 @@
         <a href="http://www.izwt.uni-wuppertal.de/en/homepage.html"><img src="{{ asset('images/logos/izwt.png') }}" height="30" alt="IZWT"/></a>
       </div>
     </footer>
-  </div><!-- /.container -->
+  </div></div></div><!-- /.container -->
+    <div id="lightbox1" class="lightbox hide fade"  tabindex="-1" role="dialog" aria-hidden="true">
+        <div class='lightbox-content'>
+            <img src="" alt="">
+        </div>
+    </div>
 {% endblock %}
