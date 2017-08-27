@@ -90,13 +90,24 @@ class SearchService
 
     public function placesNear(Radius $radius)
     {
+        $distanceSql = <<<EOSQL
+SELECT 
+    id, 
+    (6371 * acos(cos(radians(:lat)) * cos(radians(latitude)) * cos(radians(longitude) - radians(:lng)) + sin(radians(:lat)) * sin(radians(latitude)))) AS distance 
+FROM 
+    place 
+HAVING 
+    distance <= :radius 
+ORDER BY 
+    distance ASC
+EOSQL;
         $rows = $this->em->getConnection()->executeQuery(
-            'SELECT id, (6371 * acos(cos(radians(:lat)) * cos(radians(latitude)) * cos(radians(longitude) - radians(:lng)) + sin(radians(:lat)) * sin(radians(latitude)))) AS distance FROM place HAVING distance <= :radius ORDER BY distance ASC',
-        [
-            'lat' => $radius->getCenter()->getLatitude(),
-            'lng' => $radius->getCenter()->getLongitude(),
-            'radius' => $radius->getRadius()
-        ]
+            $distanceSql,
+            [
+                'lat' => $radius->getCenter()->getLatitude(),
+                'lng' => $radius->getCenter()->getLongitude(),
+                'radius' => $radius->getRadius()
+            ]
         );
 
         $ids = [];
@@ -275,13 +286,27 @@ class SearchService
 
     public function getPersonsForSubjects($ids)
     {
-        $pqb = $this->em->getRepository('AppBundle:Person')->createQueryBuilder('p')
-            ->select('p.id');
+        $pqb = $this
+            ->em
+            ->getRepository('AppBundle:Person')
+            ->createQueryBuilder('p')
+            ->select('p.id')
+        ;
+
         foreach ($ids as $id) {
-            $pqb->innerJoin('p.subjects', 'si'.$id, Query\Expr\Join::WITH, "si$id.id=$id");
+            $pqb->innerJoin(
+                'p.subjects',
+                'si'.$id,
+                Query\Expr\Join::WITH,
+                "si$id.id=$id"
+            );
         }
+
         $pids = $pqb->getQuery()->getResult(Query::HYDRATE_ARRAY);
-        $pids = array_map(function ($e) { return $e['id']; }, $pids);
+        $pids = array_map(function ($e) {
+            return $e['id'];
+        }, $pids);
+
         return $pids;
     }
 
@@ -293,12 +318,19 @@ class SearchService
     private function addCountriesFromQuery(&$filters, QueryBuilder $qb)
     {
         $qb = clone $qb;
-        $countries = $qb->select('pl.country, count(pl.country) as cnt')->andWhere('pl.country is not null')->orderBy('cnt', 'desc')->groupBy('pl.country')->getQuery()->getResult(Query::HYDRATE_ARRAY);
+        $countries = $qb
+            ->select('pl.country, count(pl.country) as cnt')
+            ->andWhere('pl.country is not null')
+            ->orderBy('cnt', 'desc')
+            ->groupBy('pl.country')
+            ->getQuery()
+            ->getResult(Query::HYDRATE_ARRAY)
+        ;
         $countries = array_combine(
-            array_map(function($e) {
+            array_map(function ($e) {
                 return $e['country'];
             }, $countries),
-            array_map(function($e) {
+            array_map(function ($e) {
                 return Helper::formatCountry($e['country']);
             }, $countries)
         );
@@ -307,18 +339,22 @@ class SearchService
 
         asort($countries);
         $filters['countries'] = $countries;
-
     }
 
     private function addContinentsFromQuery(&$filters, QueryBuilder $qb)
     {
         $qb = clone $qb;
-        $continents = $qb->select('distinct pl.continent')->andWhere('pl.continent is not null')->getQuery()->getResult(Query::HYDRATE_ARRAY);
+        $continents = $qb
+            ->select('distinct pl.continent')
+            ->andWhere('pl.continent is not null')
+            ->getQuery()
+            ->getResult(Query::HYDRATE_ARRAY)
+        ;
         $continents = array_combine(
-            array_map(function($e) {
+            array_map(function ($e) {
                 return $e['continent'];
             }, $continents),
-            array_map(function($e) {
+            array_map(function ($e) {
                 return Helper::formatContinent($e['continent']);
             }, $continents)
         );
@@ -335,11 +371,20 @@ class SearchService
             ->groupBy('src.id')
             ->orderBy('srcCount', 'desc')
             ->getQuery()->getResult(Query::HYDRATE_ARRAY);
-        $sourceIds = array_map(function($e) {
+        $sourceIds = array_map(function ($e) {
             return $e['id'];
         }, $sourceIds);
-        $filters['sources'] = $this->em->createQueryBuilder()->select('s')->from('AppBundle:Source', 's')->where('s.id IN(:ids)')->orderBy('FIELD(s.id, :ids)')->setParameter('ids', $sourceIds)->getQuery()->getResult();
-
+        $filters['sources'] = $this
+            ->em
+            ->createQueryBuilder()
+            ->select('s')
+            ->from('AppBundle:Source', 's')
+            ->where('s.id IN(:ids)')
+            ->orderBy('FIELD(s.id, :ids)')
+            ->setParameter('ids', $sourceIds)
+            ->getQuery()
+            ->getResult()
+        ;
     }
 
     private function addSubjectsFromQuery(&$filters, QueryBuilder $qb)
@@ -388,8 +433,8 @@ class SearchService
         ;
 
         $filters['occupations'] = array_combine(
-            array_map(function($o) { return $o['occupationSlug']; }, $occupations),
-            array_map(function($o) { return $o['occupation']; }, $occupations)
+            array_map(function ($o) { return $o['occupationSlug']; }, $occupations),
+            array_map(function ($o) { return $o['occupation']; }, $occupations)
         );
     }
 }
