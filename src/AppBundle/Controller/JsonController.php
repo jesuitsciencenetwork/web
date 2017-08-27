@@ -26,15 +26,26 @@ class JsonController extends Controller
 
         $data = [];
 
-        $personQuery = $this->getDoctrine()->getConnection()->executeQuery('SELECT p.id, p.display_name as pn, a.display_name as an FROM person p LEFT JOIN alternate_name a ON a.person_id=p.id WHERE p.display_name LIKE :query OR a.display_name LIKE :query', ['query' => "%$q%"]
-        );
+        $personDql = <<<EOSQL
+SELECT 
+  p.id, 
+  p.display_name AS pn, 
+  a.display_name AS an 
+FROM 
+  person p 
+LEFT JOIN 
+  alternate_name a 
+  ON
+    a.person_id = p.id 
+WHERE 
+  p.display_name LIKE :query 
+  OR a.display_name LIKE :query
+EOSQL;
 
-//        getManager()->createQuery(
-//            'SELECT p.id, p.displayName, n.id, n.displayName FROM AppBundle:Person p LEFT JOIN p.alternateNames n WHERE p.displayName LIKE :query OR n.displayName LIKE :query'
-//        )
-//            ->setParameter('query', '%'.$q.'%')
-//            ->setHydrationMode(Query::HYDRATE_SIMPLEOBJECT)
-//            ->execute();
+        $personQuery = $this
+            ->getDoctrine()
+            ->getConnection()
+            ->executeQuery($personDql, ['query' => "%$q%"]);
 
         $persons = [];
         while ($row = $personQuery->fetch()) {
@@ -67,7 +78,6 @@ class JsonController extends Controller
         }
 
         return new JsonResponse($data);
-//        return $this->render('blank.html.twig', array('data' => $data));
     }
 
     /**
@@ -112,7 +122,11 @@ class JsonController extends Controller
 
         foreach ($subjects as $subject) {
             $data[] = [
-                'url' => $this->generateUrl('search', ['subjects' => $subject->getId()], UrlGenerator::ABSOLUTE_URL),
+                'url' => $this->generateUrl(
+                    'search',
+                    ['subjects' => $subject->getId()],
+                    UrlGenerator::ABSOLUTE_URL
+                ),
                 'value' => $subject->getTitle()
             ];
         }
@@ -126,15 +140,25 @@ class JsonController extends Controller
     {
         $data = [];
 
-        $occupations = $this->getDoctrine()->getManager()->createQuery(
-            'SELECT a.occupationSlug, a.occupation FROM AppBundle:Aspect a WHERE a.occupation IS NOT NULL GROUP BY a.occupation ORDER BY a.occupation ASC'
-        )
+        $occupations = $this
+            ->getDoctrine()
+            ->getRepository('AppBundle:Aspect')
+            ->createQueryBuilder('a')
+            ->select('ANY_VALUE(a.occupationSlug) as occupationSlug, a.occupation')
+            ->where('a.occupation IS NOT NULL')
+            ->groupBy('a.occupation')
+            ->orderBy('a.occupation', 'ASC')
+            ->getQuery()
             ->setHydrationMode(Query::HYDRATE_ARRAY)
             ->getResult();
 
         foreach ($occupations as $occupation) {
             $data[] = [
-                'url' => $this->generateUrl('search', ['occupation' => $occupation['occupationSlug']], UrlGenerator::ABSOLUTE_URL),
+                'url' => $this->generateUrl(
+                    'search',
+                    ['occupation' => $occupation['occupationSlug']],
+                    UrlGenerator::ABSOLUTE_URL
+                ),
                 'value' => ucfirst($occupation['occupation'])
             ];
         }
