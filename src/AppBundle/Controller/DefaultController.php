@@ -74,7 +74,7 @@ class DefaultController extends Controller
             LEFT JOIN person t ON r.target_id = t.id
             LEFT JOIN person s ON r.source_id = s.id
             WHERE r.source_id = :id OR r.target_id = :id
-            GROUP BY id ORDER BY IF(:id = r.source_id, t.list_name, s.list_name) ASC',
+            GROUP BY r.id ORDER BY IF(:id = r.source_id, t.list_name, s.list_name) ASC',
             ['id' => $person->getId()]
         )->fetchAll();
 
