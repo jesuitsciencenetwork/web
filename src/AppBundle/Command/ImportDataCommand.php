@@ -151,6 +151,7 @@ class ImportDataCommand extends Command
         $masterProgress->display();
 
         $ids = $this->idProvider->getIds();
+        $viafs = [];
 
         $progress = new ProgressBar($output, count($ids));
         $progress->setEmptyBarCharacter('░'); // light shade character \u2591
@@ -314,6 +315,10 @@ class ImportDataCommand extends Command
 
             $personStatement->execute();
 
+            if ($personData['viaf']) {
+                $viafs[] = $personData['viaf'];
+            }
+
             foreach ($personData['alternateNames'] as $alternateName) {
                 $nameStatement->execute(
                     [
@@ -460,6 +465,22 @@ class ImportDataCommand extends Command
         $masterProgress->advance();
         $output->writeln('');
         $output->writeln('Imported <info>' . count($personsToImport) . '</info> records.');
+
+        $beacon = fopen(__DIR__ . '/../../../html/jsn-viaf.beacon', 'w');
+
+        fwrite($beacon, '#FORMAT: BEACON
+#PREFIX: http://viaf.org/viaf/
+#TARGET: http://jesuitscience.net/viaf/{id}
+#FEED: http://jesuitscience.net/jsn-viaf.beacon
+');
+        fwrite($beacon, "#TIMESTAMP: " . (new \DateTime('now', new \DateTimeZone('UTC')))->format(\DateTime::ISO8601) . "\n\n");
+
+        sort($viafs);
+        foreach ($viafs as $viaf) {
+            fwrite($beacon, "$viaf\n");
+        }
+
+        fclose($beacon);
     }
 
     protected function mergeViafNames($data)

@@ -25,3 +25,4 @@ logs
 !html/css/.gitkeep
 /html/js/*
 !html/js/.gitkeep
+/html/*.beacon
