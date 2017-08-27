@@ -113,7 +113,7 @@ class Search
         }
 
         if ($query->getOccupation()) {
-            $qb->andWhere('a.occupation = :occupation');
+            $qb->andWhere('a.occupationSlug = :occupation');
             $qb->setParameter('occupation', $query->getOccupation());
         }
 

@@ -29,7 +29,7 @@
     {% elseif not aspect.occupation %}
         Occupied himself with {{ macro.subjects(aspect) }}{{ macro.places(aspect) }}
     {% else %}
-        <a href="{{ path('search', {occupation:aspect.occupation}) }}">{{ aspect.occupation }}</a>{% if aspect.subjects|length %} of {{ macro.subjects(aspect) }}{% endif %}{{ macro.places(aspect) }}
+        <a href="{{ path('search', {occupation:aspect.occupationSlug}) }}">{{ aspect.occupation }}</a>{% if aspect.subjects|length %} of {{ macro.subjects(aspect) }}{% endif %}{{ macro.places(aspect) }}
     {% endif %}
 {% else %}
     {{ aspect.description|replace_links(currentPo is defined ? [currentPo] : [])|smart_quotes }}

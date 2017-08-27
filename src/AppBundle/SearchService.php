@@ -393,14 +393,17 @@ EOSQL;
         $subjects = $qb
             ->select('s.id, s.title, count(s.id) as cnt')
             ->orderBy('cnt', 'desc')
+            ->andWhere('s.id IS NOT NULL')
             ->groupBy('s.id')
             ->getQuery()
             ->getResult(Query::HYDRATE_ARRAY);
 
-        $filters['subjects_short'] = array_slice($subjects, 0, 7, true);
+        $count = count($subjects);
 
-        $filters['subjects_count'] = count($subjects);
-        if ($filters['subjects_count'] > 7) {
+        $filters['subjects_short'] = $count > 0 ? array_slice($subjects, 0, 7, true) : array();
+
+        $filters['subjects_count'] = $count;
+        if ($count > 7) {
             $filters['subjects'] = $this->getSubjectGroupTree(array_map(function ($s) {
                 return $s['id'];
             }, $subjects));
@@ -424,7 +427,7 @@ EOSQL;
         $qb = clone $qb;
 
         $occupations = $qb
-            ->select('a.occupation, a.occupationSlug, count(a.occupationSlug) as cnt')
+            ->select('ANY_VALUE(a.occupation) as occupation, a.occupationSlug, count(a.occupationSlug) as cnt')
             ->orderBy('cnt', 'desc')
             ->andWhere('a.occupationSlug > \'\'')
             ->groupBy('a.occupationSlug')
@@ -433,8 +436,12 @@ EOSQL;
         ;
 
         $filters['occupations'] = array_combine(
-            array_map(function ($o) { return $o['occupationSlug']; }, $occupations),
-            array_map(function ($o) { return $o['occupation']; }, $occupations)
+            array_map(function ($o) {
+                return $o['occupationSlug'];
+            }, $occupations),
+            array_map(function ($o) {
+                return $o['occupation'];
+            }, $occupations)
         );
     }
 }
