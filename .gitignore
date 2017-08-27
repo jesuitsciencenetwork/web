@@ -1,6 +1,7 @@
-/app/bootstrap.php.cache
+/.web-server-pid
 /app/config/parameters.yml
 /build/
+/phpunit.xml
 /var/*
 !/var/cache
 /var/cache/*
@@ -12,13 +13,10 @@
 /var/sessions/*
 !var/sessions/.gitkeep
 !var/SymfonyRequirements.php
-/phpunit.xml
 /vendor/
-/bin/*
-!/bin/console
-!/bin/symfony_requirements
-!/bin/post-deploy.sh
 /html/bundles/
+/bin/vendor
+!/bin/vendor/.gitkeep
 logs
 .idea
 /html/css/*
