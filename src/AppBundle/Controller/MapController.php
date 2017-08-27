@@ -80,9 +80,11 @@ class MapController extends Controller
             ->getDoctrine()
             ->getRepository('AppBundle:Place')
             ->createQueryBuilder('p')
-            ->select('p.latitude, p.longitude, p.id, p.placeName, p.continent, p.country, CONCAT(p.latitude, \',\', p.longitude) as grp, count(a.id) as aspect_count')
+            ->addSelect('p.latitude, p.longitude')
+            ->addSelect('p.id, p.placeName, p.continent, p.country')
+            ->addSelect('COUNT(a.id) AS aspect_count')
             ->innerJoin('p.associatedAspects', 'a')
-            ->groupBy('grp')
+            ->groupBy('p.id')
         ;
 
         $this->applyDateFilter($qb, $request);
