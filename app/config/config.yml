@@ -113,9 +113,10 @@ doctrine:
         auto_mapping: true
         dql:
             string_functions:
-                Field: AppBundle\ORM\Field
+                FIELD: AppBundle\ORM\Field
+                ANY_VALUE: AppBundle\ORM\AnyValue
             numeric_functions:
-                Rand: AppBundle\ORM\Rand
+                RAND: AppBundle\ORM\Rand
         hydrators:
             LetterList: \AppBundle\ORM\Hydrators\LetterListHydrator
 
