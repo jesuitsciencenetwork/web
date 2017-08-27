@@ -7,7 +7,6 @@ use AppBundle\Entity\Place;
 use AppBundle\Form\MapFilterForm;
 use AppBundle\Helper;
 use AppBundle\SearchService;
-use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;

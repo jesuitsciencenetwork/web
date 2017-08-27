@@ -5,7 +5,6 @@ namespace AppBundle\ORM\Hydrators;
 use AppBundle\LetterListInterface;
 use Doctrine\ORM\Internal\Hydration\HydrationException;
 use Doctrine\ORM\Internal\Hydration\ObjectHydrator;
-use PDO;
 
 class LetterListHydrator extends ObjectHydrator
 {
