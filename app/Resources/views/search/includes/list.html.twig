@@ -1,21 +1,35 @@
 {% import "macros.html.twig" as macro %}
 
+<div class="pull-right">
+    <div class="pull-left" style="margin-right:7px;">Sort by</div>
+    <div class="dropdown pull-left">
+        <button class="btn btn-default btn-xs dropdown-toggle" type="button" id="dd-sort" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+            {% if pagination.isSorted('date') %}Date{% elseif pagination.isSorted('name') %}Name{% endif %}
+            {% if pagination.direction == 'asc' %}ascending{% else %}descending{% endif %}
+            <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dd-sort">
+            <li>{{ knp_pagination_sortable(pagination, 'Name ascending', 'name', {'direction': 'asc'}) }}</li>
+            <li>{{ knp_pagination_sortable(pagination, 'Name descending', 'name', {'direction': 'desc'}) }}</li>
+            <li>{{ knp_pagination_sortable(pagination, 'Date ascending', 'date', {'direction': 'asc'}) }}</li>
+            <li>{{ knp_pagination_sortable(pagination, 'Date descending', 'date', {'direction': 'desc'}) }}</li>
+        </ul>
+    </div>
+</div>
 <table class="table table-striped">
     <thead>
     <tr>
         <th>
-            {{ knp_pagination_sortable(pagination, 'Date', 'date') }}
-            <span class="fa-stack">
-              <i class="fa fa-sort-asc fa-stack-1x{% if not (pagination.isSorted('date') and pagination.direction == 'asc') %} text-more-muted{% else %} text-primary{% endif %}"></i>
-              <i class="fa fa-sort-desc fa-stack-1x{% if not (pagination.isSorted('date') and pagination.direction == 'desc') %} text-more-muted{% else %} text-primary{% endif %}"></i>
-            </span>
+            Date
+            {% if pagination.isSorted('date') %}
+            <i class="fa fa-sort-numeric-{{ pagination.direction }} text-primary"></i>
+            {% endif %}
         </th>
         <th>
-            {{ knp_pagination_sortable(pagination, 'Person', 'name') }}
-            <span class="fa-stack">
-              <i class="fa fa-sort-asc fa-stack-1x{% if not (pagination.isSorted('name') and pagination.direction == 'asc') %} text-more-muted{% else %} text-primary{% endif %}"></i>
-              <i class="fa fa-sort-desc fa-stack-1x{% if not (pagination.isSorted('name') and pagination.direction == 'desc') %} text-more-muted{% else %} text-primary{% endif %}"></i>
-            </span>
+            Person
+            {% if pagination.isSorted('name') %}
+                <i class="fa fa-sort-alpha-{{ pagination.direction }} text-primary"></i>
+            {% endif %}
         </th>
         <th>Description</th>
     </tr>
