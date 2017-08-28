@@ -43,7 +43,11 @@ class SearchController extends Controller
         $pagination = $this->get('knp_paginator')->paginate(
             $qb->getQuery(),
             $request->get('page', 1),
-            20
+            20,
+            [
+                'defaultSortFieldName' => 'name',
+                'defaultSortDirection' => 'asc'
+            ]
         );
 
         return $this->render('search/results.html.twig', [
