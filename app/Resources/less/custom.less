@@ -909,7 +909,7 @@ a.geo {
 .fancy-checkbox {
   display: none;
 }
-.fancy-checkbox + label {
+.fancy-checkbox + label, .beco a {
   width: 20px;
   height: 20px;
   background-color: #eee;
@@ -923,11 +923,35 @@ a.geo {
   font-size: 11.5px;
   text-align: center;
 }
-.fancy-checkbox:checked + label {
+.fancy-checkbox:checked + label, .beco a.checked {
   background-color: #a13;
   color: #fff;
 }
+.beco {
+  .list-inline;
+  .list-unstyled;
 
+  li {
+    margin: 0;
+    padding: 0;
+  }
+  li:last-child {
+    margin-right: -3px;
+  }
+
+  a {
+    display: block;
+  }
+
+  a:hover, a:active {
+    text-decoration: none;
+  }
+}
+
+.search-refine h6 {
+  margin-top: 20px;
+  margin-bottom: 5px;
+}
 
 .restriction {
   padding-right: 20px;
@@ -1028,4 +1052,21 @@ body.splash {
 
 .text-more-muted {
   color: #b0b0b0;
+}
+
+.search-summary {
+  padding: 9px;
+  background-color: #f9f9f9;
+  color:#666;
+  margin: 9px 0 18px;
+}
+
+.search-summary .separator {
+  &:after {
+    content: "\00a0\2022\00a0"
+  }
+
+  &:last-child {
+    display: none;
+  }
 }

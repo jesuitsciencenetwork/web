@@ -8,23 +8,16 @@
 </ul>
 
 <h6>Types</h6>
-<ul class="list-unstyled">
+<ul class="beco">
     {% set types = ['biographical', 'education', 'career', 'other'] %}
     {% for type in types %}
-    {% if attribute(query, type) %}
-        <li class="restriction">
-            {{ type|capitalize }}
-            {{ macro.remove_restriction(params|bit_remove('types', constant('AppBundle\\Query::TYPE_' ~(type|upper)))) }}
-        </li>
-    {% endif %}
-    {% endfor %}
-
-    {% for type in types %}
-    {% if not attribute(query, type) %}
-        <li>
-            <a href="{{ path('search', params|bit_add('types', constant('AppBundle\\Query::TYPE_' ~(type|upper)))) }}">{{ type|capitalize }}</a>
-        </li>
-    {% endif %}
+    <li>
+        <a {% if attribute(query, type) %}class="checked"{% endif %}
+           href="{% if attribute(query, type) %}{{ path('search', params|bit_remove('types', constant('AppBundle\\Query::TYPE_' ~(type|upper)))) }}{% else %}{{ path('search', params|bit_add('types', constant('AppBundle\\Query::TYPE_' ~(type|upper)))) }}{% endif %}"
+           data-toggle="tooltip"
+           data-placement="bottom"
+           title="{{ type|capitalize }}">{{ type|first|capitalize }}</a>
+    </li>
     {% endfor %}
  </ul>
 
