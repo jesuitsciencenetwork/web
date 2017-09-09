@@ -20,10 +20,12 @@
             <header>
                 <h1>{{ person.displayName }} <small class="text-muted">({{ person.dateOfBirth }}–{{ person.dateOfDeath }})</small></h1>
                 <p class="small text-muted pref">
+                    {% if not person.isJesuit %}<span class="non-jesuit">Non-Jesuit</span> &bull; {% endif %}
+                    {% if person.viafId %}VIAF: <a target="_blank" href="http://viaf.org/viaf/{{ person.viafId }}"><code>{{ person.viafId }}</code></a> &bull; {% endif %}
+
                     <a target="_blank" href="{{ path('data', {format: 'xml', id: person.id}) }}" title="View as XML"><code>XML</code></a>
                     <a target="_blank" href="{{ path('data', {format: 'json', id: person.id}) }}" title="View as JSON"><code>JSON</code></a>
                     <a target="_blank" href="https://pdrprod.bbaw.de/idi/pdrnc/{{ person.pdrId }}" title="Download raw, unprocessed data as XML"><code>RAW</code></a>
-                    {% if person.viafId %} &bull; VIAF: <a target="_blank" href="http://viaf.org/viaf/{{ person.viafId }}"><code>{{ person.viafId }}</code></a>{% endif %}
                 </p>
 
 
