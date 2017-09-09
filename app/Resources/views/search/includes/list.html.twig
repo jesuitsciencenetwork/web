@@ -19,16 +19,16 @@
 <table class="table table-striped">
     <thead>
     <tr>
-        <th>
+        <th style="white-space: nowrap">
             Date
             {% if pagination.isSorted('date') %}
             <i class="fa fa-sort-numeric-{{ pagination.direction }} text-primary"></i>
             {% endif %}
         </th>
-        <th>
+        <th style="white-space: nowrap">
             Person
             {% if pagination.isSorted('name') %}
-                <i class="fa fa-sort-alpha-{{ pagination.direction }} text-primary"></i>
+            <i class="fa fa-sort-alpha-{{ pagination.direction }} text-primary"></i>
             {% endif %}
         </th>
         <th>Description</th>
