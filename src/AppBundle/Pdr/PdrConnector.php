@@ -419,7 +419,7 @@ class PdrConnector
                     $output['subjects'][$slug] = $childNode->nodeValue;
                 }
             } elseif ($tag == 'name' && $type == 'occupation') {
-                $output['occupation'] = $childNode->nodeValue;
+                $output['occupation'] = ucfirst($childNode->nodeValue);
                 $slug = Helper::slugify($childNode->nodeValue);
                 $textParts[] = '{O:' . $slug . '|' . $childNode->nodeValue . '}';
             } elseif ($tag == 'name' && $type == 'Comment') {
