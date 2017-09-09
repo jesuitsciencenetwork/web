@@ -42,12 +42,12 @@
             </ul>
             {% endfor %}
 
-            {% if person.relationsOutgoing|length %}
+            {% if relationsOutgoing|length %}
                 <h4>Relations</h4>
                 <ul class="aspect-list timeline">
-                    {% for relation in person.relationsOutgoing %}
+                    {% for aspect in relationsOutgoing %}
                         <li class="aspect timeline-entry" data-symbol="I">
-                            {% include "include/aspect.html.twig" with {aspect: relation.aspect, currentPo: person.id} only %}
+                            {% include "include/aspect.html.twig" with {aspect: aspect, currentPo: person.id} only %}
                         </li>
                     {% endfor %}
                 </ul>

@@ -190,9 +190,23 @@ class DefaultController extends Controller
             unset($place['types']);
         }
 
+        $relationsOutgoing = $this
+            ->getDoctrine()
+            ->getRepository(Aspect::class)
+            ->createQueryBuilder('a')
+            ->select('a')
+            ->innerJoin('a.relations', 'r')
+            ->where('r.source = :person')
+            ->groupBy('a.id')
+            ->setParameter('person', $person->getId())
+            ->getQuery()
+            ->execute()
+        ;
+
         return $this->render('default/detail.html.twig', [
             'person' => $person,
             'relations' => $relations,
+            'relationsOutgoing' => $relationsOutgoing,
             'aspects' => $aspects,
             'places' => $places
         ]
