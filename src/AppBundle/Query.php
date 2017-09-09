@@ -25,6 +25,8 @@ class Query
     /** @var Bounds */
     private $bounds;
 
+    private $jesuit;
+    private $ems;
 
     private $from;
     private $to;
@@ -218,5 +220,37 @@ class Query
     public static function types()
     {
         return self::TYPE_BIOGRAPHICAL | self::TYPE_CAREER | self::TYPE_EDUCATION | self::TYPE_OTHER;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getJesuit()
+    {
+        return $this->jesuit;
+    }
+
+    /**
+     * @param mixed $jesuit
+     */
+    public function setJesuit($jesuit)
+    {
+        $this->jesuit = $jesuit;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getEms()
+    {
+        return $this->ems;
+    }
+
+    /**
+     * @param mixed $ems
+     */
+    public function setEms($ems)
+    {
+        $this->ems = $ems;
     }
 }

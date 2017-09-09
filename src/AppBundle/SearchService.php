@@ -250,6 +250,14 @@ EOSQL;
             $query->setOccupation($q->get('occupation'));
         }
 
+        if ($q->has('jesuit')) {
+            $query->setJesuit((bool)$q->get('jesuit'));
+        }
+
+        if ($q->has('ems')) {
+            $query->setEms((bool)$q->get('ems'));
+        }
+
         if ($emptyQuery) {
             if ($request->query->count() > 0) {
                 throw new InvalidQueryException();
@@ -277,6 +285,8 @@ EOSQL;
             'from',
             'to',
             'occupation',
+            'jesuit',
+            'ems',
 
             // 'page' not included to reset results to first page
             'sort',

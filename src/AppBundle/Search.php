@@ -117,6 +117,22 @@ class Search
             $qb->setParameter('occupation', $query->getOccupation());
         }
 
+        if (!is_null($query->getJesuit())) {
+            if ($query->getJesuit()) {
+                $qb->andWhere('p.isJesuit = 1');
+            } else {
+                $qb->andWhere('p.isJesuit = 0');
+            }
+        }
+
+        if (!is_null($query->getEms())) {
+            if ($query->getEms()) {
+                $qb->andWhere('p.isMathNat = 1');
+            } else {
+                $qb->andWhere('p.isMathNat = 0');
+            }
+        }
+
         return $qb;
     }
 }

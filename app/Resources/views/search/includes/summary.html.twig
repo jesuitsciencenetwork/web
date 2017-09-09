@@ -21,19 +21,19 @@
 
 
     {# EXCLUSIONS #}
-    {% if false %}
+    {% if query.jesuit is same as(true) %}
         <em>Only Jesuits</em>
         <span class="separator"></span>
     {% endif %}
-    {% if false %}
+    {% if query.jesuit is same as(false) %}
         <em>Only Non-Jesuits</em>
         <span class="separator"></span>
     {% endif %}
-    {% if false %}
+    {% if query.ems is same as(true) %}
         <em>Only EMS-related persons</em>
         <span class="separator"></span>
     {% endif %}
-    {% if false %}
+    {% if query.ems is same as(false) %}
         <em>Only persons not related to EMS</em>
         <span class="separator"></span>
     {% endif %}

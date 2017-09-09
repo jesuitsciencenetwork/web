@@ -21,6 +21,54 @@
     {% endfor %}
  </ul>
 
+<h6>Only Include</h6>
+<ul class="list-unstyled">
+    {% if query.jesuit is not null %}
+    <li class="restriction">
+        {% if query.jesuit %}Jesuits{% else %}Non-Jesuits{% endif %}
+        {{ macro.remove_restriction(params|unset('jesuit')) }}
+    </li>
+    {% endif %}
+    {% if query.ems is not null %}
+        <li class="restriction">
+            {% if query.ems %}EMS-related{% else %}EMS-unrelated{% endif %}
+            {{ macro.remove_restriction(params|unset('ems')) }}
+        </li>
+    {% endif %}
+    {% if query.ems is null or query.ems is same as(false) %}
+    <li>
+        <a href="{{ path('search', params|merge({ems: 1})) }}">EMS-related</a>
+        <i class="fa fa-info-circle js-popover text-muted"
+           data-toggle="popover"
+           data-trigger="hover"
+           data-placement="right"
+           data-title="Early Modern Science"
+           data-content="only show aspects of persons who have a relation with subjects from early modern sciences"></i>
+    </li>
+    {% endif %}
+    {% if query.ems is null or query.ems is same as(true) %}
+    <li>
+        <a href="{{ path('search', params|merge({ems: 0})) }}">EMS-unrelated</a>
+        <i class="fa fa-info-circle js-popover text-muted"
+           data-toggle="popover"
+           data-trigger="hover"
+           data-placement="right"
+           data-title="Early Modern Science"
+           data-content="only show aspects of persons who do NOT have a relation with subjects from early modern sciences"></i>
+    </li>
+    {% endif %}
+    {% if query.jesuit is null or query.jesuit is same as(false) %}
+    <li>
+        <a href="{{ path('search', params|merge({jesuit: 1})) }}">Jesuits</a>
+    </li>
+    {% endif %}
+    {% if query.jesuit is null or query.jesuit is same as(true) %}
+    <li>
+        <a href="{{ path('search', params|merge({jesuit: 0})) }}">Non-Jesuits</a>
+    </li>
+    {% endif %}
+</ul>
+
 <h6>Subject</h6>
 <ul class="list-unstyled">
     {% for id, subject in query.subjects %}
