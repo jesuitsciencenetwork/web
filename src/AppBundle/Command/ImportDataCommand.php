@@ -431,6 +431,10 @@ class ImportDataCommand extends Command
             $progress->advance();
         }
 
+        // update person's mathnat shorthand
+        $connection->exec('UPDATE person SET is_math_nat = 0');
+        $connection->exec('UPDATE person SET is_math_nat = 1 WHERE id IN (SELECT DISTINCT ps.person_id FROM person_subject ps INNER JOIN subject s ON ps.subject_id = s.id AND s.is_mathnat = 1)');
+
         $progress->clear();
         // up one line
         $output->write("\033[1A");

@@ -82,6 +82,12 @@ class Person implements LetterListInterface
     private $dateOfDeath;
 
     /**
+     * @var boolean
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $isMathNat = null;
+
+    /**
      * @var AlternateName[]|Collection
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\AlternateName", mappedBy="person")
      */
@@ -454,7 +460,7 @@ class Person implements LetterListInterface
     /**
      * Get relationsOutgoing
      *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return \Doctrine\Common\Collections\Collection|Relation[]
      */
     public function getRelationsOutgoing()
     {
@@ -593,4 +599,19 @@ class Person implements LetterListInterface
         return $this->groupLetter;
     }
 
+    /**
+     * @return bool
+     */
+    public function isMathNat(): bool
+    {
+        return $this->isMathNat;
+    }
+
+    /**
+     * @param bool $isMathNat
+     */
+    public function setIsMathNat(bool $isMathNat)
+    {
+        $this->isMathNat = $isMathNat;
+    }
 }
