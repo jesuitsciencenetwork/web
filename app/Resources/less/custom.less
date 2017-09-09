@@ -1059,14 +1059,23 @@ body.splash {
   background-color: #f9f9f9;
   color:#666;
   margin: 9px 0 18px;
-}
 
-.search-summary .separator {
-  &:after {
-    content: "\00a0\2022\00a0"
+  .separator {
+    &:after {
+      content: "\00a0\2022\00a0"
+    }
+
+    &:last-child {
+      display: none;
+    }
   }
 
-  &:last-child {
-    display: none;
+  h6 {
+    color: @gray;
+    font-size: @font-size-small;
+    border-bottom: 1px solid #999;
+    display: inline-block;
+    margin-top: 0;
+    margin-bottom: 4px;
   }
 }

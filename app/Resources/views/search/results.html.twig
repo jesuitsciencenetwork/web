@@ -11,6 +11,8 @@
 
                 <h3>{{ pagination.getTotalItemCount }} Results</h3>
 
+                {{ include('search/includes/summary.html.twig') }}
+
                 <div class="text-center">
                     {{ knp_pagination_render(pagination) }}
                 </div>
