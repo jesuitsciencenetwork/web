@@ -75,10 +75,15 @@ function seededRandom() {
   return x - Math.floor(x);
 }
 
-function getScaleFreeNetworkSeeded(nodeCount) {
+function getScaleFreeNetworkSeeded(nodeCount, seed) {
+  if (seed) {
+    randomSeed = Number(seed);
+  }
   var nodes = [];
   var edges = [];
   var connectionCount = [];
+  var edgesId = 0;
+
 
   // randomly create some nodes and edges
   for (var i = 0; i < nodeCount; i++) {
@@ -94,6 +99,7 @@ function getScaleFreeNetworkSeeded(nodeCount) {
       var from = i;
       var to = 0;
       edges.push({
+        id: edgesId++,
         from: from,
         to: to
       });
@@ -114,6 +120,7 @@ function getScaleFreeNetworkSeeded(nodeCount) {
       var from = i;
       var to = j;
       edges.push({
+        id: edgesId++,
         from: from,
         to: to
       });
