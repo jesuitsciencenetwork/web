@@ -127,14 +127,16 @@
         </div>
     </div>
 
+    {% if places|length > 0 %}
     <div class="map-wrap" style="position: relative;">
 
         <div class="fade" style="height: 30px; line-height: 30px; position: absolute; top: 0; left: 0; color: #fff; text-align: center; background-color: rgba(0,0,0,0.5); width:100%;" id="map-tooltip"></div>
         <div id="map" style="height:350px;"></div>
 
     </div>
+    {% endif %}
 
-    <div class="container detail">
+    <div class="container detail"><div class="col-xs-12">
         <h4>Sources</h4>
         <ol class="source-list">
             {% for source in person.sources %}
@@ -143,14 +145,14 @@
             </li>
             {% endfor %}
         </ol>
-    </div>
+    </div></div>
 
 {% endblock %}
 
-{% set enableMap = true %}
-
 {% block javascripts %}
     <script type="text/javascript">
+        {% if places|length > 0 %}
+        {% set enableMap = true %}
         var map, markerObjects = [];
         $('body').on('map:ready', function() {
             map = new google.maps.Map(document.getElementById('map'), {
@@ -210,6 +212,7 @@
             });
             map.fitBounds(bounds);
         });
+        {% endif %}
 
         $(function() {
             var $toggle = $('#alternateNamesToggle');
