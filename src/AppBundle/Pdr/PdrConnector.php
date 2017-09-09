@@ -121,26 +121,27 @@ class PdrConnector
 
             // relationStm
             foreach ($aspect->relationDim->relationStm as $relationStatement) {
-                $rel = $relationStatement->relation[0];
-                $class = (string)$rel['class'];
-                $context = (string)$rel['context'];
-                $value = (string)$rel;
-                $subjectString = (string)$relationStatement['subject'];
-                $subject = Helper::pdr2num($subjectString);
-                $objectString = (string)$relationStatement->relation[0]['object'];
-                $object = Helper::pdr2num($objectString);
-                if ('aspectOf' === $value || false !== strpos($subjectString, 'pdrAo') || $subjectString != $pdrId) {
-                    continue;
-                }
+                foreach ($relationStatement->relation as $rel) {
+                    $class = (string)$rel['class'];
+                    $context = (string)$rel['context'];
+                    $value = (string)$rel;
+                    $subjectString = (string)$relationStatement['subject'];
+                    $subject = Helper::pdr2num($subjectString);
+                    $objectString = (string)$rel['object'];
+                    $object = Helper::pdr2num($objectString);
+                    if ('aspectOf' === $value || false !== strpos($subjectString, 'pdrAo') || $subjectString != $pdrId) {
+                        continue;
+                    }
 
-                $data['personRefs'][] = [
-                    $subject,
-                    $object,
-                    $class,
-                    $context,
-                    $value,
-                    Helper::pdr2num($aspectData['aoId'])
-                ];
+                    $data['personRefs'][] = [
+                        $subject,
+                        $object,
+                        $class,
+                        $context,
+                        $value,
+                        Helper::pdr2num($aspectData['aoId'])
+                    ];
+                }
             }
 
             // validationStm
