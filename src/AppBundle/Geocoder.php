@@ -18,6 +18,7 @@ class Geocoder
         'Dobrzyń Land' => 'Dobrzyń nad Wisłą',
         'Saint Petersburg' => 'Saint Petersburg, Russia',
         'Buda' => 'Budapest, Hungary',
+        'Naples' => 'Naples, Italy'
     ];
 
     private $manualLookup = [
