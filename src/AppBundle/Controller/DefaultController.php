@@ -67,14 +67,16 @@ class DefaultController extends Controller
         }
 
         $relations = $this->getDoctrine()->getConnection()->executeQuery(
-            'SELECT
-                IF(:id = r.source_id, t.id, s.id) as id,
-                IF(:id = r.source_id, t.display_name, s.display_name) as name
-            FROM relations r
-            LEFT JOIN person t ON r.target_id = t.id
-            LEFT JOIN person s ON r.source_id = s.id
-            WHERE r.source_id = :id OR r.target_id = :id
-            GROUP BY r.id ORDER BY IF(:id = r.source_id, t.list_name, s.list_name) ASC',
+            'SELECT 
+                id, display_name AS name
+             FROM person 
+             WHERE 
+                id IN (
+                    SELECT r1.source_id FROM relations r1 WHERE r1.target_id = :id
+                    UNION 
+                    SELECT r2.target_id FROM relations r2 WHERE r2.source_id = :id
+                )
+             ORDER BY list_name ASC',
             ['id' => $person->getId()]
         )->fetchAll();
 
