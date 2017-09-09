@@ -12,14 +12,19 @@
 
 {% if "entryInTheOrder" == aspect.type %}
     Entered the Society of Jesus {{ macro.places(aspect) }}
+    {{ macro.comment(aspect) }}
 {% elseif "beginningOfLife" == aspect.type %}
     Born {{ macro.places(aspect) }}
+    {{ macro.comment(aspect) }}
 {% elseif "endOfLife" == aspect.type %}
     Died {{ macro.places(aspect) }}
+    {{ macro.comment(aspect) }}
 {% elseif "resignationFromTheOrder" == aspect.type %}
     Left the Society {{ macro.places(aspect) }}
+    {{ macro.comment(aspect) }}
 {% elseif "expulsionFromTheOrder" == aspect.type %}
     Was expelled from the Society {{ macro.places(aspect) }}
+    {{ macro.comment(aspect) }}
 {% elseif "education" == aspect.type %}
     Studied {{ macro.subjects(aspect) }}{{ macro.places(aspect) }}
     {{ macro.comment(aspect) }}
@@ -31,6 +36,8 @@
     {% else %}
         <a href="{{ path('search', {occupation:aspect.occupationSlug}) }}">{{ aspect.occupation }}</a>{% if aspect.subjects|length %} of {{ macro.subjects(aspect) }}{% endif %}{{ macro.places(aspect) }}
     {% endif %}
+    {{ macro.comment(aspect) }}
 {% else %}
     {{ aspect.description|replace_links(currentPo is defined ? [currentPo] : [])|smart_quotes }}
+    {# No comment because it's already part of description #}
 {% endif %}
