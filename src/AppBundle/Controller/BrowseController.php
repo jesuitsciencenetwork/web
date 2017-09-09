@@ -49,9 +49,14 @@ class BrowseController extends Controller
             ->getResult('LetterList')
         ;
 
+        $count = 0;
+        foreach ($jesuits as $letter) {
+            $count += count($letter);
+        }
+
         return $this->render('default/list.html.twig', [
             'jesuitview' => true,
-            'personCount' => count($jesuits),
+            'personCount' => $count,
             'otherCount' => $nonJesuitCount,
             'letters' => $jesuits,
         ]);
@@ -78,9 +83,14 @@ class BrowseController extends Controller
             ->getResult('LetterList')
         ;
 
+        $count = 0;
+        foreach ($nonJesuits as $letter) {
+            $count += count($letter);
+        }
+
         return $this->render('default/list.html.twig', [
             'jesuitview' => false,
-            'personCount' => count($nonJesuits),
+            'personCount' => $count,
             'otherCount' => $jesuitCount,
             'letters' => $nonJesuits,
         ]);
