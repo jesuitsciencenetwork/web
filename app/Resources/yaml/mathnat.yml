@@ -98,6 +98,7 @@ Squaring of the circle: true
 Statics: true
 Statistics: true
 Sun dials: true
+Surgery: true
 Tactics: true
 Technology: true
 Theoretical physics: true
@@ -116,7 +117,7 @@ Zoology: true
 #########################################
 Arabic: false
 Aristotelian logic: false
-Canon law: false
+Canon ` law: false
 Cases of conscience: false
 Casuistry: false
 Catalan: false
