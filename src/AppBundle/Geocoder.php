@@ -16,7 +16,8 @@ class Geocoder
 
     private $replacementMap = [
         'Dobrzyń Land' => 'Dobrzyń nad Wisłą',
-        'Saint Petersburg' => 'Saint Petersburg, Russia'
+        'Saint Petersburg' => 'Saint Petersburg, Russia',
+        'Buda' => 'Budapest, Hungary',
     ];
 
     private $manualLookup = [
