@@ -34,6 +34,8 @@
                     </li>
                     <li class="divider-vertical"></li>
                     <li{% if 'map' == route %} class="active"{% endif %}><a href="{{ path('map') }}">Map</a></li>
+                    <li class="divider-vertical"></li>
+                    <li><a href="{{ path('random') }}">Random entry</a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     <li{% if 'search' == route %} class="active"{% endif %}><a href="{{ path('search') }}"><i class="fa fa-search"></i></a></li>
