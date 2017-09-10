@@ -165,35 +165,6 @@
             border: 0 none;
             outline: 0;
         }
-
-        .spinner {
-            width: 30px;
-            height: 30px;
-            background-color: #a13;
-
-            margin: 100px auto 20px;
-            -webkit-animation: sk-rotateplane 1.2s infinite ease-in-out;
-            animation: sk-rotateplane 1.2s infinite ease-in-out;
-        }
-
-        @-webkit-keyframes sk-rotateplane {
-            0% { -webkit-transform: perspective(120px) }
-            50% { -webkit-transform: perspective(120px) rotateY(180deg) }
-            100% { -webkit-transform: perspective(120px) rotateY(180deg)  rotateX(180deg) }
-        }
-
-        @keyframes sk-rotateplane {
-            0% {
-                transform: perspective(120px) rotateX(0deg) rotateY(0deg);
-                -webkit-transform: perspective(120px) rotateX(0deg) rotateY(0deg)
-            } 50% {
-                  transform: perspective(120px) rotateX(-180.1deg) rotateY(0deg);
-                  -webkit-transform: perspective(120px) rotateX(-180.1deg) rotateY(0deg)
-              } 100% {
-                    transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg);
-                    -webkit-transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg);
-                }
-        }
     </style>
 {% endblock %}
 
@@ -290,7 +261,7 @@
 
         function loadDetail(url) {
             url = url + '?' + $.param(collectParams());
-            $detail.html('<div class="loading"><div class="spinner"></div><h6>Loading...</h6></div>')
+            $detail.html('<div class="loading"><div class="spinner"> <div class="bounce1"></div> <div class="bounce2"></div> <div class="bounce3"></div></div><h6>Loading...</h6></div>')
                     .load(url);
         }
 

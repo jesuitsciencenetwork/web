@@ -80,6 +80,11 @@ $(function () {
         });
     }
 
+    $('.js-form-nosubmit').submit(function(e) {
+        e.preventDefault();
+        return false;
+    });
+
     $('.js-autocomplete').each(function() {
         var $this = $(this), quickSearch = $this.hasClass('js-quicksearch'),
             taArgs = [{
@@ -95,7 +100,13 @@ $(function () {
                     header: quickSearch ? '<h4 class="tt-header">Persons</h4>' : null,
                     suggestion: function(item) {
                         return '<div>' + item.value + (item.text ? '<br><small class="text-muted">' + item.text + '</small>' : '') + '</div>';
-                    }
+                    },
+                    empty: [
+                        quickSearch ? '<h4 class="tt-header">Persons</h4>' : '',
+                        '<div class="text-center empty-message">',
+                        '<em class="text-more-muted">No entries matching your query</em>',
+                        '</div>'
+                    ].join('\n')
                 }
             }];
 
@@ -106,7 +117,13 @@ $(function () {
                 source: jsnPlaceSearch,
                 limit: Infinity,
                 templates: {
-                    header: '<h4 class="tt-header">Places</h4>'
+                    header: '<h4 class="tt-header">Places</h4>',
+                    empty: [
+                        '<h4 class="tt-header">Places</h4>',
+                        '<div class="text-center empty-message">',
+                        '<em class="text-more-muted">No entries matching your query</em>',
+                        '</div>'
+                    ].join('\n')
                 }
             });
             taArgs.push({
@@ -115,7 +132,13 @@ $(function () {
                 source: subjects,
                 limit: Infinity,
                 templates: {
-                    header: '<h4 class="tt-header">Subjects</h4>'
+                    header: '<h4 class="tt-header">Subjects</h4>',
+                    empty: [
+                        '<h4 class="tt-header">Subjects</h4>',
+                        '<div class="text-center empty-message">',
+                        '<em class="text-more-muted">No entries matching your query</em>',
+                        '</div>'
+                    ].join('\n')
                 }
             });
             taArgs.push({
@@ -124,7 +147,13 @@ $(function () {
                 source: occupations,
                 limit: Infinity,
                 templates: {
-                    header: '<h4 class="tt-header">Occupations</h4>'
+                    header: '<h4 class="tt-header">Occupations</h4>',
+                    empty: [
+                        '<h4 class="tt-header">Occupations</h4>',
+                        '<div class="text-center empty-message">',
+                        '<em class="text-more-muted">No entries matching your query</em>',
+                        '</div>'
+                    ].join('\n')
                 }
             });
         }
@@ -138,7 +167,20 @@ $(function () {
             })
             .on('typeahead:select', function(e, sel) {
                 window.location.href = sel.url;
-            });
+            })
+        ;
+
+        var asyncActive = 0, grp = $this.closest('.form-group');
+        $this
+            .on('typeahead:asyncrequest', function(e, q, ds) {
+                asyncActive += 1;
+                grp.toggleClass('loading', asyncActive > 0);
+            })
+            .on('typeahead:asynccancel typeahead:asyncreceive', function() {
+                asyncActive -= 1;
+                grp.toggleClass('loading', asyncActive > 0);
+            })
+        ;
     });
 
     if ($('.when-slider').length) {

@@ -12,9 +12,14 @@
     <div class="tab-content" style="border-left: 1px solid #ddd; border-right: 1px solid #ddd; border-bottom: 1px solid #ddd;">
         <div role="tabpanel" class="tab-pane fade in active" id="who">
             <p class="text-center">Type any part of the name of a person to search within names and alternate spellings.</p>
-            <form action="{{ path('search') }}" method="get" class="form-inline text-center" style="margin-bottom: 20px;">
-                <div class="form-group text-left autocomplete">
+            <form action="{{ path('search') }}" method="get" class="form-inline text-center js-form-nosubmit" style="margin-bottom: 20px;">
+                <div class="form-group text-left autocomplete jsn-searchbox">
                     <input type="text" class="js-autocomplete form-control" />
+                    <div class="spinner small">
+                        <div class="bounce1"></div>
+                        <div class="bounce2"></div>
+                        <div class="bounce3"></div>
+                    </div>
                 </div>
             </form>
 
