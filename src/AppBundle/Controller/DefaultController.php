@@ -282,7 +282,6 @@ class DefaultController extends Controller
                 'size' => 20,
 //                'fixed' => true,
                 'label' => $person->getDisplayName(),
-                'title' => $person->getDisplayName(),
                 'shape' => 'box',
                 'borderWidthSelected' => 0.5,
                 'margin' => 15,
@@ -298,7 +297,6 @@ class DefaultController extends Controller
                 'url' => $this->generateUrl('graph', ['id' => $rel->getSource()->getId()]),
                 'group' => $rel->getSource()->isJesuit() ? 'j' : 'n',
                 'label' => $rel->getSource()->getDisplayName(),
-                'title' => $rel->getSource()->getDisplayName(),
             ];
             $edges[] = [
                 'from' => (string)$rel->getSource()->getId(),
@@ -315,7 +313,6 @@ class DefaultController extends Controller
                 'url' => $this->generateUrl('graph', ['id' => $rel->getTarget()->getId()]),
                 'group' => $rel->getTarget()->isJesuit() ? 'j' : 'n',
                 'label' => $rel->getTarget()->getDisplayName(),
-                'title' => $rel->getTarget()->getDisplayName(),
             ];
             $edges[] = [
                 'from' => (string)$person->getId(),
