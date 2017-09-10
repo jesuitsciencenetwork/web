@@ -33,6 +33,10 @@ $(function () {
 
     $(window).on('hashchange', function(event) {
         event.preventDefault();
+        if (window.location.hash.match(/=/)) {
+            // this is a param list, skip scrollTo
+            return;
+        }
         scrollTo(window.location.hash);
     });
 
