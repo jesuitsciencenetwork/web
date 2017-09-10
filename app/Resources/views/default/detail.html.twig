@@ -154,12 +154,16 @@
 
 {% endblock %}
 
+{% if places|length > 0 %}
+    {% set enableMap = true %}
+{% endif %}
+
 {% block javascripts %}
     <script type="text/javascript">
         {% if places|length > 0 %}
         {% set enableMap = true %}
         var map, markerObjects = [];
-        $('body').on('map:ready', function() {
+        var initializeMapView = function() {
             map = new google.maps.Map(document.getElementById('map'), {
                 center: {lat: -34.397, lng: 150.644},
                 zoom: 10,
@@ -174,10 +178,10 @@
             $('.geo').on('click', function(e) {
                 e.preventDefault();
                 var $this = $(this),
-                        pos = new google.maps.LatLng(
-                                parseFloat($this.data('lat')),
-                                parseFloat($this.data('lng'))
-                        );
+                    pos = new google.maps.LatLng(
+                        parseFloat($this.data('lat')),
+                        parseFloat($this.data('lng'))
+                    );
                 map.panTo(pos);
                 $.each(markerObjects, function (i, marker) {
                     var mlat = marker.position.lat();
@@ -216,7 +220,12 @@
                 bounds.extend(pos);
             });
             map.fitBounds(bounds);
-        });
+        };
+        if (mapIsReady) {
+            initializeMapView();
+        } else {
+            $('body').one('map:ready', initializeMapView);
+        }
         {% endif %}
 
         $(function() {
