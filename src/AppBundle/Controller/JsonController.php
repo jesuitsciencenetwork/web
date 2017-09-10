@@ -93,7 +93,7 @@ EOSQL;
         $places = $this
             ->getDoctrine()
             ->getManager()
-            ->createQuery('SELECT p.placeName FROM AppBundle:Place p WHERE p.placeName LIKE :query')
+            ->createQuery('SELECT p.placeName, p.slug FROM AppBundle:Place p WHERE p.placeName LIKE :query')
             ->setParameter('query', "%$q%")
             ->setHydrationMode(Query::HYDRATE_ARRAY)
             ->getResult()
@@ -101,7 +101,7 @@ EOSQL;
 
         foreach ($places as $place) {
             $data[] = [
-                'url' => $this->generateUrl('search', ['place'=>$place['placeName']], UrlGenerator::ABSOLUTE_URL),
+                'url' => $this->generateUrl('search', ['place'=>$place['slug']], UrlGenerator::ABSOLUTE_URL),
                 'value' => $place['placeName'],
             ];
         }
