@@ -83,7 +83,7 @@ $(function () {
         $('#jsn-search').on('focus', function() {
             $(this).attr('placeholder', 'Person, place, or subject');
         }).on('blur', function() {
-            $(this).attr('placeholder', 'Quick Search');
+            $(this).attr('placeholder', 'Quick search');
         });
     }
 
