@@ -475,6 +475,8 @@ class ImportDataCommand extends Command
         fwrite($beacon, '#FORMAT: BEACON
 #PREFIX: http://viaf.org/viaf/
 #TARGET: http://jesuitscience.net/viaf/{id}
+#HOMEPAGE: http://jesuitscience.net/
+#CONTACT: Dagmar Mrozik <dagmar.mrozik@jesuitscience.net>
 #FEED: http://jesuitscience.net/jsn-viaf.beacon
 ');
         fwrite($beacon, "#TIMESTAMP: " . (new \DateTime('now', new \DateTimeZone('UTC')))->format(\DateTime::ISO8601) . "\n\n");
