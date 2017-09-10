@@ -1,0 +1,181 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    <nav class="navbar navbar-default navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <h1 style="font-size: 24px;margin:0;line-height: 50px;">{{ person.displayName }}</h1>
+            </div>
+            <div class="navbar-right">
+                <ul class="nav navbar-nav">
+                    <li><a href="javascript:window.close();"><i class="fa fa-close"></i> Close</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div id="relation-graph" style="position:absolute; left:0; right:0; top: 50px; bottom: 50px;"></div>
+
+    <nav class="navbar navbar-default navbar-fixed-bottom">
+        <div class="container">
+            <div class="navbar-header">
+                <ul class="list-inline" style="margin-bottom: 0;">
+                    <li><span style="height: 20px; width: 20px; margin: 15px 0; display: inline-block; border-radius: 15px; border: 2px solid #aa1133; background-color: #aa1133;">&nbsp;&nbsp;</span>&nbsp;Jesuits</li>
+                    <li><span style="height: 20px; width: 20px; margin: 15px 0; display: inline-block; border-radius: 15px; border: 2px solid #aa1133; background-color: #fff;">&nbsp;&nbsp;</span>&nbsp;Non-Jesuits</li>
+                </ul>
+            </div>
+
+            <div class="navbar-right">
+                <ul class="nav navbar-nav">
+                    <li>
+                        <a href="{{ path('detail', {id: person.id}) }}" target="_blank">
+                            <i class="fa fa-arrow-circle-right"></i>
+                            Data sheet for <em>{{ person.displayName }}</em></a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+{% endblock %}
+
+{% block javascripts %}
+<script type="text/javascript">
+$(function() {
+    var network;
+
+    var nodesDataset = new vis.DataSet({{ nodes|json_encode|raw }});
+    var edgesDataset = new vis.DataSet({{ edges|json_encode|raw }});
+
+    function redrawAll() {
+        var container = document.getElementById('relation-graph');
+        var options = {
+            layout: {
+                improvedLayout: true,
+                randomSeed: 42
+            },
+            groups: {
+                j: {
+                    color: {
+                        border: '#aa1133',
+                        background: '#aa1133',
+                        highlight: {
+                            border: '#aa1133',
+                            background: '#aa1133'
+                        },
+                        hover: {
+                            border: '#aa1133',
+                            background: '#aa1133'
+                        }
+                    },
+                    font: {
+                        color: "#444"
+                    }
+                },
+                n: {
+                    color: {
+                        border: '#aa1133',
+                        background: '#ffffff',
+                        highlight: {
+                            border: '#aa1133',
+                            background: '#ffffff'
+                        },
+                        hover: {
+                            border: '#aa1133',
+                            background: '#ffffff'
+                        }
+                    },
+                    font: {
+                        color: '#444'
+                    }
+                }
+            },
+            nodes: {
+                shape: 'dot',
+                borderWidth: 2,
+                borderWidthSelected: 1,
+                size: 10,
+                labelHighlightBold: false,
+                font: {
+                    size: 15,
+                    face: 'Merriweather'
+                }
+            },
+            edges: {
+                length: 250,
+                font: {
+                    align: 'middle',
+                    size: 12,
+                    face: 'Merriweather'
+                },
+                width: 1.5,
+                hoverWidth: 0,
+                smooth: {
+                    type: 'continuous'
+                }
+            },
+            physics: {
+                enabled: true,
+                barnesHut: {
+                    gravitationalConstant: -2000,
+                    centralGravity: 0.3,
+                    springLength: 95,
+                    springConstant: 0.04,
+                    damping: 0.09,
+                    avoidOverlap: 0
+                }
+            },
+            interaction: {
+                dragNodes: false,
+                dragView: false,
+                zoomView: false,
+                selectable: true,
+                tooltipDelay: 50,
+                hideEdgesOnDrag: false,
+                keyboard: false,
+                hover: true,
+                selectConnectedEdges: false,
+                hoverConnectedEdges: false
+            },
+            manipulation: {
+                enabled: false
+            }
+        };
+        var data = {nodes:nodesDataset, edges:edgesDataset};
+        network = new vis.Network(container, data, options);
+
+        network.on("selectNode", function (params) {
+            console.log(params);
+            if (params.nodes.length !== 1) {
+                return;
+            }
+            network.unselectAll();
+
+            var node = nodesDataset.get(params.nodes[0]);
+
+            if (!node || !node.url) {
+                return;
+            }
+
+            window.location.href = node.url;
+
+        });
+        network.on("hoverNode", function (params) {
+            console.log(params);
+            if (params.node) {
+                var node = nodesDataset.get(params.node);
+                if (node.url) {
+                    network.canvas.body.container.style.cursor = 'pointer';
+                }
+            }
+        });
+        network.on("blurNode", function (params) {
+            network.canvas.body.container.style.cursor = 'default';
+        });
+    }
+
+    redrawAll()
+});
+</script>
+{% endblock %}

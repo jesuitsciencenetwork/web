@@ -123,6 +123,11 @@
                     {% endfor %}
                 </ul>
             </div>
+            {% if edges|length %}
+            <h4>Relation Graph</h4>
+            <div id="relation-graph" style="border:1px solid #ccc; border-bottom-width: 0; width: 100%; height: 200px;"></div>
+                <a class="btn btn-default btn-block btn-sm" id="graph-enlarge" target="_blank" href="{{ path('graph', {id: person.id}) }}">enlarge <i class="fa fa-expand"></i></a>
+            {% endif %}
             {% endif %}
         </div>
     </div>
@@ -229,4 +234,106 @@
         });
 
     </script>
+    {% if edges|length %}
+<script type="text/javascript">
+    $(function() {
+        $('#graph-enlarge').click(function(e) {
+            e.preventDefault();
+            window.open(
+                $(this).attr('href'),
+                'jsn-graph',
+                'width=800,height=600,toolbar=no,location=no,menubar=no'
+            );
+        })
+    });
+
+    var network;
+
+    var nodesDataset = new vis.DataSet({{ nodes|json_encode|raw }});
+    var edgesDataset = new vis.DataSet({{ edges|json_encode|raw }});
+
+    function redrawAll() {
+        var container = document.getElementById('relation-graph');
+        var options = {
+            layout: {
+                improvedLayout: true,
+                randomSeed: 42
+            },
+            nodes: {
+                shape: 'dot',
+                borderWidth: 2,
+                size: 10,
+                font: {
+                    size: 12,
+                    face: 'Tahoma'
+                }
+            },
+            edges: {
+                width: 1.5,
+                smooth: {
+                    type: 'continuous'
+                }
+            },
+            groups: {
+                j: {
+                    color: {
+                        border: '#aa1133',
+                        background: '#aa1133',
+                        highlight: {
+                            border: '#aa1133',
+                            background: '#aa1133'
+                        },
+                        hover: {
+                            border: '#aa1133',
+                            background: '#aa1133'
+                        }
+                    },
+                    font: {
+                        color: "#444"
+                    }
+                },
+                n: {
+                    color: {
+                        border: '#aa1133',
+                        background: '#ffffff',
+                        highlight: {
+                            border: '#aa1133',
+                            background: '#ffffff'
+                        },
+                        hover: {
+                            border: '#aa1133',
+                            background: '#ffffff'
+                        }
+                    },
+                    font: {
+                        color: '#444'
+                    }
+                }
+            },
+            physics: {
+                enabled: false
+            },
+            interaction: {
+                dragNodes: false,
+                dragView: false,
+                zoomView: false,
+                selectable: false,
+                tooltipDelay: 50,
+                hideEdgesOnDrag: true,
+                keyboard: false,
+                hover: false,
+                selectConnectedEdges: false,
+                hoverConnectedEdges: false
+            },
+            manipulation: {
+                enabled: false
+            }
+        };
+        var data = {nodes:nodesDataset, edges:edgesDataset};
+        network = new vis.Network(container, data, options);
+    }
+
+    redrawAll()
+</script>
+{% endif %}
 {% endblock %}

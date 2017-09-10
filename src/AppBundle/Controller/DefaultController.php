@@ -15,6 +15,27 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class DefaultController extends Controller
 {
+    private static $colors = [
+        '' => '#bdc3c7',
+        'agentOf' => '#2c3e50',
+        'brotherOf' => '#95a5a6',
+        'colleagueOf' => '#f1c40f',
+        'competitorOf' => '#e67e22',
+        'fatherOf' => '#1abc9c',
+        'inferiorOf' => '#d35400',
+        'inspiredBy' => '#e74c3c',
+        'predecessorOf' => '#2ecc71',
+        'privateTeacherOf' => '#c0392b',
+        'professorOf' => '#3498db',
+        'pupilOf' => '#9b59b6',
+        'reviewerOf' => '#34495e',
+        'schoolTeacherOf' => '#8e44ad',
+        'sonOf' => '#16a085',
+        'studentOf' => '#2980b9',
+        'successorOf' => '#27ae60',
+        'tutorOf' => '#7f8c8d',
+    ];
+
     /**
      * @Route("/", name="splash")
      */
@@ -143,6 +164,18 @@ class DefaultController extends Controller
             $aspects[$type][$key][] = $aspect;
         }
 
+        $nodes = [
+            [
+                'id' => (string)$person->getId(),
+                'group' => $person->isJesuit() ? 'j' : 'n',
+                'value' => 3,
+                'shape' => 'box',
+                'label' => '                 ',
+            ]
+        ];
+
+        $edges = [];
+
         foreach ($person->getRelationsIncoming() as $rel) {
             foreach ($rel->getAspect()->getPlaces() as $place) {
                 if (!array_key_exists($place->getId(), $places)) {
@@ -158,8 +191,18 @@ class DefaultController extends Controller
                         'aspect' => $rel->getAspect()
                     ]
                 );
-                $places[$place->getId()]['types'][] = $aspect->getMarkerLabel();
+                $places[$place->getId()]['types'][] = $rel->getAspect()->getMarkerLabel();
             }
+            $nodes[(string)$rel->getSource()->getId()] = [
+                'id' => (string)$rel->getSource()->getId(),
+                'group' => $rel->getSource()->isJesuit() ? 'j' : 'n',
+            ];
+            $edges[] = [
+                'from' => (string)$rel->getSource()->getId(),
+                'to' => (string)$person->getId(),
+                'arrows' => 'to',
+                'color' => self::$colors[$rel->getValue()],
+            ];
         }
 
         foreach ($person->getRelationsOutgoing() as $rel) {
@@ -177,8 +220,18 @@ class DefaultController extends Controller
                         'aspect' => $rel->getAspect()
                     ]
                 );
-                $places[$place->getId()]['types'][] = $aspect->getMarkerLabel();
+                $places[$place->getId()]['types'][] = $rel->getAspect()->getMarkerLabel();
             }
+            $nodes[(string)$rel->getTarget()->getId()] = [
+                'id' => (string)$rel->getTarget()->getId(),
+                'group' => $rel->getTarget()->isJesuit() ? 'j' : 'n',
+            ];
+            $edges[] = [
+                'from' => (string)$person->getId(),
+                'to' => (string)$rel->getTarget()->getId(),
+                'arrows' => 'to',
+                'color' => self::$colors[$rel->getValue()],
+            ];
         }
 
         foreach ($places as &$place) {
@@ -210,9 +263,74 @@ class DefaultController extends Controller
             'relations' => $relations,
             'relationsOutgoing' => $relationsOutgoing,
             'aspects' => $aspects,
-            'places' => $places
+            'places' => $places,
+            'nodes' => array_values($nodes), // use keys only for dedup
+            'edges' => $edges,
         ]
         );
+    }
+
+    /**
+     * @Route("/p/{id}/graph", requirements={"id" = "\d+"}, name="graph")
+     */
+    public function graphAction(Person $person)
+    {
+        $nodes = [
+            [
+                'id' => (string)$person->getId(),
+                'group' => $person->isJesuit() ? 'j' : 'n',
+                'size' => 20,
+//                'fixed' => true,
+                'label' => $person->getDisplayName(),
+                'title' => $person->getDisplayName(),
+                'shape' => 'box',
+                'borderWidthSelected' => 0.5,
+                'margin' => 15,
+                'font' => ['color' => $person->isJesuit() ? '#fff' : '#444']
+            ]
+        ];
+
+        $edges = [];
+
+        foreach ($person->getRelationsIncoming() as $rel) {
+            $nodes[(string)$rel->getSource()->getId()] = [
+                'id' => (string)$rel->getSource()->getId(),
+                'url' => $this->generateUrl('graph', ['id' => $rel->getSource()->getId()]),
+                'group' => $rel->getSource()->isJesuit() ? 'j' : 'n',
+                'label' => $rel->getSource()->getDisplayName(),
+                'title' => $rel->getSource()->getDisplayName(),
+            ];
+            $edges[] = [
+                'from' => (string)$rel->getSource()->getId(),
+                'to' => (string)$person->getId(),
+                'arrows' => 'to',
+                'color' => self::$colors[$rel->getValue()],
+                'label' => $rel->getValue(),
+            ];
+        }
+
+        foreach ($person->getRelationsOutgoing() as $rel) {
+            $nodes[(string)$rel->getTarget()->getId()] = [
+                'id' => (string)$rel->getTarget()->getId(),
+                'url' => $this->generateUrl('graph', ['id' => $rel->getTarget()->getId()]),
+                'group' => $rel->getTarget()->isJesuit() ? 'j' : 'n',
+                'label' => $rel->getTarget()->getDisplayName(),
+                'title' => $rel->getTarget()->getDisplayName(),
+            ];
+            $edges[] = [
+                'from' => (string)$person->getId(),
+                'to' => (string)$rel->getTarget()->getId(),
+                'arrows' => 'to',
+                'color' => self::$colors[$rel->getValue()],
+                'label' => $rel->getValue(),
+            ];
+        }
+
+        return $this->render('default/graph.html.twig', [
+            'person' => $person,
+            'nodes' => array_values($nodes),
+            'edges' => $edges,
+        ]);
     }
 
     /**
