@@ -305,7 +305,7 @@ class DefaultController extends Controller
                 'to' => (string)$person->getId(),
                 'arrows' => 'to',
                 'color' => self::$colors[$rel->getValue()],
-                'label' => $rel->getValue(),
+                'label' => $rel->getPrettyValue(),
             ];
         }
 
@@ -322,7 +322,7 @@ class DefaultController extends Controller
                 'to' => (string)$rel->getTarget()->getId(),
                 'arrows' => 'to',
                 'color' => self::$colors[$rel->getValue()],
-                'label' => $rel->getValue(),
+                'label' => $rel->getPrettyValue(),
             ];
         }
 

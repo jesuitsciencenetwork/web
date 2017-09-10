@@ -142,6 +142,18 @@ class Relation
         return $this->value;
     }
 
+    public function getPrettyValue()
+    {
+        $value = $this->value;
+        if ($this->class == 'friend') {
+            $value = 'friendOf';
+        }
+
+        $arr = preg_split('/(?=[A-Z])/', $value);
+
+        return strtolower(implode(' ', $arr));
+    }
+
     /**
      * Set source
      *
