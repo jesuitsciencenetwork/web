@@ -120,10 +120,12 @@
                     <p class="version">Version {{ stats.lm|date('m/d/Y') }}
                         &bull;
                         {{ stats.nb }} persons in database
+                        &bull;
+                        <a href="/jsn-viaf.beacon" download><samp>BEACON</samp></a>
                     </p>
                 </div>
                 <div class="col-sm-6 col-sm-pull-6">
-                    <p>Copyright 2015 by someone. All rights reserved. <a href="{{ path('imprint') }}">Imprint</a></p>
+                    <p><a href="{{ path('imprint') }}">Imprint</a></p>
                 </div>
             </div>
         </div>
