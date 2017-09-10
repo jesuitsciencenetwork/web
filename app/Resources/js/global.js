@@ -7,7 +7,10 @@ window.scrollTo = function scrollTo(fragment, offset) {
     }, 250);
 };
 
+var mapIsReady = false;
+
 window.initMap = function initMap() {
+    mapIsReady = true;
     $('body').trigger('map:ready');
 };
 
@@ -84,6 +87,140 @@ $(function () {
         e.preventDefault();
         return false;
     });
+
+    if ($('.searchbox').length) {
+        var initWhereSearch = function() {
+            console.log('in map:ready');
+            var service = new google.maps.places.AutocompleteService();
+            var geocoder = new google.maps.Geocoder();
+
+            var regions = new Bloodhound({
+                datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
+                queryTokenizer: Bloodhound.tokenizers.whitespace,
+                prefetch: '/regions.json'
+            });
+
+            $('#where-search').typeahead({
+                    hint: false,
+                    highlight: true,
+                    changeInputValue: false
+                },
+                {
+                    source: regions,
+                    templates: {
+                        header: '<h4 class="tt-header">Regions</h4>',
+                        suggestion: function(item) {
+                            return '<div>' + item.value + (item.text ? '<br><small class="text-muted">' + item.text + '</small>' : '') + '</div>';
+                        }
+                    }
+                },
+                {
+                    templates: {
+                        header: '<h4 class="tt-header">Cities</h4>',
+                        suggestion: function(prediction) {
+                            var i = prediction.terms[1].offset;
+                            return '<div>' + prediction.description.slice(0, i-2) + '<br><small class="text-muted">' + prediction.description.slice(i) + '</small></div>';
+                        }
+                    },
+                    display: 'value',
+                    source: function(query, syncResults, asyncResults) {
+                        syncResults([]);
+                        service.getPlacePredictions({ input: query, types: ['(cities)'] }, function(predictions, status) {
+                            if (status == google.maps.places.PlacesServiceStatus.OK) {
+                                asyncResults(predictions);
+                            }
+                        });
+                    }
+                });
+
+            $('#where-search')
+                .on('typeahead:cursorchange', function(e) {
+                    e.preventDefault();
+                    return false;
+                })
+                .on("typeahead:select", function (e, item) {
+                    if (item.url) {
+                        // region item
+                        window.location.href = item.url;
+                    } else {
+                        // google item
+                        geocoder.geocode({'placeId': item.place_id}, function(results, status) {
+                            if (status === google.maps.GeocoderStatus.OK) {
+                                if (results[0]) {
+                                    var loc = results[0].geometry.location;
+                                    console.log(loc);
+                                    $('#where-lat').val(loc.lat);
+                                    $('#where-lng').val(loc.lng);
+                                    $('#where-descr').val(item.description);
+                                    $('#where-selection').html(item.description);
+                                    $('#where-button').prop('disabled', false).removeClass('disabled');
+                                    $('#where-box').removeClass('hidden');
+                                    $('#where-search').val('');
+                                    $('#where-radius').focus();
+                                } else {
+                                    window.alert('No results found');
+                                }
+                            } else {
+                                window.alert('Geocoder failed due to: ' + status);
+                            }
+                        });
+                    }
+                })
+//                    .bind("typeahead:cursorchanged", addressPicker.updateMap)
+            ;
+        };
+        if (mapIsReady) {
+            initWhereSearch();
+        } else {
+            $body.one('map:ready', initWhereSearch);
+        }
+        $('.js-tree').each(function() {
+            var $this = $(this);
+
+            var updateSelection = function(e, n) {
+                if (n.nodes) {
+                    $.each(n.nodes, function(i, node) {
+                        $this.treeview(n.state.checked ? 'selectNode' : 'unselectNode', [node.nodeId, {silent: false}]);
+                    });
+                    return;
+                }
+
+                $this.treeview(n.state.checked ? 'selectNode' : 'unselectNode', [n.nodeId, {silent: true}]);
+                var selection = $this.treeview('getChecked');
+
+                if (selection.length) {
+                    $('#what-button').removeClass('disabled').prop('disabled', false);
+                    $('#what-selection').val($.map(selection, function(n) {
+                        return n.id;
+                    }).join(" "));
+                } else {
+                    $('#what-button').addClass('disabled').prop('disabled', true);
+                    $('#what-selection').val('');
+                }
+            };
+
+            var checkRow = function (e, n) {
+                $this.treeview(n.state.selected ? 'checkNode' : 'uncheckNode', [n.nodeId, {silent: false}]);
+                return false;
+            };
+
+            $this.treeview({
+                data: $this.data('tree'),
+                multiSelect: true,
+                collapseIcon: 'fa fa-minus',
+                expandIcon: 'fa fa-plus',
+                checkedIcon: 'fa fa-check-square-o',
+                uncheckedIcon: 'fa fa-square-o',
+                levels: 0,
+                showCheckbox: true,
+                onNodeChecked: updateSelection,
+                onNodeUnchecked: updateSelection,
+                onNodeSelected: checkRow,
+                onNodeUnselected: checkRow
+            });
+        });
+
+    }
 
     $('.js-autocomplete').each(function() {
         var $this = $(this), quickSearch = $this.hasClass('js-quicksearch'),
@@ -217,134 +354,6 @@ $(function () {
             params.to   = $('#when-to').val();
 
             window.location.href = $this.data('url') + '?' + $.param(params);
-        });
-    }
-
-    if ($('.searchbox').length) {
-        $('.js-tree').each(function() {
-            var $this = $(this);
-
-            var updateSelection = function(e, n) {
-                if (n.nodes) {
-                    $.each(n.nodes, function(i, node) {
-                        $this.treeview(n.state.checked ? 'selectNode' : 'unselectNode', [node.nodeId, {silent: false}]);
-                    });
-                    return;
-                }
-
-                $this.treeview(n.state.checked ? 'selectNode' : 'unselectNode', [n.nodeId, {silent: true}]);
-                var selection = $this.treeview('getChecked');
-
-                if (selection.length) {
-                    $('#what-button').removeClass('disabled').prop('disabled', false);
-                    $('#what-selection').val($.map(selection, function(n) {
-                        return n.id;
-                    }).join(" "));
-                } else {
-                    $('#what-button').addClass('disabled').prop('disabled', true);
-                    $('#what-selection').val('');
-                }
-            };
-
-            var checkRow = function (e, n) {
-                $this.treeview(n.state.selected ? 'checkNode' : 'uncheckNode', [n.nodeId, {silent: false}]);
-                return false;
-            };
-
-            $this.treeview({
-                data: $this.data('tree'),
-                multiSelect: true,
-                collapseIcon: 'fa fa-minus',
-                expandIcon: 'fa fa-plus',
-                checkedIcon: 'fa fa-check-square-o',
-                uncheckedIcon: 'fa fa-square-o',
-                levels: 0,
-                showCheckbox: true,
-                onNodeChecked: updateSelection,
-                onNodeUnchecked: updateSelection,
-                onNodeSelected: checkRow,
-                onNodeUnselected: checkRow
-            });
-        });
-
-        $body.one('map:ready', function() {
-            var service = new google.maps.places.AutocompleteService();
-            var geocoder = new google.maps.Geocoder();
-
-            var regions = new Bloodhound({
-                datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
-                queryTokenizer: Bloodhound.tokenizers.whitespace,
-                prefetch: '/regions.json'
-            });
-
-            $('#where-search').typeahead({
-                    hint: false,
-                    highlight: true,
-                    changeInputValue: false
-                },
-                {
-                    source: regions,
-                    templates: {
-                        header: '<h4 class="tt-header">Regions</h4>',
-                        suggestion: function(item) {
-                            return '<div>' + item.value + (item.text ? '<br><small class="text-muted">' + item.text + '</small>' : '') + '</div>';
-                        }
-                    }
-                },
-                {
-                    templates: {
-                        header: '<h4 class="tt-header">Cities</h4>',
-                        suggestion: function(prediction) {
-                            var i = prediction.terms[1].offset;
-                            return '<div>' + prediction.description.slice(0, i-2) + '<br><small class="text-muted">' + prediction.description.slice(i) + '</small></div>';
-                        }
-                    },
-                    display: 'value',
-                    source: function(query, syncResults, asyncResults) {
-                        syncResults([]);
-                        service.getPlacePredictions({ input: query, types: ['(cities)'] }, function(predictions, status) {
-                            if (status == google.maps.places.PlacesServiceStatus.OK) {
-                                asyncResults(predictions);
-                            }
-                        });
-                    }
-                });
-
-            $('#where-search')
-                .on('typeahead:cursorchange', function(e) {
-                    e.preventDefault();
-                    return false;
-                })
-                .on("typeahead:select", function (e, item) {
-                    if (item.url) {
-                        // region item
-                        window.location.href = item.url;
-                    } else {
-                        // google item
-                        geocoder.geocode({'placeId': item.place_id}, function(results, status) {
-                            if (status === google.maps.GeocoderStatus.OK) {
-                                if (results[0]) {
-                                    var loc = results[0].geometry.location;
-                                    console.log(loc);
-                                    $('#where-lat').val(loc.lat);
-                                    $('#where-lng').val(loc.lng);
-                                    $('#where-descr').val(item.description);
-                                    $('#where-selection').html(item.description);
-                                    $('#where-button').prop('disabled', false).removeClass('disabled');
-                                    $('#where-box').removeClass('hidden');
-                                    $('#where-search').val('');
-                                    $('#where-radius').focus();
-                                } else {
-                                    window.alert('No results found');
-                                }
-                            } else {
-                                window.alert('Geocoder failed due to: ' + status);
-                            }
-                        });
-                    }
-                })
-//                    .bind("typeahead:cursorchanged", addressPicker.updateMap)
-            ;
         });
     }
 
