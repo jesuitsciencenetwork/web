@@ -144,7 +144,7 @@ EOSQL;
             ->getDoctrine()
             ->getRepository('AppBundle:Aspect')
             ->createQueryBuilder('a')
-            ->select('ANY_VALUE(a.occupationSlug) as occupationSlug, a.occupation')
+            ->select('a.occupationSlug as occupationSlug, a.occupation')
             ->where('a.occupation IS NOT NULL')
             ->groupBy('a.occupation')
             ->orderBy('a.occupation', 'ASC')

@@ -116,7 +116,6 @@ doctrine:
         dql:
             string_functions:
                 FIELD: AppBundle\ORM\Field
-                ANY_VALUE: AppBundle\ORM\AnyValue
             numeric_functions:
                 RAND: AppBundle\ORM\Rand
         hydrators:

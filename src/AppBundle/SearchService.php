@@ -437,7 +437,7 @@ EOSQL;
         $qb = clone $qb;
 
         $occupations = $qb
-            ->select('ANY_VALUE(a.occupation) as occupation, a.occupationSlug, count(a.occupationSlug) as cnt')
+            ->select('a.occupation as occupation, a.occupationSlug, count(a.occupationSlug) as cnt')
             ->orderBy('cnt', 'desc')
             ->andWhere('a.occupationSlug > \'\'')
             ->groupBy('a.occupationSlug')
