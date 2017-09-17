@@ -4,6 +4,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Aspect;
 use AppBundle\Entity\Person;
+use AppBundle\Entity\Relation;
 use AppBundle\Helper;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query;
@@ -328,6 +329,82 @@ class DefaultController extends Controller
             'nodes' => array_values($nodes),
             'edges' => $edges,
         ]);
+    }
+
+    /**
+     * @Route("/lisiak-graph/{format}", name="lisiak")
+     */
+    public function lisiakAction($format)
+    {
+        if ($format !== 'graph' && $format !== 'txt') {
+            throw new NotFoundHttpException('Format is invalid');
+        }
+
+        $conn = $this->getDoctrine()->getConnection();
+        $q = $conn->query('select distinct person_id from aspect where type = \'beginningOfLife\' and source_id = 2');
+        $masterSet = $q->fetchAll(\PDO::FETCH_COLUMN, 0);
+
+        $qu = $this->getDoctrine()
+            ->getRepository(Relation::class)
+            ->createQueryBuilder('r')
+            ->select('r, s, t')
+            ->leftJoin('r.source', 's')
+            ->leftJoin('r.target', 't')
+            ->where('s.id IN (:ids) OR t.id IN (:ids)')
+            ->andWhere('r.value = \'professorOf\' OR r.value = \'studentOf\'')
+            ->setParameter('ids', $masterSet)
+            ->getQuery()
+            ->execute()
+        ;
+
+        $nodes = [];
+        $edges = [];
+
+        $arrows = [
+            'colleagueOf' => 'normal',
+            'inferiorOf' => 'invempty',
+            'predecessorOf' => 'obox',
+            'professorOf' => 'diamond',
+            'studentOf' => 'ediamond',
+            'successorOf' => 'box',
+        ];
+
+        foreach ($qu as $rel) {
+            $nodes[(string)$rel->getSource()->getId()] = [
+                'id' => (string)$rel->getSource()->getId(),
+                'group' => in_array((string)$rel->getSource()->getId(), $masterSet) ? 'j' : 'n',
+                'label' => $rel->getSource()->getDisplayName(),
+            ];
+            $nodes[(string)$rel->getTarget()->getId()] = [
+                'id' => (string)$rel->getTarget()->getId(),
+                'group' => in_array((string)$rel->getTarget()->getId(), $masterSet) ? 'j' : 'n',
+                'label' => $rel->getTarget()->getDisplayName(),
+            ];
+
+            $edges[] = [
+                'from' => (string)$rel->getSource()->getId(),
+                'to' => (string)$rel->getTarget()->getId(),
+                'arrows' => 'to',
+                'color' => self::$colors[$rel->getValue()],
+                'label' => $rel->getPrettyValue(),
+                'arr' => $arrows[$rel->getValue()],
+            ];
+        }
+
+        if ($format === 'txt') {
+            $r = new Response();
+            $r->headers->set('Content-Type', 'text/plain');
+            return $this->render('default/lisiak-gv.txt.twig', [
+                'nodes' => array_values($nodes),
+                'edges' => $edges,
+            ], $r);
+        } else {
+            return $this->render('default/lisiak-graph.html.twig', [
+                'nodes' => array_values($nodes),
+                'edges' => $edges,
+            ]);
+        }
+
     }
 
     /**

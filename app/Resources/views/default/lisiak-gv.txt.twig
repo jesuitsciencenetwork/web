@@ -1,0 +1,12 @@
+digraph {
+{% for n in nodes %}
+{{ n.id }} [shape=box,{% if n.group == 'n' %}style=dashed,{% endif %}label="{{ n.label }}"];
+{% endfor %}
+
+{% for e in edges %}
+{{ e.from }} -> {{ e.to }} [arrowhead={{ e.arr }}];
+{% endfor %}
+
+overlap=false
+}
+
