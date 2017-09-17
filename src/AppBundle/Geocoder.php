@@ -20,6 +20,15 @@ class Geocoder
         'Buda' => 'Budapest, Hungary',
         'Naples' => 'Naples, Italy',
         'Vilnius Voivodeship' => 'Vilnius, Lithuania',
+        'Serpa' => 'Serpa, Portugal',
+        'Segno' => 'Segno, Italy',
+        'Gascony' => 'Mont-de-Marsan, France',
+        'Clermont' => 'Clermont-Ferrand, France',
+        'Nola' => 'Nola, Italy',
+        'Transylvania' => 'Cluj-Napoca, Rumania',
+        'East Prussia' => 'Kaliningrad, Russia',
+        'North America' => 'Kansas City, USA',
+        'Yorkshire' => 'Yorkshire, UK',
     ];
 
     private $manualLookup = [
