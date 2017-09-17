@@ -29,6 +29,8 @@ class Geocoder
         'East Prussia' => 'Kaliningrad, Russia',
         'North America' => 'Kansas City, USA',
         'Yorkshire' => 'Yorkshire, UK',
+        'Béarn' => 'Pau, France',
+        'Ruthenia' => 'Kiev, Ukraine',
     ];
 
     private $manualLookup = [
