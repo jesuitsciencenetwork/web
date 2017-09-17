@@ -24,3 +24,6 @@ logs
 /html/js/*
 !html/js/.gitkeep
 /html/*.beacon
+node_modules
+/html/build/*
+!/html/build/.gitkeep
