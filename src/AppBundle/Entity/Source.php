@@ -105,6 +105,13 @@ class Source
      * @Groups({"Source"})
      */
     private $associatedAspects;
+
+    /**
+     * @var SourceGroup
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\SourceGroup", inversedBy="sources")
+     */
+    private $sourceGroup;
+
     /**
      * Constructor
      */
@@ -516,5 +523,29 @@ class Source
     public function getEditors()
     {
         return $this->editors;
+    }
+
+    /**
+     * Set sourceGroup
+     *
+     * @param \AppBundle\Entity\SourceGroup $sourceGroup
+     *
+     * @return Source
+     */
+    public function setSourceGroup(\AppBundle\Entity\SourceGroup $sourceGroup = null)
+    {
+        $this->sourceGroup = $sourceGroup;
+
+        return $this;
+    }
+
+    /**
+     * Get sourceGroup
+     *
+     * @return \AppBundle\Entity\SourceGroup
+     */
+    public function getSourceGroup()
+    {
+        return $this->sourceGroup;
     }
 }
