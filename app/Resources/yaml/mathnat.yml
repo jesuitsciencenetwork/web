@@ -29,6 +29,7 @@ Calendar: true
 Calendars: true
 Cartography: true
 Chemistry: true
+Chronology: true
 Chronometry: true
 Civil architecture: true
 Combinatorics: true
@@ -43,7 +44,9 @@ Engineering: true
 Entomology: true
 Euclidean geometry: true
 Exact sciences: true
+Experimental mechanics: true
 Experimental physics: true
+Experiments: true
 Fieldwork: true
 Forestry: true
 Fortifications: true
@@ -87,6 +90,7 @@ Naval maps: true
 Navigation: true
 Numismatics: true
 Optics: true
+Particular physics: true
 Perspective: true
 Pharmaceutics: true
 Pharmacy: true
