@@ -4,6 +4,8 @@ namespace AppBundle;
 
 use AppBundle\DTO\Bounds;
 use AppBundle\DTO\Radius;
+use AppBundle\Entity\Source;
+use AppBundle\Entity\SourceGroup;
 use AppBundle\Entity\Subject;
 use AppBundle\Entity\SubjectGroup;
 use AppBundle\Exception\EmptyQueryException;
@@ -72,7 +74,7 @@ class SearchService
 
         $this->addCountriesFromQuery($filters, $qb);
         $this->addContinentsFromQuery($filters, $qb);
-        //$this->addSourcesFromQuery($filters, $qb);
+        $this->addSourcesFromQuery($filters, $qb);
         $this->addSubjectsFromQuery($filters, $qb);
         $this->addPlacesFromQuery($filters, $qb);
         $this->addOccupationsFromQuery($filters, $qb);
@@ -212,6 +214,27 @@ EOSQL;
             $query->setPlace($place);
         }
 
+        if ($q->has('sources')) {
+            $qParts = explode(' ', $q->get('sources'));
+            $groupIds = $sourceIds = [];
+            foreach ($qParts as $qPart) {
+                if (is_numeric($qPart)) {
+                    $sourceIds[] = $qPart;
+                } else {
+                    $groupIds[] = $qPart;
+                }
+            }
+
+            $sourceResult = $this->em->getRepository(Source::class)
+                ->findBy(['id' => $sourceIds]);
+
+            $groupResult = $this->em->getRepository(SourceGroup::class)
+                ->findBy(['slug' => $groupIds]);
+
+            $sources = array_merge($sourceResult, $groupResult);
+            $query->setSources($sources);
+        }
+
         if ($q->has('subjects')) {
             $emptyQuery = false;
             // what query
@@ -287,7 +310,7 @@ EOSQL;
             'occupation',
             'jesuit',
             'ems',
-
+            'sources',
             // 'page' not included to reset results to first page
             'sort',
             'direction'
@@ -376,6 +399,26 @@ EOSQL;
     private function addSourcesFromQuery(&$filters, QueryBuilder $qb)
     {
         $qb = clone $qb;
+
+        // since it's not very helpful to only see the currently selected
+        // source ids in the filter view, we have to remove the source
+        // condition from the query.
+        $qb_where_part = $qb->getDqlPart('where')->getParts();
+        $qb->resetDQLPart('where');
+        foreach ($qb_where_part as $where_clause) {
+            if (is_object($where_clause) and $where_clause instanceof Query\Expr\Orx) {
+                continue;
+            }
+            $qb->andWhere($where_clause);
+        }
+        $params = $qb->getParameters();
+        foreach ($params as $key => $param) {
+            if (strpos($param->getName(), 'src') === 0) {
+                $params->remove($key);
+            }
+        }
+        $qb->setParameters($params);
+
         $sourceIds = $qb
             ->select('distinct src.id, count(src.id) as srcCount')
             ->groupBy('src.id')
@@ -384,17 +427,37 @@ EOSQL;
         $sourceIds = array_map(function ($e) {
             return $e['id'];
         }, $sourceIds);
-        $filters['sources'] = $this
+
+        $sources = $this
             ->em
             ->createQueryBuilder()
             ->select('s')
             ->from('AppBundle:Source', 's')
             ->where('s.id IN(:ids)')
+            ->andWhere('s.sourceGroup IS NULL')
             ->orderBy('FIELD(s.id, :ids)')
             ->setParameter('ids', $sourceIds)
             ->getQuery()
             ->getResult()
         ;
+
+        $groups = $this
+            ->em
+            ->createQueryBuilder()
+            ->select('g')
+            ->from('AppBundle:SourceGroup', 'g')
+            ->innerJoin('g.sources', 's')
+            ->where('s.id IN(:ids)')
+            ->orderBy('g.title', 'asc')
+            ->setParameter('ids', $sourceIds)
+            ->getQuery()
+            ->getResult()
+        ;
+
+        $filters['sources'] = array(
+            'sources' => $sources,
+            'groups' => $groups,
+        );
     }
 
     private function addSubjectsFromQuery(&$filters, QueryBuilder $qb)

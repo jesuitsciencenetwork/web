@@ -28,6 +28,7 @@ $(function () {
     });
 
     $('.js-popover').popover();
+    $('.js-popover-html').popover({html: true});
 
     $('[data-toggle="tooltip"]').tooltip();
 
@@ -90,6 +91,33 @@ $(function () {
     $('.js-form-nosubmit').submit(function(e) {
         e.preventDefault();
         return false;
+    });
+
+    $body.on('click', 'table.click-to-select tr', function (e) {
+        if ($(e.target).is('input, a')) {
+            return;
+        }
+        $(this).find('input').trigger('click');
+    });
+
+    $('#apply-sources').on('click', function() {
+        var $btn = $(this), $form = $btn.closest('.modal').find('form');
+        $form.submit();
+    });
+
+    $('input.collector').each(function() {
+        var $coll = $(this), $form = $coll.closest('form');
+        $form.find('input[type="checkbox"]').prop('checked', false);
+        $.each($coll.val().split(" "), function(k, val) {
+            $('input[type="checkbox"][value="'+val+'"]').prop('checked', true);
+        });
+    });
+
+    $('.click-to-select input[type="checkbox"]').on('change', function () {
+        var $this = $(this), $form = $this.closest('form');
+        $form.find('input.collector').val(
+            $form.find('input[type="checkbox"]:checked').map(function() {return $(this).val(); }).toArray().join(' ')
+        );
     });
 
     if ($('.searchbox').length) {

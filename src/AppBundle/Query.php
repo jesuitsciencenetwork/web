@@ -38,6 +38,8 @@ class Query
 
     private $occupation;
 
+    private $sources = array();
+
     /**
      * @return mixed
      */
@@ -253,4 +255,22 @@ class Query
     {
         $this->ems = $ems;
     }
+
+    /**
+     * @return array
+     */
+    public function getSources(): array
+    {
+        return $this->sources;
+    }
+
+    /**
+     * @param array $sources
+     */
+    public function setSources(array $sources)
+    {
+        $this->sources = $sources;
+    }
+
+
 }
