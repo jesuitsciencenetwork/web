@@ -24,13 +24,7 @@ class MapController extends Controller
      */
     public function indexAction()
     {
-        $form = $this->createForm(MapFilterForm::class);
-        return $this->render(
-            'map/map.html.twig',
-            [
-                'form' => $form->createView()
-            ]
-        );
+        return $this->render('map/map.html.twig');
     }
 
     private function applyTypeFilter(QueryBuilder $qb, Request $request)

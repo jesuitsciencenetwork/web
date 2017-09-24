@@ -30,14 +30,49 @@
 {% endembed %}
 
 
-{% if filter.sources is defined and filter.sources|length > 1 %}
-    {% embed "modal.html.twig" with {id: "modal-sources", class: "refinement", title: "Refine by Source"} %}
+{% if filter.sources is defined and (filter.sources.sources|length > 0 or filter.sources.groups|length > 0) %}
+    {% embed "modal.html.twig" with {id: "modal-sources", class: "refinement", title: "Refine by Source", footer: true} %}
+        {% block extra_modal_attributes %}
+            style="padding:0;"
+        {% endblock %}
+
         {% block body %}
-            <ul class="list-unstyled ">
-                {% for s in filter.sources %}
-                    <li><a href="">{% include "include/shortsource.html.twig" with {source: s} only %}</a></li>
+            <form action="{{ path('search') }}" method="get">
+                {% for key, param in params if key != "sources" %}
+                    <input type="hidden" name="{{ key }}" value="{{ param }}">
                 {% endfor %}
-            </ul>
+            <input type="hidden" class="collector" value="{{ params.sources|default('') }}" name="sources" />
+            <table class="table table-modal table-hover table-condensed click-to-select">
+                <tbody>
+                {% for g in filter.sources.groups %}
+                    <tr>
+                        <td>
+                            {#<a href="" class="btn btn-default btn-xs"><i class="fa fa-plus"></i> Add</a>#}
+                            <input type="checkbox" value="{{ g.slug }}">
+                        </td>
+                        <td>
+                            <i class="fa fa-list" title="This entry refers to multiple sources from the same series."></i> {{ g.fullCite }}
+                        </td>
+                    </tr>
+                {% endfor %}
+                {% for s in filter.sources.sources %}
+                <tr>
+                    <td>
+                        {#<a href="" class="btn btn-default btn-xs"><i class="fa fa-plus"></i> Add</a>#}
+                        <input type="checkbox" value="{{ s.id }}">
+                    </td>
+                    <td>
+                        {% include "include/shortsource.html.twig" with {source: s} only %}
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            </form>
+        {% endblock %}
+        {% block buttons %}
+            <small class="pull-left text-muted" style="line-height: 34px;">Select one or more sources you want to show aspects of.</small>
+            <button id="apply-sources" class="btn btn-primary">Apply</button>
         {% endblock %}
     {% endembed %}
 {% endif %}

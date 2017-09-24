@@ -73,6 +73,7 @@ class ImportDataCommand extends Command
             'place',
             'relations',
             'source',
+            'source_group',
             'subject',
             'subject_group',
             'subject_group_subject',
@@ -124,7 +125,10 @@ class ImportDataCommand extends Command
             'INSERT INTO aspect_subject (aspect_id, subject_id) VALUES (:aspectId, :subjectId) ON DUPLICATE KEY UPDATE aspect_id=aspect_id'
         );
         $sourceStatement = $connection->prepare(
-            'INSERT INTO source (id, genre, title, series_title, authors, publisher, place, date_issued, date_captured, url, note, editors, payload) VALUES (:id, :genre, :title, :seriesTitle, :authors, :publisher, :place, :dateIssued, :dateCaptured, :url, :note, :editors, :payload) ON DUPLICATE KEY UPDATE id=id'
+            'INSERT INTO source (id, genre, title, series_title, authors, publisher, place, date_issued, date_captured, url, note, editors, payload, source_group_id) VALUES (:id, :genre, :title, :seriesTitle, :authors, :publisher, :place, :dateIssued, :dateCaptured, :url, :note, :editors, :payload, :group) ON DUPLICATE KEY UPDATE id=id'
+        );
+        $sourceGroupStatement = $connection->prepare(
+            'INSERT INTO source_group (title, slug, full_cite, color) VALUES (:title, :slug, :cite, :color)'
         );
         $groupStatement = $connection->prepare(
             'INSERT INTO subject_group (title, slug, scheme) VALUES (:title, :slug, :scheme) ON DUPLICATE KEY UPDATE id=id'
@@ -236,6 +240,30 @@ class ImportDataCommand extends Command
 
         $masterProgress->advance();
         $masterProgress->clear();
+        $masterProgress->setMessage('Writing source groups...');
+        $masterProgress->display();
+
+        $sourceGroupMap = [];
+        $sourceGroupsToImport = [
+            'viaf' => ['VIAF/GND', 'VIAF/GND', ''],
+            'sommervogel' => ['Bibliothèque de la Compagnie de Jésus', 'Sommervogel, Carlos et al., eds. (Reprint 1960). Bibliothèque de la Compagnie de Jésus. Vol. I-XII. Louvain: Éditions de la Bibliothèque S.J. : Collège Philosophique et Théologique.', ''],
+            'dhcj' => ['Diccionario Histórico de la Compañía de Jesús', 'O\'Neill, Charles et al., eds. (2011). Diccionario Histórico de la Compañía de Jesús. Vol. I-IV. Madrid: Universidad Pontifica Comillas.', ''],
+            'wp' => ['Wikipedia', 'Wikipedia', '']
+        ];
+        foreach ($sourceGroupsToImport as $shorthand => $groupData) {
+            $sourceGroupStatement->execute(
+                [
+                    ':title' => $groupData[0],
+                    ':cite' => $groupData[1],
+                    ':color' => $groupData[2],
+                    ':slug'  => $shorthand
+                ]
+            );
+            $sourceGroupMap[$shorthand] = $connection->lastInsertId();
+        }
+
+        $masterProgress->advance();
+        $masterProgress->clear();
         $masterProgress->setMessage('Writing sources...');
         $masterProgress->display();
 
@@ -255,6 +283,7 @@ class ImportDataCommand extends Command
                 ':note' => $sourceData['note'],
                 ':editors' => json_encode($sourceData['editors']),
                 ':payload' => $sourceData['payload'],
+                ':group' => $sourceData['group'] ? $sourceGroupMap[$sourceData['group']] : null,
                 ]
             );
         }

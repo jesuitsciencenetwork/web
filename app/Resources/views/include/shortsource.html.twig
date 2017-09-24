@@ -1,6 +1,8 @@
 {% spaceless %}
     {% import "macros.html.twig" as macro %}
-    {% if source.editors|length > 0 and ["Carlos", "Sommervogel"] == source.editors.0 %}
+    {% if source.slug|default('NOTSET') != 'NOTSET' %}
+        <i class="fa fa-list"></i> {{ source.fullCite }}
+    {% elseif source.editors|length > 0 and ["Carlos", "Sommervogel"] == source.editors.0 %}
         Sommervogel: <em>Bibliothèque de la Compagnie de Jésus</em>
     {% else %}
         {% if "Aufsatz" == source.genre %}

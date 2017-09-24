@@ -279,6 +279,18 @@ class PdrConnector
             return '' === $e ? null : $e;
         }, $data);
 
+        if ($data['editors'] == [['Carlos', 'Sommervogel']]) {
+            $data['group'] = 'sommervogel';
+        } elseif ($data['genre'] == 'VIAF' || $data['genre'] == 'GND') {
+            $data['group'] = 'viaf';
+        } elseif ($data['publisher'] == 'Universidad Pontifica Comillas') {
+            $data['group'] = 'dhcj';
+        } elseif (strpos($data['url'], 'wikipedia.org') !== false) {
+            $data['group'] = 'wp';
+        } else {
+            $data['group'] = null;
+        }
+
         return $data;
     }
 

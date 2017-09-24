@@ -2,6 +2,7 @@
 
 namespace AppBundle;
 
+use AppBundle\Entity\SourceGroup;
 use Doctrine\ORM\QueryBuilder;
 use AppBundle\Query as QueryDTO;
 use Doctrine\ORM\Query as Query;
@@ -50,7 +51,8 @@ class Search
             ->innerJoin('a.person', 'p')
             ->leftJoin('a.places', 'pl')
             ->leftJoin('a.subjects', 's')
-            ->leftJoin('a.source', 'src')
+            ->innerJoin('a.source', 'src')
+            ->leftJoin('src.sourceGroup', 'grp')
         ;
 
         if ($query->hasTypeRestriction()) {
@@ -70,6 +72,19 @@ class Search
         if ($query->getContinent()) {
             $qb->andWhere('pl.continent = :continent');
             $qb->setParameter('continent', $query->getContinent());
+        }
+
+        if ($query->getSources()) {
+            $expr = $qb->expr()->orX();
+            foreach ($query->getSources() as $key => $source) {
+                if ($source instanceof SourceGroup) {
+                    $expr->add('grp.id = :src'.$key);
+                } else {
+                    $expr->add('src.id = :src'.$key);
+                }
+                $qb->setParameter('src'.$key, (int)$source->getId(), \PDO::PARAM_INT);
+            }
+            $qb->andWhere($expr);
         }
 
         if ($query->getRadius()) {

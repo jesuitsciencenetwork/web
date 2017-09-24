@@ -9,7 +9,7 @@
 
 
     {# TYPES #}
-    {% set types = ['biographical', 'education', 'career', 'other'] %}
+    {% set types = ['biographical', 'education', 'career', 'miscellaneous'] %}
     {% set activeTypes = [] %}
     {% for type in types %}
         {% if attribute(query, type) %}{% set activeTypes = activeTypes|merge([type|capitalize]) %}{% endif %}
@@ -86,6 +86,15 @@
     {% endif %}
 
     {# SOURCE #}
+    {% if query.sources %}
+        only from
+        {% if query.sources|length == 1 %}
+            <abbr class="js-popover-html" data-trigger="hover" data-placement="bottom" data-content="{% filter escape('html_attr') %}<small>{% include "include/shortsource.html.twig" with {source: query.sources[0]} only %}</small>{% endfilter %}">selected source</abbr>
+        {% else %}
+        <abbr class="js-popover-html" data-trigger="hover" data-placement="bottom" data-content="{% filter escape('html_attr') %}<small><ul class='list-unstyled'>{% for source in query.sources %}<li>{% include "include/shortsource.html.twig" with {source: source} only %}</li>{% endfor %}</ul></small>{% endfilter %}">{{ query.sources|length }} selected sources</abbr>
+        {% endif %}
+        <span class="separator"></span>
+    {% endif %}
 {% endset %}
 
 {% if temp|trim|length > 0 %}
