@@ -215,6 +215,7 @@ EOSQL;
         }
 
         if ($q->has('sources')) {
+            $emptyQuery = false;
             $qParts = explode(' ', $q->get('sources'));
             $groupIds = $sourceIds = [];
             foreach ($qParts as $qPart) {
@@ -274,10 +275,12 @@ EOSQL;
         }
 
         if ($q->has('jesuit')) {
+            $emptyQuery = false;
             $query->setJesuit((bool)$q->get('jesuit'));
         }
 
         if ($q->has('ems')) {
+            $emptyQuery = false;
             $query->setEms((bool)$q->get('ems'));
         }
 
