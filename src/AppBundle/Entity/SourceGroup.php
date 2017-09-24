@@ -30,6 +30,12 @@ class SourceGroup
      * @var string
      * @ORM\Column(type="string", length=255)
      */
+    private $fullCite;
+
+    /**
+     * @var string
+     * @ORM\Column(type="string", length=255)
+     */
     private $color;
 
     /**
@@ -167,4 +173,22 @@ class SourceGroup
     {
         return $this->sources;
     }
+
+    /**
+     * @return string
+     */
+    public function getFullCite(): string
+    {
+        return $this->fullCite;
+    }
+
+    /**
+     * @param string $fullCite
+     */
+    public function setFullCite(string $fullCite)
+    {
+        $this->fullCite = $fullCite;
+    }
+
+
 }

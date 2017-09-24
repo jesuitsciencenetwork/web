@@ -283,8 +283,10 @@ class PdrConnector
             $data['group'] = 'sommervogel';
         } elseif ($data['genre'] == 'VIAF' || $data['genre'] == 'GND') {
             $data['group'] = 'viaf';
-        } elseif ($data['editors'] == [["Charles","O'Neill"]]) {
+        } elseif ($data['publisher'] == 'Universidad Pontifica Comillas') {
             $data['group'] = 'dhcj';
+        } elseif (strpos($data['url'], 'wikipedia.org') !== false) {
+            $data['group'] = 'wp';
         } else {
             $data['group'] = null;
         }
