@@ -144,7 +144,7 @@
     {% endif %}
     {% if query.bounds %}
         <li class="restriction">
-            within specified<br><abbr class="js-popover" title="Coordinates" data-toggle="popover" data-placement="right" data-html="true" data-trigger="click" data-content="Southwest corner<br>...<br>Northeast corner<br>...">map area</abbr>
+            within specified<br><abbr class="js-popover" title="Coordinates" data-toggle="popover" data-placement="right" data-html="true" data-trigger="click" data-content="Southwest corner<br>{{ query.bounds.southWest.latitude }}, {{ query.bounds.southWest.longitude }}<br>Northeast corner<br>{{ query.bounds.northEast.latitude }}, {{ query.bounds.northEast.longitude }}">map area</abbr>
             {{ macro.remove_restriction(params|unset('bounds')) }}
         </li>
     {% endif %}
