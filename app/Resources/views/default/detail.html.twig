@@ -1,6 +1,6 @@
 {% extends 'layout.html.twig' %}
 
-
+{% set title = (person.displayName ~ (person.dateOfBirth or person.dateOfDeath ? " (" ~ person.dateOfBirth ~ "–" ~ person.dateOfDeath ~ ")" : "")) %}
 
 {% block content %}
     <style type="text/css">
