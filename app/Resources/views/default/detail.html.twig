@@ -18,7 +18,7 @@
         <div class="col-sm-8">
 
             <header>
-                <h1>{{ person.displayName }} <small class="text-muted">({{ person.dateOfBirth }}–{{ person.dateOfDeath }})</small></h1>
+                <h1>{{ person.displayName }} {% if person.dateOfBirth or person.dateOfDeath %}<small class="text-muted">({{ person.dateOfBirth }}–{{ person.dateOfDeath }})</small>{% endif %}</h1>
                 <p class="small text-muted pref">
                     {% if not person.isJesuit %}<span class="non-jesuit">Non-Jesuit</span> &bull; {% endif %}
                     {% if person.viafId %}VIAF: <a target="_blank" href="http://viaf.org/viaf/{{ person.viafId }}"><code>{{ person.viafId }}</code></a> &bull; {% endif %}
@@ -150,6 +150,12 @@
             </li>
             {% endfor %}
         </ol>
+
+        <h4 style="margin-top: 60px;">Recommended Citation</h4>
+        <div class="well well-sm">
+            {% set stats = stats() %}
+            {{ person.displayName }} {% if person.dateOfBirth or person.dateOfDeath %}({{ person.dateOfBirth }}–{{ person.dateOfDeath }}){% endif %}. In: Jesuit Science Network, version {{ stats.lm|date('m/d/Y') }}. URL: <samp>{{ url('detail', {id: person.id}) }}</samp>.
+        </div>
     </div></div>
 
 {% endblock %}
