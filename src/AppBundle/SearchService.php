@@ -57,7 +57,7 @@ class SearchService
             $typeExpr[] = $field . ' = \'education\'';
         }
 
-        if ($types & \AppBundle\Query::TYPE_OTHER) {
+        if ($types & \AppBundle\Query::TYPE_MISCELLANEOUS) {
             $typeExpr[] = $field . ' = \'miscellaneous\'';
         }
 

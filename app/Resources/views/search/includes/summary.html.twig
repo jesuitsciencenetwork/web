@@ -9,7 +9,7 @@
 
 
     {# TYPES #}
-    {% set types = ['biographical', 'education', 'career', 'other'] %}
+    {% set types = ['biographical', 'education', 'career', 'miscellaneous'] %}
     {% set activeTypes = [] %}
     {% for type in types %}
         {% if attribute(query, type) %}{% set activeTypes = activeTypes|merge([type|capitalize]) %}{% endif %}

@@ -12,7 +12,7 @@ class Query
     const TYPE_BIOGRAPHICAL = 1;
     const TYPE_EDUCATION = 2;
     const TYPE_CAREER = 4;
-    const TYPE_OTHER = 8;
+    const TYPE_MISCELLANEOUS = 8;
 
     private $types = 0;
 
@@ -199,9 +199,9 @@ class Query
         return (bool)($this->types & self::TYPE_EDUCATION);
     }
 
-    public function getOther()
+    public function getMiscellaneous()
     {
-        return (bool)($this->types & self::TYPE_OTHER);
+        return (bool)($this->types & self::TYPE_MISCELLANEOUS);
     }
 
     public function setTypes($types)
@@ -221,7 +221,7 @@ class Query
 
     public static function types()
     {
-        return self::TYPE_BIOGRAPHICAL | self::TYPE_CAREER | self::TYPE_EDUCATION | self::TYPE_OTHER;
+        return self::TYPE_BIOGRAPHICAL | self::TYPE_CAREER | self::TYPE_EDUCATION | self::TYPE_MISCELLANEOUS;
     }
 
     /**

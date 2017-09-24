@@ -9,7 +9,7 @@
 
 <h6>Types</h6>
 <ul class="beco">
-    {% set types = ['biographical', 'education', 'career', 'other'] %}
+    {% set types = ['biographical', 'education', 'career', 'miscellaneous'] %}
     {% for type in types %}
     <li>
         <a {% if attribute(query, type) %}class="checked"{% endif %}
