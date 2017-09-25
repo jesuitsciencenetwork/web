@@ -18,6 +18,9 @@ security:
                     vorschau:
                         password: "sunday-column-19"
                         roles: "ROLE_USER"
+                    thesis:
+                        password: "different-mercury-81"
+                        roles: "ROLE_USER"
 
     firewalls:
         # disables authentication for assets and the profiler, adapt it according to your needs
