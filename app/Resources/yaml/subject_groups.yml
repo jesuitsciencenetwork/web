@@ -33,10 +33,6 @@ early_modern_sciences:
         - Natural and exact sciences
         - Natural sciences
         - Sciences
-grammar:
-    name: Grammar
-    subjects:
-        - Infima
 history:
     name: History
     subjects:
