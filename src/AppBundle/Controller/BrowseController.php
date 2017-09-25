@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Place;
+use AppBundle\Entity\SourceGroup;
 use AppBundle\Entity\SubjectGroup;
 use Doctrine\ORM\Query;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -16,14 +17,25 @@ class BrowseController extends Controller
      */
     public function sourcesAction()
     {
+        $groups = $this
+            ->getDoctrine()
+            ->getRepository(SourceGroup::class)
+            ->createQueryBuilder('g')
+            ->leftJoin('g.sources', 's')
+            ->where('g.slug <> ?0 and g.slug <> ?1')
+            ->getQuery()
+            ->execute(['wp', 'viaf'])
+        ;
         $sources = $this
             ->getDoctrine()
             ->getManager()
-            ->createQuery('SELECT s FROM AppBundle:Source s WHERE s.genre <> ?0 and s.genre <> ?1 order by s.id asc')
-            ->execute(['VIAF', 'GND']);
+            ->createQuery('SELECT s FROM AppBundle:Source s WHERE s.sourceGroup IS NULL order by s.id asc')
+            ->getResult()
+        ;
 
         return $this->render('default/sources.html.twig', [
-            'sources' => $sources
+            'sources' => $sources,
+            'groups' => $groups,
         ]
         );
     }
