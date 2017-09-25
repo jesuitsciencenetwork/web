@@ -384,9 +384,9 @@ class DefaultController extends Controller
             $edges[] = [
                 'from' => (string)$rel->getSource()->getId(),
                 'to' => (string)$rel->getTarget()->getId(),
-                'arrows' => 'to',
+                'arrows' => $rel->getValue() == 'professorOf' ? 'to' : 'from',
                 'color' => self::$colors[$rel->getValue()],
-                'label' => $rel->getPrettyValue(),
+
                 'arr' => $arrows[$rel->getValue()],
             ];
         }

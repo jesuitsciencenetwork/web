@@ -1,12 +1,11 @@
 digraph {
+graph [overlap = false, splines = true];
 {% for n in nodes %}
 {{ n.id }} [shape=box,{% if n.group == 'n' %}style=dashed,{% endif %}label="{{ n.label }}"];
 {% endfor %}
 
 {% for e in edges %}
-{{ e.from }} -> {{ e.to }} [arrowhead={{ e.arr }}];
+{% if e.arrows == 'to' %}{{ e.from }} -> {{ e.to }}{% else %}{{ e.to }} -> {{ e.from }}{% endif %} [];
 {% endfor %}
-
-overlap=false
 }
 
