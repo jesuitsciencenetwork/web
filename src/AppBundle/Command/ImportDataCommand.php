@@ -131,7 +131,7 @@ class ImportDataCommand extends Command
             'INSERT INTO source_group (title, slug, full_cite, color) VALUES (:title, :slug, :cite, :color)'
         );
         $groupStatement = $connection->prepare(
-            'INSERT INTO subject_group (title, slug, scheme) VALUES (:title, :slug, :scheme) ON DUPLICATE KEY UPDATE id=id'
+            'INSERT INTO subject_group (title, slug) VALUES (:title, :slug) ON DUPLICATE KEY UPDATE id=id'
         );
         $subjectGroupRefStatement = $connection->prepare(
             'INSERT INTO subject_group_subject (subject_id, subject_group_id) VALUES (:subjectId, :groupId) ON DUPLICATE KEY UPDATE subject_id=subject_id'
@@ -217,7 +217,6 @@ class ImportDataCommand extends Command
         foreach ($this->subjectGroupDefinitions as $subjectGroup) {
             $groupStatement->execute([
                 ':title' => $subjectGroup['name'],
-                ':scheme' => $subjectGroup['scheme'],
                 ':slug' => Helper::slugify($subjectGroup['name'])
             ]);
             $groupId = $connection->lastInsertId();

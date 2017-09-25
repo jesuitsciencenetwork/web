@@ -30,12 +30,6 @@ class SubjectGroup
      * @var string
      * @ORM\Column(type="string", length=255)
      */
-    private $scheme;
-
-    /**
-     * @var string
-     * @ORM\Column(type="string", length=255)
-     */
     private $slug;
 
     /**
@@ -143,29 +137,5 @@ class SubjectGroup
     public function getSubjects()
     {
         return $this->subjects;
-    }
-
-    /**
-     * Set scheme
-     *
-     * @param string $scheme
-     *
-     * @return SubjectGroup
-     */
-    public function setScheme($scheme)
-    {
-        $this->scheme = $scheme;
-
-        return $this;
-    }
-
-    /**
-     * Get scheme
-     *
-     * @return string
-     */
-    public function getScheme()
-    {
-        return $this->scheme;
     }
 }

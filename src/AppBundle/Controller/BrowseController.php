@@ -239,21 +239,16 @@ class BrowseController extends Controller
     }
 
     /**
-     * @Route(path="/subjects/{scheme}/", name="subjects_grouped")
+     * @Route(path="/subjects/grouped/", name="subjects_grouped")
      */
-    public function subjectsGroupedAction($scheme)
+    public function subjectsGroupedAction()
     {
-        if (!in_array($scheme, ['modern', 'harris'])) {
-            throw new NotFoundHttpException('Unknown scheme');
-        }
-
         $em = $this->getDoctrine()->getManager();
         /** @var SubjectGroup[] $subjectGroups */
         $subjectGroups = $em
             ->createQuery(
-                'SELECT g, s FROM AppBundle:SubjectGroup g INNER JOIN g.subjects s WHERE g.scheme=:scheme ORDER BY g.title asc, s.title ASC'
+                'SELECT g, s FROM AppBundle:SubjectGroup g INNER JOIN g.subjects s ORDER BY g.title asc, s.title ASC'
             )
-            ->setParameter('scheme', $scheme)
             ->execute()
         ;
 
@@ -285,7 +280,7 @@ class BrowseController extends Controller
             'groupCount' => count($subjectGroups),
             'fullCount' => count($uniqueSubjects),
             'letters' => $letters,
-            'scheme' => $scheme
+            'scheme' => 'grouped'
         ]
         );
     }

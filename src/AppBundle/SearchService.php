@@ -130,7 +130,6 @@ EOSQL;
             ->createQueryBuilder('g')
             ->select('g, s')
             ->innerJoin('g.subjects', 's')
-            ->where('g.scheme = :scheme')
             ->addOrderBy('g.title', 'ASC')
             ->addOrderBy('s.title', 'ASC')
         ;
@@ -139,10 +138,7 @@ EOSQL;
             $qb->andWhere($qb->expr()->in('s.id', $whitelist));
         }
 
-        $q = $qb->getQuery();
-
-        $contemporary = $q->execute(['scheme' => 'harris']);
-        $modern = $q->execute(['scheme' => 'modern']);
+        $groups = $qb->getQuery()->execute();
 
         $callback = function (SubjectGroup $group) {
             return [
@@ -159,20 +155,7 @@ EOSQL;
             ];
         };
 
-        return [
-            [
-                'text' =>  '<em>Contemporary grouping</em>',
-                'selectable' => false,
-                'disableCheckbox' => false,
-                'nodes' => array_map($callback, $contemporary)
-            ],
-            [
-                'text' =>  '<em>Modern grouping</em>',
-                'selectable' => false,
-                'disableCheckbox' => false,
-                'nodes' => array_map($callback, $modern)
-            ],
-        ];
+        return array_map($callback, $groups);
     }
 
     public function getQueryFromRequest(Request $request)
