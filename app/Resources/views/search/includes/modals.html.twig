@@ -124,29 +124,22 @@
     {% if filter.subjects is defined %}
         {% embed "modal.html.twig" with {id: "modal-subjects", class: "wide refinement", title: "Refine by Subject"} %}
             {% block body %}
-                <div class="row">
-                    {% for groupingScheme in filter.subjects %}
-                        <div class="col-md-6">
-                            <h6>{{ groupingScheme.text|striptags }}</h6>
+            <ul class="list-unstyled list-indented">
+                {% for node in filter.subjects %}
+                    <li>
+                        {% if node.nodes|length %}
+                            <em>{{ node.text }}</em>
                             <ul class="list-unstyled list-indented">
-                                {% for node in groupingScheme.nodes %}
-                                    <li>
-                                        {% if node.nodes|length %}
-                                            <em>{{ node.text }}</em>
-                                            <ul class="list-unstyled list-indented">
-                                                {% for childNode in node.nodes %}
-                                                    <li><a href="{{ path('search', params|str_add('subjects', childNode.id)) }}">{{ childNode.text }}</a></li>
-                                                {% endfor %}
-                                            </ul>
-                                        {% else %}
-                                            {{ node.text }}
-                                        {% endif %}
-                                    </li>
+                                {% for childNode in node.nodes %}
+                                    <li><a href="{{ path('search', params|str_add('subjects', childNode.id)) }}">{{ childNode.text }}</a></li>
                                 {% endfor %}
                             </ul>
-                        </div>
-                    {% endfor %}
-                </div>
+                        {% else %}
+                            {{ node.text }}
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
             {% endblock %}
         {% endembed %}
     {% endif %}
