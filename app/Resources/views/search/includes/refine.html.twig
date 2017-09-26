@@ -43,20 +43,18 @@
            data-trigger="hover"
            data-container=".search-refine"
            data-placement="right"
-           data-title="Early Modern Science"
-           data-content="only show aspects of persons who have a relation with subjects from early modern sciences"></i>
+           data-content="Only show aspects of persons associated with subjects from the early modern sciences"></i>
     </li>
     {% endif %}
     {% if query.ems is null or query.ems is same as(true) %}
     <li>
         <a href="{{ path('search', params|merge({ems: 0})) }}">EMS-unrelated</a>
-        <i class="fa fa-info-circle js-popover text-muted"
+        <i class="fa fa-info-circle js-popover-html text-muted"
            data-toggle="popover"
            data-trigger="hover"
            data-container=".search-refine"
            data-placement="right"
-           data-title="Early Modern Science"
-           data-content="only show aspects of persons who do NOT have a relation with subjects from early modern sciences"></i>
+           data-content="Only show aspects of persons <em>not</em> associated with subjects from the early modern sciences"></i>
     </li>
     {% endif %}
     {% if query.jesuit is null or query.jesuit is same as(false) %}
@@ -94,7 +92,13 @@
     {% endif %}
 </ul>
 
-<h6>Occupation</h6>
+<h6>Occupation <i class="fa fa-info-circle js-popover-html text-muted"
+                  data-toggle="popover"
+                  data-trigger="hover"
+                  data-container=".search-refine"
+                  data-placement="right"
+                  data-content="..."></i>
+</h6>
 <ul class="list-unstyled">
     {% if query.occupation %}
         <li class="restriction">
