@@ -2,8 +2,8 @@
 
 {% set temp %}
     {# DATE #}
-    {% if (query.from and query.from|default(1490) != 1490) or (query.to and query.to|default(1890) != 1890) %}
-        Date range: <em>{{ query.from|default(1490) }} – {{ query.to|default(1890) }}</em>
+    {% if (query.from and query.from|default(1490) != 1490) or (query.to and query.to|default(1850) != 1850) %}
+        Date range: <em>{{ query.from|default(1490) }} – {{ query.to|default(1850) }}</em>
         <span class="separator"></span>
     {% endif %}
 
