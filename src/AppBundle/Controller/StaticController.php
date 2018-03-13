@@ -8,14 +8,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 class StaticController extends Controller
 {
     /**
-     * @Route("/imprint/", name="imprint")
-     */
-    public function imprintAction()
-    {
-        return $this->render('static/imprint.html.twig');
-    }
-
-    /**
      * @Route("/about/", name="about")
      */
     public function aboutAction()
