@@ -131,7 +131,7 @@
             </a></li>
         {% elseif filter.sources is defined and (filter.sources.sources|length > 0 or filter.sources.groups|length > 0) %}
             <li><a href="#" data-toggle="modal" data-target="#modal-sources">
-                    <em>view list ({{ filter.sources.sources|length + filter.sources.groups|length }})</em>
+                    <em>View list ({{ filter.sources.sources|length + filter.sources.groups|length }})</em>
             </a></li>
         {% else %}
             <li><em class="text-muted">Not applicable</em></li>
