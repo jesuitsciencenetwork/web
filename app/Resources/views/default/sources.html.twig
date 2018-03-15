@@ -1,12 +1,35 @@
 {% extends "::layout.html.twig" %}
 
 {% block content %}
+<a href="#sources" id="btt" style="display: none;"><span></span></a>
 <div class="container container-narrow">
     <div class="col-xs-12">
-        <h3 id="sources">Sources</h3>
+        <h2 id="sources">Sources</h2>
 
+        <p>
+            The main source for the biographical data collected and
+            presented in the JSN is the twelve-volume <a href="#sommervogel"><em>Bibliothèque de
+                la Compagnie de Jésus</em></a>. The first nine volumes were edited
+            by the French Jesuit Carlos Sommervogel (1834–1883) between
+            1890 and 1900 and supplemented by three more volumes in 1909
+            and 1932; the entire series was reprinted in 1960.
+        </p>
+        <p>
+            A more modern cornerstone of the project is the four-volume
+            <a href="#dhcj"><em>Diccionario Histórico de la Compagñía de Jesús</em></a>, a
+            Spanish-speaking historical dictionary on the Society of Jesus
+            edited by Charles O’Neill (1927–2009) et al. in 2001.
+            It contains articles not only on Jesuits, but also places,
+            institutions, and even subjects connected to or treated by
+            Jesuits.
+        </p>
+        <p>
+            Aside from these two fundamental works, the Jesuit Science
+            Network also makes use of <a href="#other">a number of smaller studies</a>, most
+            of them with a geographical focus.
+        </p>
         {% for group in groups %}
-        <h6>{{ group.title }}</h6>
+            <h4 style="margin-top: 3em;" class="jumptarget" id="{{ group.slug }}">{{ group.title }}</h4>
         <ol class="source-list">
         {% for source in group.sources %}
             <li>{% include "include/source.html.twig" %}</li>
@@ -14,7 +37,7 @@
         </ol>
         {% endfor %}
 
-        <h6>Other sources</h6>
+        <h4 style="margin-top: 3em;" class="jumptarget" id="other">Other sources</h4>
         <ol class="source-list">
         {% for source in sources %}
             <li>{% include "include/source.html.twig" %}</li>
@@ -22,4 +45,18 @@
         </ol>
     </div>
 </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        $(function() {
+            $(window).scroll(function(){
+                if ($(this).scrollTop() > 100) {
+                    $('#btt').fadeIn();
+                } else {
+                    $('#btt').fadeOut();
+                }
+            });
+        });
+    </script>
 {% endblock %}
