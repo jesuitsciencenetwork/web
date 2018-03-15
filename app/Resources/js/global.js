@@ -371,9 +371,9 @@ $(function () {
                 $('#when-from').val(1490);
             }
 
-            if (to > 1850) {
-                to = 1850;
-                $('#when-to').val(1850);
+            if (to > 1870) {
+                to = 1870;
+                $('#when-to').val(1870);
             }
             slider.setValue([from, to])
         });

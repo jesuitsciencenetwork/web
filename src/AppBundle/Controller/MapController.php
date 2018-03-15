@@ -37,7 +37,7 @@ class MapController extends Controller
     private function applyDateFilter(QueryBuilder $qb, Request $request)
     {
         $qb->setParameter('from', (int)$request->get('from', 1490));
-        $qb->setParameter('to', (int)$request->get('to', 1850));
+        $qb->setParameter('to', (int)$request->get('to', 1870));
 
         $eb = $qb->expr();
 
