@@ -87,6 +87,7 @@ services:
 
   jsn.search:
     class: AppBundle\SearchService
+    public: true
     arguments:
       - "@doctrine.orm.default_entity_manager"
       - "@knp_paginator"
