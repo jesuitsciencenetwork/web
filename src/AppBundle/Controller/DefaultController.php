@@ -38,15 +38,7 @@ class DefaultController extends Controller
     ];
 
     /**
-     * @Route("/", name="splash")
-     */
-    public function splashAction()
-    {
-        return $this->render('splash.html.twig');
-    }
-
-    /**
-     * @Route("/home/", name="homepage")
+     * @Route("/", name="homepage")
      */
     public function startAction()
     {

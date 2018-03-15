@@ -78,7 +78,6 @@ assetic:
                 - "%kernel.root_dir%/Resources/vendor/bootstrap-select/dist/js/bootstrap-select.js"
                 - "%kernel.root_dir%/Resources/vendor/bootstrap-select/dist/js/i18n/defaults-en_US.js"
                 - "%kernel.root_dir%/Resources/js/markerclusterer.js"
-                - "%kernel.root_dir%/Resources/js/featherlight.js"
                 - "%kernel.root_dir%/Resources/js/global.js"
             output: js/scripts.js
         styles:
@@ -88,7 +87,6 @@ assetic:
                 - "%kernel.root_dir%/Resources/vendor/bootstrap3-dialog-1.34.9/dist/css/bootstrap-dialog.css"
                 - "%kernel.root_dir%/Resources/vendor/bootstrap-treeview-1.2.0/src/css/bootstrap-treeview.css"
                 - "%kernel.root_dir%/Resources/vendor/vis/dist/vis-network.min.css"
-                - "%kernel.root_dir%/Resources/css/featherlight.css"
                 - "%kernel.root_dir%/Resources/less/bootstrap.less"
             output: css/styles.css
 
