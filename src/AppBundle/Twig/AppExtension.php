@@ -66,7 +66,7 @@ class AppExtension extends \Twig_Extension
                 'is_safe' => ['html']
             ]),
             new \Twig_SimpleFilter('format_country', ['AppBundle\Helper', 'formatCountry']),
-            new \Twig_SimpleFilter('slugify', ['Helper', 'slugify']),
+            new \Twig_SimpleFilter('slugify', ['AppBundle\Helper', 'slugify']),
             new \Twig_SimpleFilter('format_continent', ['AppBundle\Helper', 'formatContinent']),
             new \Twig_SimpleFilter('lcfirst', 'lcfirst'),
         ];
