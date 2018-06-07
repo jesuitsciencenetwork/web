@@ -9,4 +9,5 @@ SYMFONY_ENV=prod composer install --no-dev --optimize-autoloader
 php $DIR/console doctrine:schema:update --env=prod --force
 
 php $DIR/console assetic:dump --env=prod --no-debug
-php $DIR/console cache:clear --env=prod
+php $DIR/console cache:clear --no-warmup --env=prod
+php $DIR/console cache:warmup --env=prod
