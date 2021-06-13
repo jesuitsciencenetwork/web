@@ -34,7 +34,7 @@ For the rest of the instructions you'll also need a basic understanding of PHP w
 
 ### Instructions
 
-1. Download [all release files]() to a folder of your choosing. 
+1. Download [all release files](https://github.com/jesuitsciencenetwork/web/releases/tag/1.0.0) to a folder of your choosing. 
 
 2. Connect to your MySQL/MariaDB server. Import the supplied SQL file `jsn.sql.gz` into your database using a db client of your choice. Be sure to change the database name if needed (`jsn` by default). Create a user with access to the database.
 
